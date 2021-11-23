@@ -6,24 +6,26 @@
 
 * Profile -> Settings -> Developer settings
 * 选择 Personal access tokens
-* t仅选择 repo 权限
+* 仅选择 repo 权限
 * 复制 token，只显示一次
+
 ## 配置 token
 
 * 在仓库的 settings -> Secrets 新建
 * token名称任意，这里为 ACCESS_TOKEN ，后面需要用到
 
-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
 
 ## 准备代码
 
 * 在当前需要部署的仓库根目录下新建文件夹 
+
 ```
 .github/workflows
 ```
+
 * 新建文件 gitbook-cli.yml ，文件名任意，后缀固定
 
-```yaml 
+```yml 
 name: auto-generate-gitbook
 on:                                 #在master分支上进行push时触发  
   push:

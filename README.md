@@ -11,7 +11,7 @@ chnhuangbo@gmail.com
 ## Wechat
 Wechat: chnhuangbo
 
-<img src="./wechat_me.jpeg" alt="wechat" style="zoom:25%;" />
+<img src="/images/wechat_me.jpeg" alt="wechat" style="zoom:25%;" />
 
 # 工作经历
 
