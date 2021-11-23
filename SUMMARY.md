@@ -1,3 +1,3 @@
 # Your Book Title
 
-- [00 About Me](00-about%20me/README.md)
+- [00 About](00%20about/README.md)
