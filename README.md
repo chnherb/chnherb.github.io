@@ -9,7 +9,7 @@ chnhuangbo@qq.com
 chnhuangbo@gmail.com
 
 ## Wechat
-chnhuangbo
+Wechat: chnhuangbo
 
 <img src="./wechat_me.jpeg" alt="wechat" style="zoom:25%;" />
 
