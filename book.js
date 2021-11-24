@@ -11,6 +11,7 @@ module.exports = {
         "code",
         // "code-optimize",
         "highlight", 
+        // "prism",  // -highlight
         "splitter",
         "intopic-toc",
         // "highlight-code",
@@ -18,6 +19,9 @@ module.exports = {
         "-sharing",
         "sharing-plus",
         "donate",
+        "github",
+        "hide-element",
+        "auto-scroll-table",
     ],
     pluginsConfig: {
         // "code": {
@@ -63,6 +67,12 @@ module.exports = {
             "button": "赏",
             "alipayText": "支付宝打赏",
             "wechatText": "微信打赏"
+        },
+        "github": {
+            "url": "https://github.com/chnherb"
+        },
+        "hide-element": {
+            "elements": [".gitbook-link"]
         }
     },
     variables: {
