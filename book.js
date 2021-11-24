@@ -5,6 +5,7 @@ module.exports = {
     lang: "zh-cn",
     plugins: [
         "-lunr", "-search", "search-pro",
+        "custom-favicon",
         "back-to-top-button",
         "expandable-chapters",
         "chapter-fold",
@@ -31,6 +32,7 @@ module.exports = {
         //     "copyButtons": true,
         //     "showLines": true
         // },
+        "favicon": "images/favicon.ico",
         "intopic-toc": {
             "label": "CONTENTS",
             "selector": ".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4, .markdown-section h5, .markdown-section h6",
@@ -49,7 +51,7 @@ module.exports = {
             "douban": true,
             "facebook": true,
             "google": true,
-            "pocket": true,
+            "pocket": false,
             "qq": true,
             "qzone": true,
             "twitter": true,
@@ -73,7 +75,7 @@ module.exports = {
         },
         "hide-element": {
             "elements": [".gitbook-link"]
-        }
+        },
     },
     variables: {
     },
