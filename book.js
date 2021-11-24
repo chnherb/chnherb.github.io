@@ -32,7 +32,7 @@ module.exports = {
         //     "copyButtons": true,
         //     "showLines": true
         // },
-        "favicon": "images/favicon.ico",
+        "favicon": "/imagessss/favicon.ico",
         "intopic-toc": {
             "label": "CONTENTS",
             "selector": ".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4, .markdown-section h5, .markdown-section h6",
