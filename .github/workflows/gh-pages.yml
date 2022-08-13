@@ -1,0 +1,56 @@
+name: github pages
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: "0.101.0"
+          extended: true
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      - name: Cache dependencies
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - run: bash replace_imgs_path.sh
+      - run: npm install && npm ci
+      - run: HUGO_ENV=production hugo --minify --verbose
+
+      - name: Deploy
+        env:
+          TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          REF: github.com/${{github.repository}}
+          MYEMAIL: chnhuangbo@qq.com                  # ！！记得修改为自己github设置的邮箱
+          MYNAME: ${{github.repository_owner}}   
+        run: |
+          cd public
+          git config --global user.email "${MYEMAIL}"
+          git config --global user.name "${MYNAME}"
+          git init
+          git remote add origin https://${REF}
+          git add . 
+          git commit -m "Updated By Github Actions With Build ${{github.run_number}} of ${{github.workflow}} For Github Pages"
+          git branch -M master
+          git push --force --quiet "https://${TOKEN}@${REF}" master:gh-pages
