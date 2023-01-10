@@ -1,18 +1,18 @@
 name: auto-generate-gitbook
-on:                                 #在master分支上进行push时触发  
+on:                                 #在dev分支上进行push时触发  
   push:
     branches:
-    - master
+    - dev
 
 jobs:
-  master-to-gh-pages:
+  dev-to-gh-pages:
     runs-on: ubuntu-latest
         
     steps:                          
-    - name: checkout master
+    - name: checkout dev
       uses: actions/checkout@v2
       with:
-        ref: master
+        ref: dev
             
     - name: install nodejs
       uses: actions/setup-node@v1
@@ -43,5 +43,5 @@ jobs:
         git remote add origin https://${REF}
         git add . 
         git commit -m "Updated By Github Actions With Build ${{github.run_number}} of ${{github.workflow}} For Github Pages"
-        git branch -M master
-        git push --force --quiet "https://${TOKEN}@${REF}" master:gh-pages
+        git branch -M dev
+        git push --force --quiet "https://${TOKEN}@${REF}" dev:gh-pages

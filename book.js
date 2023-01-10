@@ -37,15 +37,15 @@ module.exports = {
             "label": "CONTENTS",
             "selector": ".markdown-section h1, .markdown-section h2, .markdown-section h3, .markdown-section h4, .markdown-section h5, .markdown-section h6",
             "mode": "nested",
-            "maxDepth": 3,
-            "isCollapsed": false,
+            "maxDepth": 5,
+            "isCollapsed": true,
             "isScrollspyActive": true,
             "visible": true,
         },
         "tbfed-pagefooter": {
             "copyright": "Copyright © chnhuangbo@qq.com 2020",
-            "modify_label": "修订时间：",
-            "modify_format": "YYYY-MM-DD HH:mm:ss"
+            // "modify_label": "修订时间：",
+            // "modify_format": "YYYY-MM-DD HH:mm:ss"
         },
         "sharing": {
             "douban": true,
