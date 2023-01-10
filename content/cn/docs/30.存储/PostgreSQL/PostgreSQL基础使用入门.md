@@ -90,6 +90,17 @@ PostgreSQL的劣势：
 * MySQL存储引擎插件化机制，使得应用场景更加广泛，如innodb适合事务处理场景外，myisam适合静态数据的查询场景。
 从应用场景来说，PG更加适合严格的企业应用场景（比如金融、电信、ERP、CRM），且其 json、jsonb、hstore 等数据格式，特别适用于一些大数据格式的分析。而 MySQL 更加适合业务逻辑相对简单、数据可靠性要求较低的互联网场景（如google、alibaba等），当然MySQL在innodb引擎的大力发展下功能表现良好。
 
+## 特性
+
+PG拥有众多开放特性：
+
+* 开放的数据类型接口：除了传统数据库支持的类型，还支持GIS，JSON，RANGE，IP，ISBN，图像特征值，化学，DNA等等扩展的类型，还可以根据实际业务扩展更多的类型。
+* 开放的操作符接口：不仅支持常见的类型操作符，还支持扩展的操作符，例如距离符，逻辑并、交、差符号，图像相似符号，几何计算符号等等扩展的符号，用户还可以根据实际业务扩展更多的操作符。
+* 开放的外部数据源接口：PG支持丰富的外部数据源，例如可以通过FDW读写mysql, redis, mongo, oracle, sqlserver, hive, www, hbase, ldap等等，只要你能想到的数据源都可以通过FDW接口读写。
+* 开放的语言接口：使得PG支持几乎地球上所有的编程语言作为数据库的函数、存储过程语言，例如plpython , plperl , pljava , plR , plCUDA , plshell等等。用户可以通过language handler扩展PG的语言支持。
+* 开放的索引接口：使得PG支持非常丰富的索引方法，例如btree , hash , gin , gist , sp-gist , brin , bloom , rum , zombodb , bitmap (greenplum extend)，用户可以根据不同的数据类型，以及查询的场景，选择不同的索引。
+* PG内部还支持BitmapAnd, BitmapOr的优化方法，可以合并多个索引的扫描操作，从而提升多个索引数据访问的效率。
+
 # 安装
 
 ## 下载
@@ -213,7 +224,56 @@ host  all  all 0.0.0.0/0 md5
 sudo systemctl restart postgresql-14
 ```
 
+# 数据类型
 
+创建表时必须使用数据类型，PG主要有以下几类数据类型：
+
+* 数值数据类型
+    * smallint：2字节
+    * integer：4字节
+    * bigint：8字节
+    * decimal：可变长
+    * numeric：可变长
+    * real：4字节
+    * double：8字节
+* 字符串数据类型
+    * char
+    * varchar
+    * text
+* 日期/时间数据类型
+    * timestamp：日期和时间
+    * date：日期
+    * time：时间
+* 数组类型
+    * int[]
+    * text[]
+    * int[][]
+* json/jsonb类型
+    * json
+    * jsonb
+* xml类型
+* 货币类型
+    * money
+* 布尔
+    * boolean
+* 空间几何类型
+    * point
+    * line
+    * box
+    * path
+    * circle
+* 网络地址类型
+    * inet
+    * macaddr
+* 位串
+    * bit
+* uuid类型
+* 复合类型
+    * CREATE TYPE complex AS(a int, b int)
+* 范围类型
+    * int4range
+    * numrange
+    * daterange
 # 基本使用
 
 ## 控制台常用命令
@@ -259,24 +319,6 @@ drop database <dbname>
 
 ## 数据库表操作
 
-创建表时必须使用数据类型，PG主要有三类数据类型：
-
-* 数值数据类型
-    * smallint：2字节
-    * integer：4字节
-    * bigint：8字节
-    * decimal：可变长
-    * numeric：可变长
-    * real：4字节
-    * double：8字节
-* 字符串数据类型
-    * char
-    * varchar
-    * text
-* 日期/时间数据类型
-    * timestamp：日期和时间
-    * date：日期
-    * time：时间
 初级用法：
 
 ```shell
