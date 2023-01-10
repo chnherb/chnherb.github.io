@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "CODE_OF_CONDUCT"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 # Contributor Covenant Code of Conduct
 
 ## Our Pledge

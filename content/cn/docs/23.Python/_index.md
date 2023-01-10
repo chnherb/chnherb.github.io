@@ -1,5 +1,5 @@
 ---
-categories: [""] 
+categories: ["Python"] 
 tags: [""] 
 title: "Python"
 # linkTitle: ""

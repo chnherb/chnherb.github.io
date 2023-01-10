@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["JavaExtension"] 
+tags: ["log"] 
 title: "log"
 # linkTitle: ""
 weight: 5

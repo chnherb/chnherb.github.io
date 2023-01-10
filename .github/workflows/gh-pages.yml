@@ -35,6 +35,7 @@ jobs:
             ${{ runner.os }}-node-
 
       - run: bash replace_imgs_path.sh
+      - run: chmod +x ./tools/util-cli_linux_amd64 && ./tools/util-cli_linux_amd64 collapse --src=./content/cn
       - run: npm install && npm ci
       - run: HUGO_ENV=production hugo --minify --verbose
 

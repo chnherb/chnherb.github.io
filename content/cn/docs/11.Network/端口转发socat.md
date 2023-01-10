@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["port forward"] 
+tags: ["socat", "ssh"] 
 title: "端口转发socat"
 # linkTitle: ""
 weight: 5
@@ -41,7 +41,7 @@ fi
 ## 实际使用
 
 ```shell
-ssh -f -N -L 2280:127.0.0.1:2280 huangbo.bin@10.231.243.5
+ssh -f -N -L 2280:127.0.0.1:2280 zhangsan@1.23.2.5
 ```
 
 

@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["common"] 
+tags: ["cron"] 
 title: "cron表达式"
 # linkTitle: ""
 weight: 5

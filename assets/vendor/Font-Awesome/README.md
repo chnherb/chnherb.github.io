@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "README"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 <h1><img src="https://img.fortawesome.com/349cfdf6/logo-fa-free.svg" alt="Font Awesome 5 Free" width="50%"></h1>
 
 > Version 5 – the iconic SVG, font, and CSS framework

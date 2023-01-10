@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "PULL_REQUEST_TEMPLATE"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 <!--- WARNING Pull Requests made to this repository cannot be merged -->
 
 I understand that:

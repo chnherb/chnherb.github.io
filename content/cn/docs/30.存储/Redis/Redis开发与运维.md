@@ -1,5 +1,5 @@
 ---
-categories: [""] 
+categories: ["Redis"] 
 tags: [""] 
 title: "Redis开发与运维"
 # linkTitle: ""

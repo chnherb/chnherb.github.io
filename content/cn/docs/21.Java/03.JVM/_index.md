@@ -1,9 +1,9 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["Java"] 
+tags: ["JVM"] 
 title: "JVM"
 # linkTitle: ""
-weight: 5
+weight: 20
 description: >
   
 ---

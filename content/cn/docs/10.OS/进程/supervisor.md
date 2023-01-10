@@ -1,9 +1,9 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["process"] 
+tags: ["supervisor"] 
 title: "supervisor"
 # linkTitle: ""
-weight: 5
+weight: 15
 description: >
   
 ---

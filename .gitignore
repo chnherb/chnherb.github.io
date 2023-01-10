@@ -4,3 +4,9 @@ node_modules/
 package-lock.json
 .hugo_build.lock
 /themes
+.DS_Store
+assets/.DS_Store
+content/.DS_Store
+content/cn/.DS_Store
+content/cn/docs/.DS_Store
+/.idea

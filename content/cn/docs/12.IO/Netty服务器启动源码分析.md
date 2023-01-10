@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["IO", "Netty"] 
+tags: ["Netty"] 
 title: "Netty服务器启动源码分析"
 # linkTitle: ""
 weight: 5

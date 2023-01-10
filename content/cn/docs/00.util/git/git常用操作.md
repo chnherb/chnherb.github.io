@@ -5,7 +5,7 @@ title: "git常用操作"
 # linkTitle: ""
 weight: 5
 description: >
-  
+
 ---
 
 # 基本操作
@@ -91,7 +91,7 @@ git checkout -b 本地分支名 remotes/origin/远程分支
 
 	c、分支：master
 
-	d、负责人：huangbo16
+	d、负责人：zhangsan
 
 2、新建本地分支
 
@@ -173,7 +173,7 @@ git push --force origin TXXX
 
 ```plain
 # 全局设置
-git config --global user.email huangbo16@meituan.com
+git config --global user.email zhangsan@xxx.com
 git config --global users.name bo
 # 清除全局配置
 git config --global --unset user.name
@@ -183,6 +183,7 @@ git config --global --unset user.email
 
 >参考：[https://www.jianshu.com/p/89cb26e5c3e8](https://www.jianshu.com/p/89cb26e5c3e8)
 >[https://www.cnblogs.com/TRHX/p/11699999.html?ivk_sa=1024320u](https://www.cnblogs.com/TRHX/p/11699999.html?ivk_sa=1024320u)
+
 配置~/.ssh/config
 
 ```objectivec
@@ -190,12 +191,12 @@ Host 10.*
     GSSAPIAuthentication yes
     GSSAPIDelegateCredentials no
 
-Host byteide_6961
-    HostName 10.227.82.148
-    User huangbo.bin
+Host abcd_1234
+    HostName 1.2.3.4
+    User zhangsan
     Port 11789
     StrictHostKeyChecking no
-    IdentityFile ~/.ssh/.cloud_workspace_keys/huangbo.bin/workspace_1639_rsa
+    IdentityFile ~/.ssh/.cloud_workspace_keys/zhangsan/abc_1639_rsa
 
 Host github
 HostName https://github.com
@@ -240,9 +241,11 @@ git config --global --list 
 
 ![git_operation_1.jpeg](./imgs/git_operation_1.jpeg)
 
-git remote set-url origin [ssh://git@code.byted.org/cg/recon_oversea](ssh://git@code.byted.org/cg/recon_oversea)
+
+git remote set-url origin ssh://git@github.com:chnherb/chnherb.github.io.git
 
 ![git_operation_2.png](./imgs/git_operation_2.png)
+
 
 ```shell
 echo "# myrpc" >> README.md
@@ -260,7 +263,7 @@ git push -u origin master
 ```
 ## 切换/绑定仓库
 
-git remote set-url origin [ssh://git@code.byted.org/cg/oversea-rebate](ssh://git@code.byted.org/cg/oversea-rebate)
+git remote set-url origin ssh://git@github.com:chnherb/chnherb.github.io.git
 
 # gerrit
 
@@ -277,11 +280,9 @@ git reset --soft 这个changeId bf89b70b99591e9c0d4d2a70beeda6b80049789e
 git add .
 git commit -m 'commitlog'
 git push origin HEAD:refs/for/master 如果该步出错，按照提示敲命令，如下两条，然后再git stutas看看是否提交完，提交完则直接push
-1、 gitdir=$(git rev-parse --git-dir); scp -p -P 29418 huangbo.bin@git.byted.org:hooks/commit-msg ${gitdir}/hooks/
+1、 gitdir=$(git rev-parse --git-dir); scp -p -P 29418 zhangsan@git.xxx.org:hooks/commit-msg ${gitdir}/hooks/
 2、 git commit --amend --no-edit
-
 ```
-
 
 ## 报错分析
 
@@ -303,3 +304,42 @@ change id已经被使用
 ## 合并dev冲突解决办法
 
 ![git_operation_3.png](./imgs/git_operation_3.png)
+
+
+# tag
+
+>github tag流水线配置参考：[https://github.com/chnherb/util-cli/blob/master/.github/workflows/release.yml](https://github.com/chnherb/util-cli/blob/master/.github/workflows/release.yml)
+
+## 查看
+
+```shell
+# 查看本地所有tag
+git tag # git tag -l 也可以
+# 查看远程所有tag
+git ls-remote --tags origin
+# 查看commit tag信息
+git log
+```
+## 创建
+
+```shell
+# 创建本地tag
+git tag <tagName>   # git tag v1.0.1
+```
+## 推送
+
+```shell
+# 推送某个tag到远程仓库 
+git push origin <tagName>
+# 推送所有tag到远程仓库
+git push origin --tags
+```
+## 删除
+
+```shell
+# 删除本地tag
+git tag -d <tagName>
+# 删除远程tag
+git push origin :refs/tags/<tagName>
+```
+

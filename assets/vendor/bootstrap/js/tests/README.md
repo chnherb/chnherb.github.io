@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "README"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 ## How does Bootstrap's test suite work?
 
 Bootstrap uses [QUnit](https://qunitjs.com/) and [Sinon](https://sinonjs.org/). Each plugin has a file dedicated to its tests in `unit/<plugin-name>.js`.

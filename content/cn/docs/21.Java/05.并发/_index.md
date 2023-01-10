@@ -1,9 +1,9 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["Java"] 
+tags: ["concurrent"] 
 title: "并发"
 # linkTitle: ""
-weight: 5
+weight: 30
 description: >
   
 ---

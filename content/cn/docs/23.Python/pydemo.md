@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["Python"] 
+tags: ["pydemo"] 
 title: "pydemo"
 # linkTitle: ""
 weight: 5

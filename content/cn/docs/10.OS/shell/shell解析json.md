@@ -1,9 +1,9 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["shell"] 
+tags: ["json"] 
 title: "shell解析json"
 # linkTitle: ""
-weight: 5
+weight: 98
 description: >
   
 ---
@@ -26,7 +26,7 @@ description: >
             "x86_64"
         ],
         "type": "online",
-        "create_user": "huangbo.bin"
+        "create_user": "zhangsan"
 },
 {
         "version": "1.0.0.58",
@@ -34,7 +34,7 @@ description: >
             "x86_64"
         ],
         "type": "online",
-        "create_user": "huangbo.bin"
+        "create_user": "zhangsan"
 }
 ]
 ```
@@ -209,7 +209,7 @@ json_content='
             "x86_64"
         ],
         "type": "online",
-        "create_user": "huangbo.bin"
+        "create_user": "zhangsan"
 },
 {
         "version": "1.0.0.58",
@@ -217,7 +217,7 @@ json_content='
             "x86_64"
         ],
         "type": "online",
-        "create_user": "huangbo.bin"
+        "create_user": "zhangsan"
 }
 ]'
 
@@ -252,9 +252,9 @@ echo -e $(\
 ```plain
 [{   
          "version":
- "1.0.0.59", "arch": [ "x86_64" ], "type": "online", "create_user": "huangbo.bin" }, { "version": 
+ "1.0.0.59", "arch": [ "x86_64" ], "type": "online", "create_user": "zhangsan" }, { "version": 
  "1.0.0.58", "arch": [ "x86_64" ], "type": "online", 
- "create_user": "huangbo.bin" } ]
+ "create_user": "zhangsan" } ]
 ```
 ## 运行脚本
 

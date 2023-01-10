@@ -1,9 +1,9 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["process"] 
+tags: ["systemd"] 
 title: "systemd"
 # linkTitle: ""
-weight: 5
+weight: 20
 description: >
   
 ---

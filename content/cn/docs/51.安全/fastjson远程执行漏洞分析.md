@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["safe"] 
+tags: ["fastjson"] 
 title: "fastjson远程执行漏洞分析"
 # linkTitle: ""
 weight: 5

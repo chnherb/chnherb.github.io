@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["Java"] 
+tags: ["Spring", "annotation"] 
 title: "spring注解驱动+源码"
 # linkTitle: ""
 weight: 5

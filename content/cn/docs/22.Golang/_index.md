@@ -1,5 +1,5 @@
 ---
-categories: [""] 
+categories: ["Golang"] 
 tags: [""] 
 title: "Golang"
 # linkTitle: ""

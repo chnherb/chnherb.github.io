@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["github"] 
+tags: ["github"] 
 title: "github搜索技巧"
 # linkTitle: ""
 weight: 5

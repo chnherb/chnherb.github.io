@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["util"] 
+tags: ["gitbook"] 
 title: "gitbook使用指南"
 # linkTitle: ""
 weight: 5

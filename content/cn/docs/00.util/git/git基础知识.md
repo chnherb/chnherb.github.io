@@ -25,7 +25,7 @@ description: >
 
 ```shell
 mkdir learngit #新建目录
-cd learngit
+cd learngit"
 git init #将目录初始化为git仓库
 # 查看git仓库状态
 git status

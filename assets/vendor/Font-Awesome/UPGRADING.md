@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "UPGRADING"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 # Upgrading Guide
 
 See the [CHANGELOG.md](./CHANGELOG.md) for detailed information about what has changed between versions.

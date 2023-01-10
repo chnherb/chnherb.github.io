@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["shell"] 
+tags: ["shell"] 
 title: "shell"
 # linkTitle: ""
 weight: 5

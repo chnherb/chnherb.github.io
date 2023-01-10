@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["Java"] 
+tags: ["Mybatis"] 
 title: "Mybatis"
 # linkTitle: ""
 weight: 5

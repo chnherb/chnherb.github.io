@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["Java"] 
+tags: ["Spring"] 
 title: "Spring"
 # linkTitle: ""
 weight: 5

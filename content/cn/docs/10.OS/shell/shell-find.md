@@ -1,9 +1,9 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["shell"] 
+tags: ["find"] 
 title: "shell-find"
 # linkTitle: ""
-weight: 5
+weight: 15
 description: >
   
 ---

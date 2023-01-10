@@ -1,9 +1,9 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["shell"] 
+tags: ["grep", "sed", "awk"] 
 title: "shell文本处理三剑客"
 # linkTitle: ""
-weight: 5
+weight: 20
 description: >
   
 ---

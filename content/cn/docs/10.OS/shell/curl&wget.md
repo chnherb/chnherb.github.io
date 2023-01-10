@@ -1,9 +1,9 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["shell"] 
+tags: ["curl", "wget"] 
 title: "curl&wget"
 # linkTitle: ""
-weight: 5
+weight: 10
 description: >
   
 ---
@@ -166,7 +166,7 @@ curl 10.225.147.108:9669/ping/kitex
 ```shell
 curl -H "X-TT-ENV: boe_cloud_toolkits_debug_42" 10.225.147.108:9669/ping/kitex
 
-curl --location --request POST 'https://2ydeg9cx.faas-cn-beijing.byted.org' \
+curl --location --request POST 'https://xxx.xxx.org' \
 --header 'Token: e144c79a-14e8-4908-9edf-d24e02688b36' \
 --header 'X-TT-LOGID: 1234' \
 --header 'Content-Type: application/json' \
@@ -176,7 +176,7 @@ curl --location --request POST 'https://2ydeg9cx.faas-cn-beijing.byted.org' \
 }'
 
 curl -X POST \
-'http://dj7biad5.fn-tobboe.bytedance.net' \
+'http://xxx.xxx.net' \
 -H 'Content-Type:application/json' \
 -H 'Token:e144c79a-14e8-4908-9edf-d24e02688b36' \
 -H 'X-TT-LOGID:1234567' \
@@ -198,13 +198,13 @@ curl -i -X POST \
     }
   }
 ]' \
-'https://ide-boe.byted.org/ide/api/v1/tools/metrics'
+'https://xxx.xxx.org/xxx'
 ```
 #### 上传文件
 
 ```shell
 cd ${PRODUCT_OUTPUT_DIR} && curl --location --request POST \
-'luban-source.byted.org/repository/bytesuite-ftt' \
+'xxx.xxx.org/repository/xxx' \
 --form "file=@\"${BUILD_REPO_PACKAGE_NAME}.tar.gz\""
 ```
 ### 获取当前机器ip

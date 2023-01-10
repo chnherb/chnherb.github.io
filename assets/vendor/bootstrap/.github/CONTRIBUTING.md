@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "CONTRIBUTING"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 # Contributing to Bootstrap
 
 Looking to contribute something to Bootstrap? **Here's how you can help.**

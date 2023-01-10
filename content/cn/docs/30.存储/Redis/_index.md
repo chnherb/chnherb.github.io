@@ -1,5 +1,5 @@
 ---
-categories: [""] 
+categories: ["Redis"] 
 tags: [""] 
 title: "Redis"
 # linkTitle: ""

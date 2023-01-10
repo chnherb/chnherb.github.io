@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "CHANGELOG"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 # Change Log
 
 All notable changes to this project will be documented in this file.

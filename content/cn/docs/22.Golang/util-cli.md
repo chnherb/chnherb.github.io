@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["Goland"] 
+tags: ["util-cli"] 
 title: "util-cli"
 # linkTitle: ""
 weight: 5
@@ -48,11 +48,7 @@ git remote add origin https://github.com/chnherb/util-cli.git
 
 ```shell
 # 下载文件到本地，注意修改成自己的路径
-# https://github.com/chnherb/util-cli/blob/master/util-cli?row=true
-cd /Users/bo/software/ && \
-wget -c -O util-cli https://raw.github.com/chnherb/util-cli/master/util-cli && \
-chmod +x util-cli && \
-ln -s /Users/bo/software/util-cli /usr/local/bin/util-cli
+https://github.com/chnherb/util-cli/releases/download/v1.0.3/util-cli_v1.0.3_darwin_amd64.tar.gz
 
 # 注意：软连接必须是全路径，不可用~、./等
 ```

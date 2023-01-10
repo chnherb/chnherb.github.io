@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "CONTRIBUTING"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 # Contributing to Font Awesome
 
 Looking to contribute something to Font Awesome? **Here's how you can help.**

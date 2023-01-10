@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["JavaExtension"] 
+tags: ["lombok"] 
 title: "lombok功能及原理"
 # linkTitle: ""
 weight: 5

@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["auth"] 
+tags: ["OAuth2"] 
 title: "OAuth2介绍"
 # linkTitle: ""
 weight: 5

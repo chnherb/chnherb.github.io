@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "README"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 # @fortawesome/free-solid-svg-icons - SVG with JavaScript version
 
 > "I came here to chew bubblegum and install Font Awesome 5 - and I'm all out of bubblegum"

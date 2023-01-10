@@ -1,5 +1,5 @@
 ---
-categories: [""] 
+categories: ["Java"] 
 tags: [""] 
 title: "基础"
 # linkTitle: ""

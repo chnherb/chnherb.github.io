@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "README"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 A HEADS UP ABOUT DUOTONE ICONS ON THE DESKTOP
 ---------------------------------------------
 

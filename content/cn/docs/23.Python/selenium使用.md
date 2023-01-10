@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["Python"] 
+tags: ["selenium"] 
 title: "selenium使用"
 # linkTitle: ""
 weight: 5

@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["IO"] 
+tags: ["IO模型"] 
 title: "IO模型"
 # linkTitle: ""
 weight: 5
@@ -34,7 +34,7 @@ description: >
 
 # 5种IO模型
 
-## ![io_model_basic_1.png](./imgs/io_model_basic_1.png)
+![io_model_basic_1.png](./imgs/io_model_basic_1.png)
 
  
 ## 阻塞IO

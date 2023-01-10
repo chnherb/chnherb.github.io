@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "CONTRIBUTING"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 # How to Contribute
 
 We'd love to accept your patches and contributions to this project. There are

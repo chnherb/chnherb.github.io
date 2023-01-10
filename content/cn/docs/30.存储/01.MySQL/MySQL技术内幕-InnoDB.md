@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["MySQL"] 
+tags: ["MySQL"] 
 title: "MySQL技术内幕-InnoDB"
 # linkTitle: ""
 weight: 5
@@ -180,6 +180,7 @@ Sharp Checkpoint发生在数据库关闭时将所有的脏页都刷新回磁盘�
 
 
 >保证LRU列表需要大约100多个空闲也可用，移除LRU列表尾端的页需要Checkpoint
+
 3、Async/Sync Flush Checkpoint
 
 >重做日志不可用，保证重做日志循环使用
@@ -529,6 +530,7 @@ InnoDB引擎是面向行（row-oriented），也就是数据时按行进行存�
 MySQL数据库的VARCHAR类型可以存放65535字节。通过测试最长长度为为65532，因为有别的开销。（字符集为latin1，UTF-8、GBK不一样）
 
 >注意如果没有讲SQL_MODE设为严格模式，或许可以建立表，但会抛出warning。自动将VARCHAR类型转换成了TEXT类型。
+
 ### Compressed和Dynamic行记录格式
 
 ### CHAR的行结构存储

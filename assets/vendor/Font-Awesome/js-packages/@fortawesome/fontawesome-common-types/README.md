@@ -1,3 +1,13 @@
+---
+categories: [""]
+tags: [""]
+title: "README"
+# linkTitle: ""
+weight: 10
+description: >
+
+---
+
 # @fortawesome/fontawesome-common-types - SVG with JavaScript
 
 > "I came here to chew bubblegum and install Font Awesome 5 - and I'm all out of bubblegum"

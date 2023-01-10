@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["safe"] 
+tags: ["Log4j2"] 
 title: "Log4j2远程执行漏洞"
 # linkTitle: ""
 weight: 5

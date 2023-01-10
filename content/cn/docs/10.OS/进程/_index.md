@@ -1,9 +1,9 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["process"] 
+tags: ["process"] 
 title: "进程"
 # linkTitle: ""
-weight: 5
+weight: 10
 description: >
   
 ---

@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["process"] 
+tags: ["后台进程"] 
 title: "Linux后台进程"
 # linkTitle: ""
 weight: 5

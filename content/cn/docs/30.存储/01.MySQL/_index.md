@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["MySQL"] 
+tags: ["MySQL"] 
 title: "MySQL"
 # linkTitle: ""
 weight: 5

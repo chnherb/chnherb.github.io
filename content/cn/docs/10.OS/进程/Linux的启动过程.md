@@ -1,9 +1,9 @@
 ---
-categories: [""] 
+categories: ["linux"] 
 tags: [""] 
 title: "Linux的启动过程"
 # linkTitle: ""
-weight: 5
+weight: 10
 description: >
   
 ---

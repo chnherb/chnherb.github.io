@@ -1,6 +1,6 @@
 ---
-categories: [""] 
-tags: [""] 
+categories: ["linux"] 
+tags: ["lvs", "ipvs"] 
 title: "Linux负载均衡LVS之IPVS"
 # linkTitle: ""
 weight: 5
