@@ -1,5 +1,5 @@
 ---
-categories: [""]
+categories: ["distributed"]
 tags: [""]
 title: "Quorum机制"
 # linkTitle: ""

@@ -1,5 +1,5 @@
 ---
-categories: ["distribution"] 
+categories: ["distributed"] 
 tags: ["zookeeper"] 
 title: "zookeeper启动源码分析"
 # linkTitle: ""

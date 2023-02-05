@@ -1,5 +1,5 @@
 ---
-categories: ["distribution"] 
+categories: ["distributed"] 
 tags: ["zookeeper"] 
 title: "Zookeeper基本使用"
 # linkTitle: ""

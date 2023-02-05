@@ -1,5 +1,5 @@
 ---
-categories: ["Distributed consistency"] 
+categories: ["distributed"] 
 tags: ["raft"] 
 title: "Raft-01.基础理论"
 # linkTitle: ""

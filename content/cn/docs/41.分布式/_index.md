@@ -1,7 +1,7 @@
 ---
-categories: ["distribution"] 
-tags: ["distribution"] 
-title: "分布式一致性"
+categories: ["distributed"] 
+tags: ["distributed"] 
+title: "分布式"
 # linkTitle: ""
 weight: 41
 description: >

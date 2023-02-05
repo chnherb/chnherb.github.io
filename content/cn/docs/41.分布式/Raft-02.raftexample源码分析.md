@@ -1,5 +1,5 @@
 ---
-categories: ["distribution"] 
+categories: ["distributed"] 
 tags: ["raft"] 
 title: "Raft-02.raftexample源码分析"
 # linkTitle: ""
