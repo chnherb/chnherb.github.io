@@ -1,5 +1,5 @@
 ---
-categories: [""]
+categories: ["TiDB"]
 tags: [""]
 title: "TiDB初探"
 # linkTitle: ""
@@ -21,17 +21,17 @@ TiDB 是一个开源的、兼容 MySQL、可以横向扩展的、可以完美替
 
 TiDB 架构主要分为四个模块：
 
-* TiDB
-* TiKV
-* TiSpark
-* PD
-TiKV 用来做数据存储，是一个带事务的分布式的 key-value 存储。
+* TiDB Server
+* TiKV Server
+* TiSpark 
+* PD（Placement Drive）Server
+TiKV Server：负责数据存储，一个分布式的提供事务的Key-Value存储引擎，维护多副本（默认三副本），支持高可用和自动故障转移。
 
-PD 集群是对原始数据里用来存储 key-value 里每一个范围的的 k-v 存储在每一个具体的 k-v 元数据信息，也会负责做一些热点调度，如热点 region 调度。
+PD Server：整个 TiDB 集群的元信息管理模块，负责存储每个 TiKV 节点实时的数据分布情况和集群的整体拓扑结构，提供 TiDB Dashboard 管控界面，并未分布式事务分配事务 ID。还会根据 TiKV 节点实时上报数据分布状态，下发数据调度命令给具体的 TiKV 节点（如热点 region 调度），可以说是整个集群的“大脑”。
 
-TiDB 是所有场景中对接用户客户端的一层，也负责做 SQL 的优化，也支持所有 SQL 算子实现。
+TiDB Server：SQL 层，对外暴露 MySQL 协议连接 endpoint，负责接受客户端的连接，执行 SQL 解析和优化，最终生成分布式执行计划，也支持所有 SQL 算子实现。TiDB 层本身无状态，内部可提供多个实例，通过负载均衡组件（如 LVS、HAProxy、F5）对外提供统一的接入。
 
-Spark 集群是用来做重型 IP 的 SQL 或者作业查询，做一些分布式计算。
+TiFlash：用来做重型 IP 的 SQL 或者作业查询，做一些分布式计算。
 
 ## 整体架构
 
