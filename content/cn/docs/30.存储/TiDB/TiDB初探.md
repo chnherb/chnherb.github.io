@@ -15,6 +15,29 @@ TiDB 是一个开源的、兼容 MySQL、可以横向扩展的、可以完美替
 ![20230211_tidb_base_1.png](./imgs/20230211_tidb_base_1.png)
 
 
+# TiDB架构
+
+## 主要模块
+
+TiDB 架构主要分为四个模块：
+
+* TiDB
+* TiKV
+* TiSpark
+* PD
+TiKV 用来做数据存储，是一个带事务的分布式的 key-value 存储。
+
+PD 集群是对原始数据里用来存储 key-value 里每一个范围的的 k-v 存储在每一个具体的 k-v 元数据信息，也会负责做一些热点调度，如热点 region 调度。
+
+TiDB 是所有场景中对接用户客户端的一层，也负责做 SQL 的优化，也支持所有 SQL 算子实现。
+
+Spark 集群是用来做重型 IP 的 SQL 或者作业查询，做一些分布式计算。
+
+## 整体架构
+
+![20230211_tidb_base_2.png](./imgs/20230211_tidb_base_2.png)
+
+
 # TiKV
 
 ## 概述
@@ -75,12 +98,12 @@ Range 分片的问题是热点分片问题（最新的分片往往最热）。�
 * 分片数量、Leader、吞吐量自动平衡
 * 自定义调度接口
     * 支持跨 IDC 表级同时写入
-![20230211_tidb_base_2.png](./imgs/20230211_tidb_base_2.png)
+![20230211_tidb_base_3.png](./imgs/20230211_tidb_base_3.png)
 
 
 ### TiKV整体架构
 
-![20230211_tidb_base_3.png](./imgs/20230211_tidb_base_3.png)
+![20230211_tidb_base_4.png](./imgs/20230211_tidb_base_4.png)
 
 
 ## 多版本控制(MVCC)
@@ -102,19 +125,19 @@ TiKV 的 MVCC 实现是通过在 Key 后面添加版本号来实现。
 
 ### 协作处理器（Coprocessor）
 
-![20230211_tidb_base_4.png](./imgs/20230211_tidb_base_4.png)
+![20230211_tidb_base_5.png](./imgs/20230211_tidb_base_5.png)
 
 
 整体结构：
 
-![20230211_tidb_base_5.png](./imgs/20230211_tidb_base_5.png)
+![20230211_tidb_base_6.png](./imgs/20230211_tidb_base_6.png)
 
 
 # SQL引擎
 
 ## 基于KV实现逻辑表
 
-![20230211_tidb_base_6.png](./imgs/20230211_tidb_base_6.png)
+![20230211_tidb_base_7.png](./imgs/20230211_tidb_base_7.png)
 
 
 对于已经有的**全局有序**的分布式的 Key-Value 的存储引擎。
@@ -129,7 +152,7 @@ TiKV对于每个表分配一个 TableID，每个索引分配一个 IndexID，每
 
 TiKV 中，二级索引也是一个全局有序的 Key-Value map，简单理解为 Key 就是索引的列信息，Value 是原表的 Primary key 主键，通过该主键在原表的 Key-Value map 进行再一次扫描找到 Value，然后再按照等位偏移量进行列信息解析。该过程和传统数据库 B-tree 的回表逻辑类似。
 
-![20230211_tidb_base_7.png](./imgs/20230211_tidb_base_7.png)
+![20230211_tidb_base_8.png](./imgs/20230211_tidb_base_8.png)
 
 
 ### SQL引擎过程
@@ -153,7 +176,7 @@ SQL 引擎很重要的模块就是优化器，负责从很多执行计划中找�
 
 5. 执行器
     1. 执行引擎与根据优化器定下来的执行路径进行相应的数据的寻址、数据的计算
-![20230211_tidb_base_8.png](./imgs/20230211_tidb_base_8.png)
+![20230211_tidb_base_9.png](./imgs/20230211_tidb_base_9.png)
 
 
 ## 关键算子
@@ -168,7 +191,7 @@ SQL 引擎很重要的模块就是优化器，负责从很多执行计划中找�
     * Cost(p) = N(p)*FN+M(p)*FM+C(p)*FC, N stands for the network cost, M stands for the memory cost and C stands for the CPU cost.
 * task ( handle on TiDB or TiKV )
     * corp、root
-![20230211_tidb_base_9.png](./imgs/20230211_tidb_base_9.png)
+![20230211_tidb_base_10.png](./imgs/20230211_tidb_base_10.png)
 
 
 
@@ -178,14 +201,14 @@ SQL 引擎很重要的模块就是优化器，负责从很多执行计划中找�
 
 用户表在不同存储节点的分片进行预计算，完成本地的数据过滤以及统计，然后再将本地存储节点的临时结果、中间结果上报到 Server 层进行再一次 SUM 返回最终结果，利用了分布式多节点的计算能力。而不是上传到 Server 端进行统一的过滤及计算，没有利用 TiKV 的并行能力。
 
-![20230211_tidb_base_10.png](./imgs/20230211_tidb_base_10.png)
+![20230211_tidb_base_11.png](./imgs/20230211_tidb_base_11.png)
 
 
 ### 关键算子分布式化
 
 TiDB-Server 中的 Hash Join 不管是在数据寻址，还是在内层进行分批匹配，都可以通过并行与分批的处理。这也是在大表 Join 的场景，比传统的 MySQL 的 join 的场景要快很多的原因。
 
-![20230211_tidb_base_11.png](./imgs/20230211_tidb_base_11.png)
+![20230211_tidb_base_12.png](./imgs/20230211_tidb_base_12.png)
 
 
 ### Online DDL算法
@@ -193,7 +216,7 @@ TiDB-Server 中的 Hash Join 不管是在数据寻址，还是在内层进行分
 * TiDB 没有分表概念，整个 DDL 完成过程非常快速
     1. Schema（表结构）只存储一份，新增字段时，新增数据按照新的Schema进行存储，老数据只需要在读到（默认值）和变更时，才需要进行新 Schema 的重组。
 * 保证多个计算节点的Schema信息一致：根据 Google 的 F1 论文算法，将 Schema 变更异步分成了多个版本，把 DDL 过程分成 Public、Delete-only、Write-only 等几个相邻状态，每个相邻状态在多节点之间互相同步和一致，最终完成完整的 DDL。
-![20230211_tidb_base_12.png](./imgs/20230211_tidb_base_12.png)
+![20230211_tidb_base_13.png](./imgs/20230211_tidb_base_13.png)
 
 
 ## TiDB-Server
@@ -202,17 +225,17 @@ TiDB-Server 是一个对等、无状态的，可横向扩展，支持多点写�
 
 连接到 TiDB-Server：
 
-![20230211_tidb_base_13.png](./imgs/20230211_tidb_base_13.png)
+![20230211_tidb_base_14.png](./imgs/20230211_tidb_base_14.png)
 
 
 从进程角度看 TiDB-Server
 
-![20230211_tidb_base_14.png](./imgs/20230211_tidb_base_14.png)
+![20230211_tidb_base_15.png](./imgs/20230211_tidb_base_15.png)
 
 
 从内部结构看 TiDB-Server
 
-![20230211_tidb_base_15.png](./imgs/20230211_tidb_base_15.png)
+![20230211_tidb_base_16.png](./imgs/20230211_tidb_base_16.png)
 
 
 ### 其它功能
@@ -231,7 +254,7 @@ TiDB-Server 是一个对等、无状态的，可横向扩展，支持多点写�
 * SQL 优化器与执行器
 ## TiDB与TiKV关系
 
-![20230211_tidb_base_16.png](./imgs/20230211_tidb_base_16.png)
+![20230211_tidb_base_17.png](./imgs/20230211_tidb_base_17.png)
 
 
 # 分布式HTAP数据库
@@ -251,7 +274,7 @@ HTAP 数据库需要同时支持 OLTP 和 OLAP 场景。基于创建的计算存
 * 业务创建导致的场景多样性
 在数据容量爆发性的前提下，OLTP 与 OLTP 技术开始分道扬镳，OLTP 业务更加追求吞吐的高并发、低延迟（小汽车：灵活、快速），OLAP 业务更加关注整个数据的吞吐量（大轮船：装载量和吞吐量）。因此形成了狭义的数据和大数据两个方向。
 
-![20230211_tidb_base_17.png](./imgs/20230211_tidb_base_17.png)
+![20230211_tidb_base_18.png](./imgs/20230211_tidb_base_18.png)
 
 
 而分布式技术的发展，逐步解决了数据容量爆炸的问题，分布式关系型数据库，同时满足了 OLTP 的需求，也解决了数据容量的问题。在此基础上，很多传统的 OLAP 技术可以在此架构上进行再融合，实现了更大数据容量的混合数据库，也就是 HTAP。同时业务创新的场景多样性，在使用层面开始模糊了 OLTP 和 OLAP 的划分，比如业财一体、后台运营、客服后台、大屏展示、报表系统。从该角度，HTAP 又是一个数据服务的需求，其核心诉求是数据服务的统一。
@@ -268,7 +291,7 @@ HTAP 数据库需要同时支持 OLTP 和 OLAP 场景。基于创建的计算存
 
 TiDB-Server 虽然有上面说到的诸多特性，但其还是主要面向 OLTP 的业务，对于 OLAP 中间结果过大的查询还会造成内存使用过量，甚至 OOM 的问题。为了满足用户的需求，借助社区的力量，引入了大数据技术 Spark 的生态， 让 Spark 识别 TiKV 的数据格式、统计信息、索引、执行器，最终构建了一个能跑在 TiKV 上的 Spark 的计算引擎，并封装为 TiSpark。
 
-![20230211_tidb_base_18.png](./imgs/20230211_tidb_base_18.png)
+![20230211_tidb_base_19.png](./imgs/20230211_tidb_base_19.png)
 进而实现了一个分布式的技术平台，在面对大批量数据的报表和重量级的 Adhoc 里提供了一个可行的方案。
 
 Spark 只能提供低并发的重量级查询，在应用场景，很多中小规模的轻量 AP 查询，也需要高并发、相对技术低延迟计数能力，该场景下，Spark 的技术模型重，资源消耗高的缺点就会暴露。
@@ -279,7 +302,7 @@ OLTP 和 OLAP 的资源隔离很难通过软件层面彻底解决好，从数据
 
 在传统的主从架构下，读写分离其实也是资源隔离的问题。隔离就需要有一个单独的副本进行 AP 的查询。列存天然对 OLAP 查询类友好，所以选择将这个副本放到一个列式存储引擎上。列式存储引擎需要按照列的单位进行存储，每个列是一个独立的对象。这种引擎对批量写入友好，最大的挑战在于对实时跟新不友好。
 
-![20230211_tidb_base_19.png](./imgs/20230211_tidb_base_19.png)
+![20230211_tidb_base_20.png](./imgs/20230211_tidb_base_20.png)
 
 
 借助列式引擎的思想，引入了 Delta tree 的方法，最终实现了一个支持准实时更新的列式引擎 TiFlash。
@@ -308,7 +331,7 @@ MMP引擎也就是并行计算。MMP架构是将任务并行地分散到多个�
 
 如果要让一个 join 多个节点并行计算，需要将 join 的两个表的分片在节点的分布尽量一致，不一致需要通过网络将分片临时拷贝为一份临时数据进行 join 和计算，该过程就是 shuffle。MMP 计算模型本质上是通过网络与存储成本来置换计算资源。
 
-![20230211_tidb_base_20.png](./imgs/20230211_tidb_base_20.png)
+![20230211_tidb_base_21.png](./imgs/20230211_tidb_base_21.png)
 
 
 如果启动 MMP 计算，首先在各个 TiFlash 节点将多表关联的结果进行数据分布一致，即上图中 TiFlash 上的红色箭头。接下来每个 TiFlash 节点上面的 MPP Worker 负责将表 Join 在多个节点的并行进行计算，最终将每个节点的临时结果返回到 TiDB-Server 进行再计算。
@@ -353,7 +376,7 @@ HTAP 会逐步转化为是**数据服务统一**的代名词：
 
 * 96 MB 自增分片
 * 20 MB 合并分片
-![20230211_tidb_base_21.png](./imgs/20230211_tidb_base_21.png)
+![20230211_tidb_base_22.png](./imgs/20230211_tidb_base_22.png)
 
 
 Multi-Raft 将复制组更离散
