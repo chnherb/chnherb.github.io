@@ -44,6 +44,7 @@ systemctl --version  # 查看版本
 systemd架构图
 ![systemd_1.png](./imgs/systemd_1.png)
 
+
 # 系统管理
 
 systemd不是一个命令，而是一组命令，涉及到系统管理的方方面面。
@@ -181,6 +182,10 @@ $ systemctl status
 $ sysystemctl status bluetooth.service
 # 显示远程主机的某个 Unit 的状态
 $ systemctl -H root@rhel7.example.com status httpd.service
+
+# 查看以某个用户启动的服务
+$ sudo -u <user> bash
+$ systemctl --user status xxx.service  # 相关命令都需要加上--user
 ```
 查询状态
 可以供脚本内部的判断语句使用。
@@ -352,6 +357,7 @@ RestartSec：自动重启当前服务间隔的秒数
 Restart：定义何种情况 Systemd 会自动重启当前服务，可能的值包括always（总是重启）、on-success、on-failure、on-abnormal、on-abort、on-watchdog
 TimeoutSec：定义 Systemd 停止当前服务之前等待的秒数
 Environment：指定环境变量
+KillMode: 服务停止时，杀死进程的方法
 ```
 
 # Target
@@ -462,6 +468,7 @@ $ sudo journalctl --vacuum-size=1G
 $ sudo journalctl --vacuum-time=1years
 ```
 
+
 # Reference
 
 [Systemd入门教程：命令篇](http://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-commands.html)
@@ -469,3 +476,10 @@ $ sudo journalctl --vacuum-time=1years
 [Systemd入门教程：实战篇](https://www.ruanyifeng.com/blog/2016/03/systemd-tutorial-part-two.html)
 
 [Systemd定时器教程](https://www.ruanyifeng.com/blog/2018/03/systemd-timer.html)
+
+[Linux-启动和服务(service)](https://blog.csdn.net/charles_neil/article/details/78448326?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ELandingCtr%7ERate-1.queryctrv2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ELandingCtr%7ERate-1.queryctrv2&utm_relevant_index=2)
+
+[Linux下service xxx服务深入理解](https://blog.csdn.net/u011095110/article/details/81020839)
+
+[使用systemd管理程序](https://www.cnblogs.com/taoyuxuan/p/11468172.html)
+
