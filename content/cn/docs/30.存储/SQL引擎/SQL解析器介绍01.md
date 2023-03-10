@@ -1,6 +1,6 @@
 ---
-categories: [""]
-tags: [""]
+categories: ["SQL engine"]
+tags: ["SQL engine"]
 title: "SQL解析器介绍01"
 # linkTitle: ""
 weight: 10
