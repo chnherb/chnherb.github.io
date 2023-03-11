@@ -344,6 +344,228 @@ public class TestLibExprPrint {
 }
 ```
 
+## 解析CSV文件
+
+### 裁剪g4文件
+
+定义SelectBase.g4文件。直接参考Presto源码，g4文件并不需要从零开发，只需要基于Presto的g4文件裁剪即可。
+
+核心规则为: SELECT  selectItem (',' selectItem)*  (FROM relation (',' relation)*)?
+
+查询数据表被抽象成了relation。
+
+裁剪后的内容如下：
+
+```plain
+grammar SqlBase;
+ 
+tokens {
+    DELIMITER
+}
+ 
+singleStatement
+    : statement EOF
+    ;
+ 
+statement
+    : query                                                            #statementDefault
+    ;
+ 
+query
+    :  queryNoWith
+    ;
+ 
+queryNoWith:
+      queryTerm
+    ;
+ 
+queryTerm
+    : queryPrimary                                                             #queryTermDefault
+    ;
+ 
+queryPrimary
+    : querySpecification                   #queryPrimaryDefault
+    ;
+ 
+querySpecification
+    : SELECT  selectItem (',' selectItem)*
+      (FROM relation (',' relation)*)?
+    ;
+ 
+selectItem
+    : expression  #selectSingle
+    ;
+ 
+relation
+    :  sampledRelation                             #relationDefault
+    ;
+ 
+expression
+    : booleanExpression
+    ;
+ 
+booleanExpression
+    : valueExpression             #predicated
+    ;
+ 
+valueExpression
+    : primaryExpression                                                                 #valueExpressionDefault
+    ;
+ 
+primaryExpression
+    : identifier                                                                          #columnReference
+    ;
+ 
+sampledRelation
+    : aliasedRelation
+    ;
+ 
+aliasedRelation
+    : relationPrimary
+    ;
+ 
+relationPrimary
+    : qualifiedName                                                   #tableName
+    ;
+ 
+qualifiedName
+    : identifier ('.' identifier)*
+    ;
+ 
+identifier
+    : IDENTIFIER             #unquotedIdentifier
+    ;
+ 
+SELECT: 'SELECT';
+FROM: 'FROM';
+ 
+fragment DIGIT
+    : [0-9]
+    ;
+ 
+fragment LETTER
+    : [A-Z]
+    ;
+ 
+IDENTIFIER
+    : (LETTER | '_') (LETTER | DIGIT | '_' | '@' | ':')*
+    ;
+ 
+WS
+    : [ \r\n\t]+ -> channel(HIDDEN)
+    ;
+ 
+// Catch-all for anything we can't recognize.
+// We use this to be able to ignore and recover all the text
+// when splitting statements with DelimiterLexer
+UNRECOGNIZED
+    : .
+    ;
+```
+
+### 生成代码
+
+```shell
+antlr4 -package com.chnherb.csv -no-listener -visitor .\SqlBase.g4
+```
+
+### 语法树节点
+
+![sql_intro_230310_1.png](./imgs/sql_intro_230310_1.png)
+
+
+### 解析类
+
+基于visitor模式实现解析类AstBuilder，以visitQuerySpecification为例：
+
+```java
+@Override
+public Node visitQuerySpecification(SqlBaseParser.QuerySpecificationContext context)
+{
+    Optional<Relation> from = Optional.empty();
+    List<SelectItem> selectItems = visit(context.selectItem(), SelectItem.class);
+ 
+    List<Relation> relations = visit(context.relation(), Relation.class);
+    if (!relations.isEmpty()) {
+        // synthesize implicit join nodes
+        Iterator<Relation> iterator = relations.iterator();
+        Relation relation = iterator.next();
+ 
+        from = Optional.of(relation);
+    }
+ 
+    return new QuerySpecification(
+            getLocation(context),
+            new Select(getLocation(context.SELECT()), false, selectItems),
+            from);
+}
+```
+解析出查询的数据源和具体字段，封装到QuerySpecification对象中。
+### Statement查询数据
+
+将用户输入的语句解析成ParseTree，对其遍历生成Statement对象。核心代码如下：
+
+```java
+SqlParser sqlParser = new SqlParser();
+Statement statement = sqlParser.createStatement(sql);
+```
+Statement对象使用：
+* Query类型的Statement有QueryBody属性。
+* QuerySpecification类型的QueryBody有select属性和from属性。
+    * 从from属性中获取待查询的目标表Table。这里约定表名和csv文件名一致。
+    * 从select属性中获取待查询的目标字段SelectItem。这里约定csv首行为title行。
+流程如下：
+
+1. 获取查询的数据表以及字段。
+2. 通过数据表名称定为到数据文件，并读取数据文件数据。
+3. 格式化输出字段名称到命令行。
+4. 格式化输出字段内容到命令行。
+### 编写代码
+
+```java
+/**
+ * 获取待查询的表名和字段名称
+ */
+QuerySpecification specification = (QuerySpecification) query.getQueryBody();
+Table table= (Table) specification.getFrom().get();
+List<SelectItem> selectItems = specification.getSelect().getSelectItems();
+List<String> fieldNames = Lists.newArrayList();
+for(SelectItem item:selectItems){
+    SingleColumn column = (SingleColumn) item;
+    fieldNames.add(((Identifier)column.getExpression()).getValue());
+} 
+/**
+ * 基于表名确定查询的数据源文件
+ */
+String fileLoc = String.format("./data/%s.csv",table.getName());
+/**
+ * 从csv文件中读取指定的字段
+ */
+Reader in = new FileReader(fileLoc);
+Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
+List<Row> rowList = Lists.newArrayList();
+for(CSVRecord record:records){
+    Row row = new Row();
+    for(String field:fieldNames){
+        row.addColumn(record.get(field));
+    }
+    rowList.add(row);
+}
+/**
+ * 格式化输出到控制台
+ */
+int width=30;
+String format = fieldNames.stream().map(s-> "%-"+width+"s").collect(Collectors.joining("|"));
+System.out.println( "|"+String.format(format, fieldNames.toArray())+"|");
+ 
+int flagCnt = width*fieldNames.size()+fieldNames.size();
+String rowDelimiter = String.join("", Collections.nCopies(flagCnt, "-"));
+System.out.println(rowDelimiter);
+for(Row row:rowList){
+    System.out.println( "|"+String.format(format, row.getColumnList().toArray())+"|");
+}
+```
+
 # Calcite
 
 ## 简介
