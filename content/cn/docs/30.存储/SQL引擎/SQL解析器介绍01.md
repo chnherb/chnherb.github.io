@@ -424,6 +424,10 @@ public class JSqlClient {
 
 [https://github.com/smartloli/EFAK](https://github.com/smartloli/EFAK)
 
+[https://prestodb.io/docs/current/](https://prestodb.io/docs/current/)
+
+[https://github.com/prestodb/presto](https://github.com/prestodb/presto)
+
 [探究Presto SQL引擎(1)-巧用Antlr](https://mp.weixin.qq.com/s/oYsCmTg4OVlIuB9a8Eu1Vw)
 
 [如何实现一个SQL解析器](https://mp.weixin.qq.com/s/2FH4WuO1FMbxqiv4RUvdrA)
