@@ -1,7 +1,7 @@
 ---
 categories: [""] 
 tags: [""] 
-title: "存储"
+title: "数据库"
 # linkTitle: ""
 weight: 30
 description: >
@@ -9,4 +9,4 @@ description: >
 ---
 
 # Introduction
-存储相关，如MySQL、Redis或其他类型db
+数据库相关，如MySQL、Redis或其他类型db
