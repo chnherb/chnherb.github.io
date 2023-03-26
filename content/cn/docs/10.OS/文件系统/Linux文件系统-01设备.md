@@ -1,7 +1,7 @@
 ---
 categories: [""]
 tags: [""]
-title: "Linux存储设备管理"
+title: "Linux文件系统-01设备"
 # linkTitle: ""
 weight: 10
 description: >
@@ -18,7 +18,45 @@ Linux有多种文件系统，不同的文件系统支持不同的体系。文件
 
 ## 分类
 
-Linux支持很多文件系统格式，大体可分以下几类：
+Linux支持很多文件系统格式，常见文件系统类型：
+
+ext2 ： 早期linux中常用的文件系统
+
+ext3 ： ext2的升级版，带日志功能
+
+RAMFS ： 内存文件系统，速度很快
+
+NFS ： 网络文件系统，由SUN发明，主要用于远程文件共享
+
+MS-DOS ： MS-DOS文件系统
+
+VFAT ： Windows 95/98 操作系统采用的文件系统
+
+FAT ： Windows XP 操作系统采用的文件系统
+
+NTFS： Windows NT/XP 操作系统采用的文件系统
+
+HPFS ： OS/2 操作系统采用的文件系统
+
+PROC : 虚拟的进程文件系统
+
+ISO9660 ： 大部分光盘所采用的文件系统
+
+ufsSun : OS 所采用的文件系统
+
+NCPFS ： Novell 服务器所采用的文件系统
+
+SMBFS ： Samba 的共享文件系统
+
+XFS ： 由SGI开发的先进的日志文件系统，支持超大容量文件
+
+JFS ：IBM的AIX使用的日志文件系统
+
+ReiserFS : 基于平衡树结构的文件系统
+
+udf: 可擦写的数据光盘文件系统
+
+大体可分以下几类：
 
 ### 磁盘文件系统
 
@@ -54,7 +92,7 @@ Serial Advanced Technology Attachment，结构简单、支持热插拔。
 
 为了便于管理和使用，通常会对磁盘进行分区。
 
-![linux_storage_device_230325_1.png](./imgs/linux_storage_device_230325_1.png)
+![file_sys_01_1.png](./imgs/file_sys_01_1.png)
 
 
 ## 主分区
@@ -181,6 +219,8 @@ ln [参数][源文件或目录][目标文件或目录]
 
 ## mount
 
+### 挂载本地设备
+
 对分区/dev/sda3的操作命令：
 
 1、挂载：mount /dev/sda1 /mnt/asd，这样挂载分区到文件系统上，才能看/mnt/asd里的东西。
@@ -195,6 +235,21 @@ ln [参数][源文件或目录][目标文件或目录]
 
 (2)、通过挂载点卸载：umount -v /mnt/mymount/
 
+### 挂载网络设备
+
+挂载 NFS 服务作为网络磁盘：
+
+```plain
+sudo mount -t nfs <NFS_server_IP>:<NFS_share_path> <mount_point>
+# sudo mount -t nfs 192.168.1.100:/nfs/share /mnt/nfs
+```
+挂载后，可以在 `/mnt/nfs` 目录下查看 NFS 服务器上的文件。
+要在系统启动时自动挂载 NFS，可以将以上命令添加到 `/etc/fstab` 文件中，例如：
+
+```plain
+192.168.1.100:/nfs/share /mnt/nfs nfs defaults 0 0
+```
+注意：在生产环境中，使用前需要调整访问安全性的设置，并确保挂载的代码的正确性。
 ## 设备查看
 
 |命令|作用|
