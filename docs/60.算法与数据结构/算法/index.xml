@@ -1,0 +1,72 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – 算法</title><link>/docs/60.%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%AE%97%E6%B3%95/</link><description>Recent content in 算法 on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/docs/60.%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%AE%97%E6%B3%95/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 雪花算法</title><link>/docs/60.%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%AE%97%E6%B3%95/%E9%9B%AA%E8%8A%B1%E7%AE%97%E6%B3%95/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/60.%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%AE%97%E6%B3%95/%E9%9B%AA%E8%8A%B1%E7%AE%97%E6%B3%95/</guid><description>
+&lt;h1 id="简介">简介&lt;/h1>
+&lt;p>雪花算法：由Twitter开源的分布式ID生成算法。主要应用于分库分表场景中的全局ID作为业务主键，或者生成全局唯一的订单号。&lt;/p>
+&lt;p>名称由来：一般的雪花大约由10的19次方哥水分子组成。在雪花的形成过程中，会形成不同的结构分支，大自然中并不存在两片完全一样的雪花，每一片雪花都会有其自己独特的形状。雪花算法的意思就是表示生成的ID如雪花一般独一无二。&lt;/p>
+&lt;p>解决唯一ID一般方法：&lt;/p>
+&lt;ul>
+&lt;li>UUID&lt;/li>
+&lt;li>系统时间戳&lt;/li>
+&lt;li>Redis原子递增&lt;/li>
+&lt;li>全局表自增ID&lt;/li>
+&lt;/ul>
+&lt;p>分布式ID除了唯一性，还需要满足以下特征：&lt;/p>
+&lt;ul>
+&lt;li>单调递增&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>保证下一个ID号一定大于上一个&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>保证安全（无规则性）&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>ID号需要无规则性，不能让别人根据ID号推测出信息和业务数据量，增加恶意用户爬取数据的难度&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>含时间戳&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>ID需要记录系统时间戳&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>高可用&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>获取分布式ID的请求，服务至少要保证99.999%的情况下给创建一个全局唯一的分布式ID&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>低延迟&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>获取分布式ID的请求要快、延迟低&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>高QPS&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>服务器要支撑并且成功创建10万个分布式ID&lt;/p>
+&lt;/blockquote>
+&lt;h1 id="实现原理">实现原理&lt;/h1>
+&lt;p>0 - 00000000 00000000 000000000 00000000 0 - 00000000 00 - 00000000 0000&lt;/p>
+&lt;p>组成部分：&lt;/p>
+&lt;ul>
+&lt;li>符号位 （1bit）&lt;/li>
+&lt;li>时间戳（41bit）&lt;/li>
+&lt;li>机器码（10bit）&lt;/li>
+&lt;li>序列号（12bit）&lt;/li>
+&lt;/ul>
+&lt;h1 id="优缺点">优缺点&lt;/h1>
+&lt;h2 id="优点">优点&lt;/h2>
+&lt;ul>
+&lt;li>分布式系统内不会产生ID碰撞，效率高&lt;/li>
+&lt;li>不需要依赖数据库等第三方系统，稳定性更高，可以根据自身业务分配bit位，非常灵活&lt;/li>
+&lt;li>生成ID性能非常高，每秒能生成26万个自增可排序的ID&lt;/li>
+&lt;/ul>
+&lt;h2 id="缺点">缺点&lt;/h2>
+&lt;ul>
+&lt;li>如果机器回拨，可能导致ID重复&lt;/li>
+&lt;li>分布式环境，每台机器上的时钟不可能完全同步，有时候会出现不是全局递增的情况&lt;/li>
+&lt;/ul>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://github.com/twitter-archive/snowflake/tree/b3f6a3c6ca8e1b6847baa6ff42bf72201e2c2231">twitter snowflake&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://zh.wikipedia.org/wiki/%E9%9B%AA%E8%8A%B1%E7%AE%97%E6%B3%95">雪花算法&lt;/a>&lt;/p></description></item></channel></rss>

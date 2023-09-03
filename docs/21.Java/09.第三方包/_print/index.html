@@ -1,0 +1,1145 @@
+<!doctype html><html lang=zh-cn class=no-js><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=generator content="Hugo 0.101.0"><link rel=canonical type=text/html href=/docs/21.Java/09.%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85/><link rel=alternate type=application/rss+xml href=/docs/21.Java/09.%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85/index.xml><meta name=robots content="noindex, nofollow"><link rel="shortcut icon" href=/favicons/favicon.ico><link rel=apple-touch-icon href=/favicons/apple-touch-icon-180x180.png sizes=180x180><link rel=icon type=image/png href=/favicons/favicon-16x16.png sizes=16x16><link rel=icon type=image/png href=/favicons/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/favicons/android-36x36.png sizes=36x36><link rel=icon type=image/png href=/favicons/android-48x48.png sizes=48x48><link rel=icon type=image/png href=/favicons/android-72x72.png sizes=72x72><link rel=icon type=image/png href=/favicons/android-96x96.png sizes=96x96><link rel=icon type=image/png href=/favicons/android-144x144.png sizes=144x144><link rel=icon type=image/png href=/favicons/android-192x192.png sizes=192x192><title>第三方包 | Herbdocs</title><meta name=description content="Introduction
+Java第三方包
+"><meta property="og:title" content="第三方包"><meta property="og:description" content="Herb's blog"><meta property="og:type" content="website"><meta property="og:url" content="/docs/21.Java/09.%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85/"><meta property="og:site_name" content="Herbdocs"><meta itemprop=name content="第三方包"><meta itemprop=description content="Herb's blog"><meta name=twitter:card content="summary"><meta name=twitter:title content="第三方包"><meta name=twitter:description content="Herb's blog"><link rel=preload href=/scss/main.min.dcab2c3dae6e6fefb7672f19e4b612cc4e75ca208740f642aa2f1fe378478a8f.css as=style><link href=/scss/main.min.dcab2c3dae6e6fefb7672f19e4b612cc4e75ca208740f642aa2f1fe378478a8f.css rel=stylesheet integrity><script src=https://code.jquery.com/jquery-3.6.0.min.js integrity=sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK crossorigin=anonymous></script>
+<script src=https://unpkg.com/lunr@2.3.9/lunr.min.js integrity=sha384-203J0SNzyqHby3iU6hzvzltrWi/M41wOP5Gu+BiJMz5nwKykbkUx8Kp7iti0Lpli crossorigin=anonymous></script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-00000000-0","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body class=td-section><header><nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar"><a class=navbar-brand href=/><span class=navbar-logo><img width=6% style=margin-bottom:1% src=/favicons/favicon.ico></span><span class=font-weight-bold>&nbsp;Herbdocs</span></a><div class="td-navbar-nav-scroll ml-md-auto" id=main_navbar><ul class="navbar-nav mt-2 mt-lg-0"><li class="nav-item mr-4 mb-2 mb-lg-0"><a class=nav-link href=/about/><span>About</span></a></li><li class="nav-item mr-4 mb-2 mb-lg-0"><a class="nav-link active" href=/docs/><span class=active>Documentation</span></a></li><li class="nav-item dropdown mr-4 d-none d-lg-block"><a class="nav-link dropdown-toggle" href=# id=navbarDropdown role=button data-toggle=dropdown aria-haspopup=true aria-expanded=false>Chinese</a><div class=dropdown-menu aria-labelledby=navbarDropdownMenuLink><a class=dropdown-item href=/en/>English</a></div></li></ul></div><div class="navbar-nav d-none d-lg-block"><input type=search class="form-control td-search-input" placeholder="&#xf002; 站内搜索…" aria-label=站内搜索… autocomplete=off></div></nav></header><div class="container-fluid td-outer"><div class=td-main><div class="row flex-xl-nowrap"><main class="col-12 col-md-9 col-xl-8 pl-md-5" role=main><div class=td-content><div class="pageinfo pageinfo-primary d-print-none"><p>这是本节的多页打印视图。
+<a href=# onclick="return print(),!1">点击此处打印</a>.</p><p><a href=/docs/21.Java/09.%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85/>返回本页常规视图</a>.</p></div><h1 class=title>第三方包</h1><ul><li>1: <a href=#pg-b754182bd9bf4c7ea40997f6930b013c>log</a></li><li>2: <a href=#pg-ab257e9e4a50069eaa03c059c289bf0b>lombok功能及原理</a></li></ul><div class=content><h1 id=introduction>Introduction</h1><p>Java第三方包</p></div></div><div class=td-content><h1 id=pg-b754182bd9bf4c7ea40997f6930b013c>1 - log</h1><h1 id=背景>背景</h1><p>日志出现的顺序：</p><p>log4j -> JUL -> JCL -> slf4j -> logback -> log4j2</p><h1 id=基本概念>基本概念</h1><h2 id=日志接口>日志接口</h2><p>java common logging</p><p>SLF4J(Simple Logging Facade for Java)</p><h2 id=日志实现>日志实现</h2><p>log4j</p><p>java.util.logging</p><p>simplelog</p><p>LogBack</p><p>log4j2</p><p><img src=../imgs/java_log_211218_1.png alt=java_log_211218_1.png></p><p>图片来自官网 <a href=http://slf4j.org/manual.html>http://slf4j.org/manual.html</a></p><h1 id=jar包简介>jar包简介</h1><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">57
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">58
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">59
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">60
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#177500>&lt;!-- slf4j 日志门面 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>slf4j-api<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.7.26<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- slf4j 内置的简单实现 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>slf4j-simple<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.7.21<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- junit 单元测试 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>junit<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>junit<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>4.12<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- logback 日志实现 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>ch.qos.logback<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>logback-classic<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.2.3<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- nop 日志开关 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>slf4j-nop<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.7.25<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- 绑定 log4j 日志实现，需要导入适配器 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>slf4j-log4j12<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.7.12<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>log4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>log4j<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.2.17<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- 绑定 jul 日志实现，需要导入适配器 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>slf4j-jdk14<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.7.25<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- 配置 log4j 的桥接器  --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>log4j-over-slf4j<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.7.25<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><p>注意：如果slf4j绑定了多个实现日志，默认使用第一个</p><h2 id=桥接器>桥接器</h2><p>初期代码中使用的是具体日志实现如log4j或者jcl，后期想修改成slf4j+xx，那么无需修改代码，使用桥接器即可做到</p><p><strong>使用桥接器注意问题</strong></p><p>1、jcl-over-sIf4j.jar和slf4j-jcl.jar不能同时部署。前一个jar文件将导致JCL将日志系统的选择始托给SLF4J,后一个jar文件将导致SLF4J将日志系统的选择委托给JCL,从而导致无益循环。</p><p>2、log4j-overI-slf4j.jar（桥接器）和sif4j-log4j12.jar（适配器）不能同时出现。（死循环）</p><p>3、jul-to-sIf4j.jar（桥接器）和sIf4j-jdk14.jar（适配器）不能同时出现</p><p>4、所有的桥接器都只对Logger日志记录器对象有效，如果程序中调用了内部的配置类或者是Appender，Filter等对象，将无法产生效果。</p><p>其中2、3点死循环原因如下图：（报错：栈内存溢出StackOverflowError！！）</p><p><img src=../imgs/java_log_211218_2.png alt=java_log_211218_2.png></p><h1 id=heading></h1><h1 id=slf4j>SLF4J</h1><h2 id=slf4j中适配器原理>slf4j中适配器原理</h2><h2 id=使用slf4j的日志绑定流程>使用slf4j的日志绑定流程：</h2><p>1、添加sIf4j-api的依赖</p><p>2、使用sIf4j的API在项目中进行统一的日志记录</p><p>3、绑定具体的日志实现框架</p><p>3.1 绑定已经实现了sIf4j的日志框架,直接添加对应依赖</p><p>3.2 绑定没有实现slf4j的日志框架,先添加日志的适配器,再添加实现类的依赖</p><p>4、sIf4j有且仅有一个日志实现框架的绑定(如果出现多个默认使用第一个依赖日志实现)</p><p>slf4j自动绑定实现类的方式基于约定：它要求你在实现类的包名和拿到LoggerFactory实例的文件路径必须是：org/slf4j/impl/StaticLoggerBinder.class</p><h1 id=logback>LogBack</h1><h2 id=logback入门>logback入门</h2><p>Logback 主要由三个模块组成：</p><ul><li>logback-core：其它两个模块的基础模块</li><li>logback-classic：log4j的一个改良版本，同时完整实现了slf4j API</li><li>logback-access：访问模块与Servlet容器集成提供通过Http来访问日志的功能
+其中 logback-core 提供了 LogBack 的核心功能，是另外两个组件的基础。logback-classic 的地位和作用等同于 Log4J，它也被认为是 Log4J 的一个改进版，并且它实现了简单日志门面 SLF4J，所以当想配合 SLF4J 使用时，需要将 logback-classic 加入 classpath；而 logback-access 主要作为一个与 Servlet 容器交互的模块，比如说 tomcat 或者 jetty，提供一些与 HTTP 访问相关的功能。</li></ul><h2 id=logback配置>logback配置</h2><p>logback会一次读取以下类型配置文件：</p><ul><li>logback.groovy</li><li>logback-test.xml</li><li>logback.xml
+如果均不存在会采用默认配置</li></ul><h3 id=1-logback组件之间的关系><strong>1、logback组件之间的关系</strong></h3><p>1.1 Logger：日志的记录器，把它关联到到应用的对应的context上后，主要用于存放日志对象，也可以定义日志类型、级别</p><p>1.2 Appender：用于指定日志输出的目的地，目的地可以是控制台、文件、数据库的等等。</p><p>1.3 Layout：负责把时间转换成字符串，格式化的日志信息的输出。在logback中Layout对象被封装在encoder中。</p><h3 id=2-fileappender>2、FileAppender</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">57
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">58
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">59
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">60
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">61
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">62
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">63
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">64
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">65
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">66
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">67
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">68
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">69
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">70
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">71
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">72
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">73
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">74
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">75
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">76
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">77
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">78
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">79
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">80
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">81
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">82
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">83
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">84
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">85
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">86
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">87
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">88
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">89
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">90
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;</span>?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;&gt;
+</span></span><span style=display:flex><span>  <span style=color:#177500>&lt;!--
+</span></span></span><span style=display:flex><span><span style=color:#177500>  日志输出格式：
+</span></span></span><span style=display:flex><span><span style=color:#177500>  %-5level
+</span></span></span><span style=display:flex><span><span style=color:#177500>  %d{yyyy-MM-dd HH:mm:ss.SSS}日期
+</span></span></span><span style=display:flex><span><span style=color:#177500>  %c类的完整名称
+</span></span></span><span style=display:flex><span><span style=color:#177500>  %M为method
+</span></span></span><span style=display:flex><span><span style=color:#177500>  %L为行号
+</span></span></span><span style=display:flex><span><span style=color:#177500>  %thread线程名称
+</span></span></span><span style=display:flex><span><span style=color:#177500>  %m或者%msg为信息
+</span></span></span><span style=display:flex><span><span style=color:#177500>  %n换行 
+</span></span></span><span style=display:flex><span><span style=color:#177500>  --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;property</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;pattern&#34;</span> <span style=color:#836c28>value=</span><span style=color:#c41a16>&#34;[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} %c %M %L [%thread] %m%n&#34;</span><span style=color:#000>&gt;&lt;/property&gt;</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#177500>&lt;!-- 定义日志文件保存路径信息 --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;property</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;log_dir&#34;</span> <span style=color:#836c28>value=</span><span style=color:#c41a16>&#34;/logs&#34;</span><span style=color:#000>&gt;&lt;/property&gt;</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#177500>&lt;!-- 控制台日志输出的 appender --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;appender</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;console&#34;</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.core.ConsoleAppender&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!-- 控制器输出流对象 默认 System.out 改为 System.err --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;target&gt;</span>System.err<span style=color:#000>&lt;/target&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!-- 日志消息格式配置 --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;encoder</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.classic.encoder.PatternLayoutEncoder&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;pattern&gt;</span>${pattern}<span style=color:#000>&lt;/pattern&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/encoder&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/appender&gt;</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#177500>&lt;!-- 日志文件输出的 appender --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;appender</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;file&#34;</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.core.FileAppender&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!-- 日志文件保存信息 --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;file&gt;</span>${log_dir}/logback.log<span style=color:#000>&lt;/file&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!-- 日志消息格式配置 --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;encoder</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.classic.encoder.PatternLayoutEncoder&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;pattern&gt;</span>${pattern}<span style=color:#000>&lt;/pattern&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/encoder&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/appender&gt;</span>
+</span></span><span style=display:flex><span>  
+</span></span><span style=display:flex><span>  <span style=color:#177500>&lt;!-- 日志文件输出的 appender --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;appender</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;htmlFile&#34;</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.core.FileAppender&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#177500>&lt;!-- 日志文件保存信息 --&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;file&gt;</span>${log_dir}/logback.html<span style=color:#000>&lt;/file&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>&lt;!-- html 消息格式配置 --&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;encoder</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.classic.encoder.LayoutWrappingEncoder&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;layout</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.classic.html.HTMLLayout&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>          <span style=color:#000>&lt;pattern&gt;</span>%-5level%d{yyyy-MM-dd HH:mm:ss.SSS}%c%M%L%thread %m<span style=color:#000>&lt;/pattern&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;/layout&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;/encoder&gt;</span>
+</span></span><span style=display:flex><span>   <span style=color:#000>&lt;/appender&gt;</span>
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>   <span style=color:#177500>&lt;!-- 日志拆分和归档压缩的 appender 对象--&gt;</span>
+</span></span><span style=display:flex><span>   <span style=color:#000>&lt;appender</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;rollFile&#34;</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.core.rollling.RollingFileAppender&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#177500>&lt;!-- 日志文件保存信息 --&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#000>&lt;file&gt;</span>${log_dir}/roll_logback.log<span style=color:#000>&lt;/file&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#177500>&lt;!-- 日志消息格式配置 --&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#000>&lt;encoder</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.classic.encoder.PatternLayoutEncoder&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;pattern&gt;</span>${pattern}<span style=color:#000>&lt;/pattern&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#000>&lt;/encoder&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#177500>&lt;!-- 指定拆分规则 可查看源码 --&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#000>&lt;rollingPolicy</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>&lt;!-- 按时间和压缩格式声明拆分的文件名 --&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;fileNamePattern&gt;</span>${log_dir}/rolling.%d{yyyy-MM-dd-HH-mm-ss}.log%i.gz<span style=color:#000>&lt;/fileNamePattern&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;maxFileSize&gt;</span>1MB<span style=color:#000>&lt;maxFileSize&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;/rollingPolicy&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#177500>&lt;!-- 日志级别过滤器 --&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;filter</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.classc.filter.LevelFilter&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>&lt;!-- 日志过滤规则 --&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;level&gt;</span>ERROR<span style=color:#000>&lt;/level&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;onMatch&gt;</span>ACCEPT<span style=color:#000>&lt;/onMatch&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;onMismatch&gt;</span>DENY<span style=color:#000>&lt;/onMismatch&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;/filter&gt;</span>
+</span></span><span style=display:flex><span>   <span style=color:#000>&lt;/appender&gt;</span>
+</span></span><span style=display:flex><span>   
+</span></span><span style=display:flex><span>   <span style=color:#177500>&lt;!-- 异步日志 --&gt;</span>
+</span></span><span style=display:flex><span>   <span style=color:#000>&lt;appender</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;async&#34;</span> <span style=color:#836c28>class=</span><span style=color:#c41a16>&#34;ch.qos.logback.classic.AsyncAppender&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#177500>&lt;!-- 指定某个具体的 appender --&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;rollFile&#34;</span><span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>   <span style=color:#000>&lt;/appender&gt;</span>
+</span></span><span style=display:flex><span>   
+</span></span><span style=display:flex><span>   <span style=color:#177500>&lt;!-- root logger 配置--&gt;</span>
+</span></span><span style=display:flex><span>   <span style=color:#000>&lt;root</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;ALL&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;console&#34;</span><span style=color:#000>&gt;&lt;/appender-ref&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;file&#34;</span><span style=color:#000>&gt;&lt;/appender-ref&gt;</span>
+</span></span><span style=display:flex><span>   <span style=color:#000>&lt;/root&gt;</span>
+</span></span><span style=display:flex><span>   
+</span></span><span style=display:flex><span>   <span style=color:#177500>&lt;!-- 自定义 logger对象 
+</span></span></span><span style=display:flex><span><span style=color:#177500>       additivity=&#34;false&#34; 自定义 logger 对象是否继承 rootLogger --&gt;</span>
+</span></span><span style=display:flex><span>   <span style=color:#000>&lt;logger</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;com.iteima&#34;</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;info&#34;</span> <span style=color:#836c28>additivity=</span><span style=color:#c41a16>&#34;false&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>     <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;console&#34;</span><span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>   <span style=color:#000>&lt;/logger&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/configuration&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h3 id=3-logback-access的使用>3、logback-access的使用</h3><p>logback-access模块与Servlet容器（如Tomcat和Jetty）集成，以提供HTTP访问日志功能。我们可以使用logback-access模块来替换tomcat的访问日志</p><p>1）将logback-access.jar与logback-core.jar复制到%TOMCAT_HOME/lib/目录下</p><p>2）修改$TOMCAT_HOME/conf/server.xml中的Host元素中添加：</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;Value</span> <span style=color:#836c28>className=</span><span style=color:#c41a16>&#34;ch.qos.logback.access.tomcat.LogbackValue&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>3）logback默认会在$TOMCAT_HOME/conf下查找文件logback-access.xml
+<img src=../imgs/java_log_211218_3.png alt=java_log_211218_3.png></p><h2 id=logback使用步骤>logback使用步骤</h2><p>1、jar包</p><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;artifactId&gt;</span>slf4j-api<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;version&gt;</span>1.7.25<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;groupId&gt;</span>ch.qos.logback<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;artifactId&gt;</span>logback-core<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;version&gt;</span>1.2.3<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;groupId&gt;</span>ch.qos.logback<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;artifactId&gt;</span>logback-classic<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;version&gt;</span>1.2.3<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;groupId&gt;</span>ch.qos.logback<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;artifactId&gt;</span>logback-access<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;version&gt;</span>1.2.3<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><p>2、logback.xml
+在 src 根目录下建立 logback.xml</p><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">57
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">58
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">59
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">60
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">61
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">62
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">63
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#633820>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!--日志级别以及优先级排序: OFF &gt; FATAL &gt; ERROR &gt; WARN &gt; INFO &gt; DEBUG &gt; TRACE &gt; ALL --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!-- status用来指定log4j本身的打印日志的级别 --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!--monitorInterval：Log4j能够自动检测修改配置文件和重新配置本身，设置间隔秒数 --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;configuration</span> <span style=color:#836c28>status=</span><span style=color:#c41a16>&#34;WARN&#34;</span> <span style=color:#836c28>monitorInterval=</span><span style=color:#c41a16>&#34;30&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>&lt;!--先定义所有的appender --&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;appenders&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>&lt;!--这个输出控制台的配置 --&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;console</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;Console&#34;</span> <span style=color:#836c28>target=</span><span style=color:#c41a16>&#34;SYSTEM_OUT&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#177500>&lt;!--输出日志的格式 --&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;PatternLayout</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>pattern=</span><span style=color:#c41a16>&#34;[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %logger{36} - %msg%n&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/console&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>&lt;!--定义输出到指定位置的文件 --&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;File</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;log&#34;</span> <span style=color:#836c28>fileName=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/log.log&#34;</span> <span style=color:#836c28>append=</span><span style=color:#c41a16>&#34;true&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;PatternLayout</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>pattern=</span><span style=color:#c41a16>&#34;[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %logger{36} - %msg%n&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/File&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>&lt;!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 --&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;RollingFile</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;RollingFileInfo&#34;</span> <span style=color:#836c28>fileName=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/info.log&#34;</span>
+</span></span><span style=display:flex><span>                <span style=color:#836c28>filePattern=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#177500>&lt;!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） --&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#177500>&lt;!-- DENY，日志将立即被抛弃不再经过其他过滤器； NEUTRAL，有序列表里的下个过滤器过接着处理日志； ACCEPT，日志会被立即处理，不再经过剩余过滤器。 --&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;ThresholdFilter</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;error&#34;</span> <span style=color:#836c28>onMatch=</span><span style=color:#c41a16>&#34;DENY&#34;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>onMismatch=</span><span style=color:#c41a16>&#34;ACCEPT&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;PatternLayout</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>pattern=</span><span style=color:#c41a16>&#34;[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %logger{36} - %msg%n&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;Policies&gt;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>&lt;TimeBasedTriggeringPolicy</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>&lt;SizeBasedTriggeringPolicy</span> <span style=color:#836c28>size=</span><span style=color:#c41a16>&#34;100 MB&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;/Policies&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#177500>&lt;!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了30 --&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;DefaultRolloverStrategy</span> <span style=color:#836c28>max=</span><span style=color:#c41a16>&#34;30&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/RollingFile&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;RollingFile</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;RollingFileError&#34;</span> <span style=color:#836c28>fileName=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/error.log&#34;</span>
+</span></span><span style=display:flex><span>                <span style=color:#836c28>filePattern=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;ThresholdFilter</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;ERROR&#34;</span> <span style=color:#836c28>onMatch=</span><span style=color:#c41a16>&#34;ACCEPT&#34;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>onMismatch=</span><span style=color:#c41a16>&#34;DENY&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;PatternLayout</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>pattern=</span><span style=color:#c41a16>&#34;[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %logger{36} - %msg%n&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;Policies&gt;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>&lt;TimeBasedTriggeringPolicy</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>&lt;SizeBasedTriggeringPolicy</span> <span style=color:#836c28>size=</span><span style=color:#c41a16>&#34;100 MB&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;/Policies&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/RollingFile&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;/appenders&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>&lt;!--只有定义了logger并引入的appender，appender才会生效 --&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;loggers&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>&lt;!--过滤掉spring和mybatis的一些无用的DEBUG信息 --&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;logger</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;org.springframework&#34;</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;INFO&#34;</span><span style=color:#000>&gt;&lt;/logger&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;logger</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;org.mybatis&#34;</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;INFO&#34;</span><span style=color:#000>&gt;&lt;/logger&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;root</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;INFO&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;Console&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;log&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;RollingFileInfo&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;RollingFileError&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/root&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;/loggers&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/configuration&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><p>3、输出日志代码<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span>    <span style=color:#a90d91>import</span> <span style=color:#000>org.slf4j.Logger</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>import</span> <span style=color:#000>org.slf4j.LoggerFactory</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>TestLogback</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>public</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>void</span> <span style=color:#000>main</span><span style=color:#000>(</span><span style=color:#000>String</span><span style=color:#000>[]</span> <span style=color:#000>args</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#a90d91>final</span> <span style=color:#000>Logger</span> <span style=color:#000>LOGGER</span> <span style=color:#000>=</span> <span style=color:#000>LoggerFactory</span><span style=color:#000>.</span><span style=color:#836c28>getLogger</span><span style=color:#000>(</span><span style=color:#000>TestLogback</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>debug</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;print debug log.&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>info</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;print info log.&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>error</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;print error log.&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><h1 id=log4j>Log4j</h1><h2 id=log4使用步骤>log4使用步骤</h2><h3 id=1-jar包>1、jar包</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#177500>&lt;!-- slf4j 日志门面 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>slf4j-api<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.7.26<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- log4j, 与log4j2不要共存 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- 绑定 log4j 日志实现，需要导入适配器 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>slf4j-log4j12<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.7.12<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>log4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>log4j<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.2.17<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h3 id=2-log4j-properties>2、log4j.properties</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span>#log4j.appender.CONSOLE = org.apache.log4j.ConsoleAppender
+</span></span><span style=display:flex><span>#log4j.appender.Threshold = DEBUG
+</span></span><span style=display:flex><span>#log4j.appender.CONSOLE.Target = System.out
+</span></span><span style=display:flex><span>#log4j.appender.CONSOLE.layout = org.apache.log4j.PatternLayout
+</span></span><span style=display:flex><span>#log4j.appender.CONSOLE.layout.ConversionPattern = [framework] % d - % c -%- 4r [ % t] %- 5p % c % x - % m % n
+</span></span><span style=display:flex><span>#
+</span></span><span style=display:flex><span>##log4j.appender.CONSOLE.layout.ConversionPattern = [start] % d {DATE} [DATE] % n % p[PRIORITY] % n % x[NDC] % n % t[THREAD] n % c[CATEGORY] % n % m[MESSAGE] % n % n
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>log4j.rootLogger=INFO, stdout, D
+</span></span><span style=display:flex><span># Console Appender
+</span></span><span style=display:flex><span>log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+</span></span><span style=display:flex><span>log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+</span></span><span style=display:flex><span>log4j.appender.stdout.layout.ConversionPattern= %d{hh:mm:ss,SSS} [%t] %-5p %c %x - %m%n
+</span></span><span style=display:flex><span># Custom tweaks
+</span></span><span style=display:flex><span>log4j.logger.com.codahale.metrics=WARN
+</span></span><span style=display:flex><span>log4j.logger.com.ryantenney=WARN
+</span></span><span style=display:flex><span>log4j.logger.com.zaxxer=WARN
+</span></span><span style=display:flex><span>log4j.logger.org.apache=WARN
+</span></span><span style=display:flex><span>log4j.logger.org.hibernate=WARN
+</span></span><span style=display:flex><span>log4j.logger.org.hibernate.engine.internal=WARN
+</span></span><span style=display:flex><span>log4j.logger.org.hibernate.validator=WARN
+</span></span><span style=display:flex><span>log4j.logger.org.springframework=WARN
+</span></span><span style=display:flex><span>log4j.logger.org.springframework.web=WARN
+</span></span><span style=display:flex><span>log4j.logger.org.springframework.security=WARN
+</span></span><span style=display:flex><span># log file
+</span></span><span style=display:flex><span>log4j.appender.D = org.apache.log4j.DailyRollingFileAppender
+</span></span><span style=display:flex><span>log4j.appender.D.File = /Users/bo/code/JavaDemo/log.log
+</span></span><span style=display:flex><span>log4j.appender.D.Append = true
+</span></span><span style=display:flex><span>log4j.appender.D.Threshold = DEBUG 
+</span></span><span style=display:flex><span>log4j.appender.D.layout = org.apache.log4j.PatternLayout
+</span></span><span style=display:flex><span>log4j.appender.D.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss}  [ %t:%r ] - [ %p ]  %m%n
+</span></span></code></pre></td></tr></table></div></div></details><br><h1 id=log4j2>Log4j2</h1><p>ApacheLog4j2是对Log4j的升级版,参考了logback的一些优秀的设计,并且修复了一些问题,因此带来了一些重大的提升,主要有:</p><p>1、异常处理 ：在logback中,Appender中的异常不会被应用感知到,但是在log84j2中,提供了一些异常处理机制。</p><p>2、性能提升：log4j2相较于log4j和logback都具有很明显的性能提升,后面会有官方测试的数据。</p><p>3、自动重载配置：参考了logback的设计,当然会提供自动刷新参数配置,最实用的就是我们在生产上可以动态的修改日志的级别而不需要重启应用。</p><p>4、无垃圾机制：log4j2在大部分情况下,都可以使用其设计的一套无垃圾机制,避免频繁的日志收集导致的jvm gc。</p><h2 id=日志实现方式><strong>日志实现方式</strong></h2><p>Log4j2提供了两种实现日志的方式,一个是通过AsyncAppender（一般性能低不使用），一个是通过AsyncLogger，分别对应我们说的Appender组件和Logger组件。</p><p>注意：配置异步日志需要添加依赖</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#177500>&lt;!-- 异步日志依赖 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;groupId&gt;</span>com.1max<span style=color:#000>&lt;/gzoupId&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;artifactId&gt;</span>disruptor<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;version&gt;</span>3.3.4<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div><h3 id=asyncappender方式>AsyncAppender方式</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#633820>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;Configurationstatus</span><span style=color:#000>=&#34;warn&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;properties&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;propertyname</span><span style=color:#000>=&#34;LOG_HOME&#34;</span><span style=color:#000>&gt;</span>D:/logs<span style=color:#000>&lt;/property&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/properties&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;Appenders&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;File</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;file&#34;</span> <span style=color:#836c28>fileName=</span><span style=color:#c41a16>&#34;${LOGHOME}/myfile.log&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;PatternLayout&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;Pattern&gt;</span>%d %p %c{1.} {%t} %m%n<span style=color:#000>&lt;/Pattern&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;/PatternLayout&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/File&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!-- 异步日志 AsyncAppender --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;Async</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;Async&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;AppenderRef</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;file&#34;</span><span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/Async&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/Appenders&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;Loggers&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;Root</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;error&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;AppenderRef</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;Async&#34;</span><span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/Root&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/Loggers&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/Configuration&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h3 id=asynclogger方式>AsyncLogger方式</h3><p>AsyncLogger才是log4j2的重头戏,也是官方推荐的异步方式。它可以使得调用Logger.log返回的更快。你可以有两种选择:全局异步和混合异步。</p><p>全局异步</p><p>所有的日志都异步的记录,在配置文件上不用做任何改动,只需要添加个log4j2.component.properties配置（Resources路径下）;</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span>Log4jContextSelector=org.apache.1ogging.1og4j.core.async.AsyncLoggerContextSelector
+</span></span></code></pre></td></tr></table></div></div></div><p>混合异步</p><p>可以在应用中同时使用同步日志和异步日志,这使得日志的配置方式更加灵活。</p><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#633820>&lt;?xmlversion=&#34;1.0&#34;encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;Configurationstatus</span><span style=color:#000>=&#34;WARN&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;properties&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;propertyname</span><span style=color:#000>=&#34;LOG_HOME&#34;</span><span style=color:#000>&gt;</span>D:/logs<span style=color:#000>&lt;/property&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/properties&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;Appenders&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;File</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;file&#34;</span> <span style=color:#836c28>fileName=</span><span style=color:#c41a16>&#34;${LOG_HOME}/myfile.log&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;PatternLayout&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;Pattern&gt;</span>%d%p%c{1.}[%t]%m$n<span style=color:#000>&lt;/Pattern&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;/PatternLayout&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/File&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;Async</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;Async&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;AppenderRef</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;file&#34;</span><span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/Async&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/Appenders&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;Loggers&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#177500>&lt;!-- 自定义异步logger日志 --&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;AsyncLogger</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;com.itheima&#34;</span><span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;trace&#34;</span> <span style=color:#836c28>additivity=</span><span style=color:#c41a16>&#34;false&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;AppenderRef</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;file&#34;</span><span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/AsyncLogger&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;Root</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>“info&#34;</span> <span style=color:#836c28>includeLocation=</span><span style=color:#c41a16>&#34;true&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;AppenderRef</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;file&#34;</span><span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/Root&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/Loggers&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/Configuration&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><p><img src=../imgs/java_log_211218_4.png alt=java_log_211218_4.png></p><p>使用异步日志需要注意的问题:</p><p>1、如果使用异步日志,AsyncAppender、AsyncLogger和全局目志,不要同时出现。性能会和</p><p>AsyncAppend一致，降至最低。（木桶原理）</p><p>2、设置includeLocation=false，否则打印位置信息会急剧降低异步日志的性能,比同步日志还要慢。</p><p><strong>无垃圾记录</strong></p><p>垃圾收集暂停是延迟峰值的常见原因,并且对于许多系统而言,花费大量精力来控制这些暂停。</p><p>许多日志库（包括以前版本的Log4j）在稳态日志记录期间分配临时对象,如日志事件对象,字符串,字符数组,字节数组等。这会对垃圾收集器造成压力并增加GC暂停发生的频率。</p><p>从版本2.6开始,默认情况下Log4j以“无垃圾“模式运行,其中重用对象和缓冲区,平且尽可能不分配临时对象。还有一个“低垃圾“模式,它不是完全无垃圾,但不使用ThreadLocal字段。</p><p>Log4j 2.6中的无垃圾日志记录部分通过重用ThreadLoca|字段中的对象来实现,部分通过在将文本转换为字节时重用缓冲区来实现。</p><p>有两个单独的系统厘性可用于手动控制Log4j用于邀免创建临时对象的机制:</p><ul><li>log4j2.enableThreadlocals - 如果"true"(非Web应用程序的默认值)对象存储ThreadLocal字段中并重新使用,否则将为每个日志事件创建新对象。</li><li>log4j2.enablepirectEncoders - 如果将"true"(默认)日志事件转换为文本,则将此文本转换为字节而不创建临时对象。注意:由于共享缓冲区上的同步,在此模式下多线程应用程序的同步日志记录性能可能更差。如果您的应用程序是多线程的并且日志记录性能很重要,请考虑使用异步记录器。</li></ul><h2 id=log4j2使用步骤>log4j2使用步骤</h2><h3 id=1-jar包-1>1、jar包</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#177500>&lt;!-- slf4j 日志门面 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.slf4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>slf4j-api<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.7.26<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- log4j2, 与log4j不要共存 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- 用于与slf4j保持桥接 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.apache.logging.log4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>log4j-slf4j-impl<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>2.8.2<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- log4j2核心包，注意路径与log4j不同 --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.apache.logging.log4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>log4j-api<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>2.8.2<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.apache.logging.log4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>log4j-core<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>2.8.2<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h3 id=2-log2j-配置文件-log4j2-xml>2、log2j 配置文件：log4j2.xml</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">57
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">58
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">59
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">60
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">61
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#633820>&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!--日志级别以及优先级排序: OFF &gt; FATAL &gt; ERROR &gt; WARN &gt; INFO &gt; DEBUG &gt; TRACE &gt; ALL --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!-- status用来指定Log4j本身的打印日志的级别 --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!--monitorInterval：Log4j能够自动检测修改配置文件和重新配置本身，设置间隔秒数 --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;configuration</span> <span style=color:#836c28>status=</span><span style=color:#c41a16>&#34;WARN&#34;</span> <span style=color:#836c28>monitorInterval=</span><span style=color:#c41a16>&#34;30&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>&lt;!--先定义所有的appender --&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;appenders&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>&lt;!--这个输出控制台的配置 --&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;console</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;Console&#34;</span> <span style=color:#836c28>target=</span><span style=color:#c41a16>&#34;SYSTEM_OUT&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#177500>&lt;!--输出日志的格式 --&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;PatternLayout</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>pattern=</span><span style=color:#c41a16>&#34;[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-4level] %l %logger{36} - %msg%n&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/console&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>&lt;!-- &lt;Console name=&#34;STDOUT&#34; target=&#34;SYSTEM_OUT&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>              &lt;PatternLayout pattern=&#34;%d %-5p [%t] %C{2} (%F:%L) - %m%n&#34;/&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>            &lt;/Console&gt; --&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>&lt;!--定义输出到指定位置的文件 --&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;File</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;log&#34;</span> <span style=color:#836c28>fileName=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/log.log&#34;</span> <span style=color:#836c28>append=</span><span style=color:#c41a16>&#34;true&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;PatternLayout</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>pattern=</span><span style=color:#c41a16>&#34;[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %logger{36} - %msg%n&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/File&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>&lt;!-- 这个会打印出所有的info及以下级别的信息，每次大小超过size，则这size大小的日志会自动存入按年份-月份建立的文件夹下面并进行压缩，作为存档 --&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;RollingFile</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;RollingFileInfo&#34;</span> <span style=color:#836c28>fileName=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/info.log&#34;</span>
+</span></span><span style=display:flex><span>                <span style=color:#836c28>filePattern=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#177500>&lt;!--控制台只输出level及以上级别的信息（onMatch），其他的直接拒绝（onMismatch） --&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;ThresholdFilter</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;info&#34;</span> <span style=color:#836c28>onMatch=</span><span style=color:#c41a16>&#34;ACCEPT&#34;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>onMismatch=</span><span style=color:#c41a16>&#34;DENY&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;PatternLayout</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>pattern=</span><span style=color:#c41a16>&#34;[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %logger{36} - %msg%n&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;Policies&gt;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>&lt;TimeBasedTriggeringPolicy</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>&lt;SizeBasedTriggeringPolicy</span> <span style=color:#836c28>size=</span><span style=color:#c41a16>&#34;100 MB&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;/Policies&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#177500>&lt;!-- DefaultRolloverStrategy属性如不设置，则默认为最多同一文件夹下7个文件，这里设置了30 --&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;DefaultRolloverStrategy</span> <span style=color:#836c28>max=</span><span style=color:#c41a16>&#34;30&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/RollingFile&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;RollingFile</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;RollingFileError&#34;</span> <span style=color:#836c28>fileName=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/error.log&#34;</span>
+</span></span><span style=display:flex><span>                <span style=color:#836c28>filePattern=</span><span style=color:#c41a16>&#34;/jpm/log4j2/logs/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;ThresholdFilter</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;error&#34;</span> <span style=color:#836c28>onMatch=</span><span style=color:#c41a16>&#34;ACCEPT&#34;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>onMismatch=</span><span style=color:#c41a16>&#34;DENY&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;PatternLayout</span>
+</span></span><span style=display:flex><span>                    <span style=color:#836c28>pattern=</span><span style=color:#c41a16>&#34;[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] %l %logger{36} - %msg%n&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;Policies&gt;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>&lt;TimeBasedTriggeringPolicy</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>&lt;SizeBasedTriggeringPolicy</span> <span style=color:#836c28>size=</span><span style=color:#c41a16>&#34;100 MB&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;/Policies&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/RollingFile&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;/appenders&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>&lt;!--只有定义了logger并引入的appender，appender才会生效 --&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;Loggers&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>&lt;!--过滤掉spring和mybatis的一些无用的DEBUG信息 --&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;logger</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;org.springframework&#34;</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;INFO&#34;</span><span style=color:#000>&gt;&lt;/logger&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;logger</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;org.mybatis&#34;</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;INFO&#34;</span><span style=color:#000>&gt;&lt;/logger&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;root</span> <span style=color:#836c28>level=</span><span style=color:#c41a16>&#34;INFO&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;Console&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;log&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;RollingFileInfo&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;appender-ref</span> <span style=color:#836c28>ref=</span><span style=color:#c41a16>&#34;RollingFileError&#34;</span> <span style=color:#000>/&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/root&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;/Loggers&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/configuration&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h3 id=3-输出日志代码>3、输出日志代码</h3><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.logging.log4j.LogManager</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>import</span> <span style=color:#000>org.apache.logging.log4j.Logger</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>TestLog4j2</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>public</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>void</span> <span style=color:#000>main</span><span style=color:#000>(</span><span style=color:#000>String</span><span style=color:#000>[]</span> <span style=color:#000>args</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#a90d91>final</span> <span style=color:#000>Logger</span> <span style=color:#000>LOGGER</span> <span style=color:#000>=</span> <span style=color:#000>LogManager</span><span style=color:#000>.</span><span style=color:#836c28>getLogger</span><span style=color:#000>(</span><span style=color:#000>LogManager</span><span style=color:#000>.</span><span style=color:#836c28>ROOT_LOGGER_NAME</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>debug</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;TestLog4j2 debug log.&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>info</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;TestLog4j2 info log.&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>error</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;TestLog4j2 error log.&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h1 id=对比>对比</h1><h2 id=核心jar包>核心jar包</h2><p>log4j只需要引用一个包 log4j.log4j</p><p>log4j2需要2个核心包：org.apache.logging.log4j.log4j-api 和 org.apache.logging.log4j.log4j-core，并且路径不同</p><h2 id=logger调用>logger调用</h2><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>lombok.extern.slf4j.Slf4j</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#000>@Slf4j</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>Log4JDemo</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>void</span> <span style=color:#000>main</span><span style=color:#000>(</span><span style=color:#000>String</span><span style=color:#000>[]</span> <span style=color:#000>args</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>String</span> <span style=color:#000>name</span> <span style=color:#000>=</span> <span style=color:#c41a16>&#34;${java:os}&#34;</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// @Slf4j
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>log</span><span style=color:#000>.</span><span style=color:#836c28>info</span><span style=color:#000>(</span><span style=color:#000>name</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// slf4j LoggerFactory
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#a90d91>final</span> <span style=color:#000>org</span><span style=color:#000>.</span><span style=color:#836c28>slf4j</span><span style=color:#000>.</span><span style=color:#836c28>Logger</span> <span style=color:#000>LOGGER</span> <span style=color:#000>=</span> <span style=color:#000>org</span><span style=color:#000>.</span><span style=color:#836c28>slf4j</span><span style=color:#000>.</span><span style=color:#836c28>LoggerFactory</span><span style=color:#000>.</span><span style=color:#836c28>getLogger</span><span style=color:#000>(</span><span style=color:#000>Log4JDemo</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>info</span><span style=color:#000>(</span><span style=color:#000>name</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// log4j Logger
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#a90d91>final</span> <span style=color:#000>org</span><span style=color:#000>.</span><span style=color:#836c28>apache</span><span style=color:#000>.</span><span style=color:#836c28>log4j</span><span style=color:#000>.</span><span style=color:#836c28>Logger</span> <span style=color:#000>LOGGER1</span> <span style=color:#000>=</span> <span style=color:#000>org</span><span style=color:#000>.</span><span style=color:#836c28>apache</span><span style=color:#000>.</span><span style=color:#836c28>log4j</span><span style=color:#000>.</span><span style=color:#836c28>Logger</span><span style=color:#000>.</span><span style=color:#836c28>getLogger</span><span style=color:#000>(</span><span style=color:#000>Log4JDemo</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>LOGGER1</span><span style=color:#000>.</span><span style=color:#836c28>info</span><span style=color:#000>(</span><span style=color:#000>name</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// log4j2 LogManager
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#a90d91>final</span> <span style=color:#000>org</span><span style=color:#000>.</span><span style=color:#836c28>apache</span><span style=color:#000>.</span><span style=color:#836c28>logging</span><span style=color:#000>.</span><span style=color:#836c28>log4j</span><span style=color:#000>.</span><span style=color:#836c28>Logger</span> <span style=color:#000>LOGGER2</span> <span style=color:#000>=</span> <span style=color:#000>org</span><span style=color:#000>.</span><span style=color:#836c28>apache</span><span style=color:#000>.</span><span style=color:#836c28>logging</span><span style=color:#000>.</span><span style=color:#836c28>log4j</span><span style=color:#000>.</span><span style=color:#836c28>LogManager</span><span style=color:#000>.</span><span style=color:#836c28>getLogger</span><span style=color:#000>(</span><span style=color:#000>Log4JDemo</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>LOGGER2</span><span style=color:#000>.</span><span style=color:#836c28>info</span><span style=color:#000>(</span><span style=color:#000>name</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h1 id=jcl>JCL</h1><h2 id=1-动态加载>1、动态加载</h2><p>通过LogFactory动态加载Log实现类</p><p><img src=../imgs/java_log_211218_5.png alt=java_log_211218_5.png></p><h2 id=2-支持日志>2、支持日志</h2><p>日志门面支持的日志实现数组</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>private</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>final</span> <span style=color:#000>String</span><span style=color:#000>[]</span> <span style=color:#000>classesToDiscover</span> <span style=color:#000>=</span> 
+</span></span><span style=display:flex><span>  <span style=color:#a90d91>new</span> <span style=color:#000>String</span><span style=color:#000>[]{</span><span style=color:#c41a16>&#34;org.apache.commons.logging.impl.Log4JLogger&#34;</span><span style=color:#000>,</span>
+</span></span><span style=display:flex><span>              <span style=color:#c41a16>&#34;org.apache.commons.logging.impl.Jdk14Logger&#34;</span><span style=color:#000>,</span>
+</span></span><span style=display:flex><span>              <span style=color:#c41a16>&#34;org.apache.commons.logging.impl.Jdk13LumberjackLogger&#34;</span><span style=color:#000>,</span>
+</span></span><span style=display:flex><span>              <span style=color:#c41a16>&#34;org.apache.commons.logging.impl.SimpleLog&#34;</span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>缺陷：只考虑了主流的日志框架</p><h2 id=3-日志实现>3、日志实现</h2><p>获取具体的日志实现</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>for</span><span style=color:#000>(</span><span style=color:#a90d91>int</span> <span style=color:#000>i</span> <span style=color:#000>=</span> <span style=color:#000>0</span><span style=color:#000>;</span> <span style=color:#000>i</span><span style=color:#000>&lt;</span><span style=color:#000>classesToDiscover</span><span style=color:#000>.</span><span style=color:#836c28>length</span> <span style=color:#000>&amp;&amp;</span> <span style=color:#000>result</span> <span style=color:#000>==</span> <span style=color:#a90d91>null</span><span style=color:#000>;</span> <span style=color:#000>++</span><span style=color:#000>i</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>result</span> <span style=color:#000>=</span> <span style=color:#a90d91>this</span><span style=color:#000>.</span><span style=color:#836c28>createLogFromClass</span><span style=color:#000>(</span><span style=color:#000>classesToDiscover</span><span style=color:#000>[</span><span style=color:#000>i</span><span style=color:#000>],</span> <span style=color:#000>logCategory</span><span style=color:#000>,</span> <span style=color:#a90d91>true</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h2 id=jcl-java-common-logging-log4j>JCL(java common logging)+Log4j </h2><p>1、jar包</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;groupId&gt;</span>commons-logging<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;artifactId&gt;</span>commons-logging<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;version&gt;</span>1.2<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;groupId&gt;</span>log4j<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;artifactId&gt;</span>log4j<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>&lt;version&gt;</span>1.2.17<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>2、配置 common-logging.properties 文件
+只需要一行即可，放在 classpath 下，如果是 Maven 中就在 src/resources 下，不过如果没有 common-logging.properties 文件，但是 src 下有 log4j.properties 配置也可以正常的输出 Log4j 设置的日志。</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span>org.apache.commons.logging.Log=org.apache.commons.logging.impl.Log4JLogger
+</span></span></code></pre></td></tr></table></div></div></div><p>3、配置log4j.properties
+略</p><p>4、输出日志代码</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>jpm.jcllog4j</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>import</span> <span style=color:#000>org.apache.commons.logging.Log</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>import</span> <span style=color:#000>org.apache.commons.logging.LogFactory</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>TestJclAndLog4j</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>public</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>void</span> <span style=color:#000>main</span><span style=color:#000>(</span><span style=color:#000>String</span><span style=color:#000>[]</span> <span style=color:#000>args</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#a90d91>final</span> <span style=color:#000>Log</span> <span style=color:#000>LOGGER</span> <span style=color:#000>=</span> <span style=color:#000>LogFactory</span><span style=color:#000>.</span><span style=color:#836c28>getLog</span><span style=color:#000>(</span><span style=color:#000>TestJclAndLog4j</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>debug</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;TestJclAndLog4j debug log.&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>info</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;TestJclAndLog4j info log.&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>LOGGER</span><span style=color:#000>.</span><span style=color:#836c28>error</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;TestJclAndLog4j error log.&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h2 id=jcl与slf4j比较>JCL与SLF4J比较</h2><p><img src=../imgs/java_log_211218_6.png alt=java_log_211218_6.png></p><h1 id=spring-boot日志>Spring boot日志</h1><h2 id=1-日志结构>1、日志结构</h2><p><img src=../imgs/java_log_211218_7.png alt=java_log_211218_7.png></p><p>总结:</p><p>1、springboot底层默认使用logback作为日志实现。</p><p>2、ERTSLEDBIE</p><p>3、将JUL也转换成sIf4j</p><p>4、也可以使用log4j2作为日志门面,但是最终也是通过sIf4j调用logback</p><h2 id=2-消息格式>2、消息格式</h2><p>指定控制台输出消息格式</p><p><img src=../imgs/java_log_211218_8.png alt=java_log_211218_8.png></p><p><img src=../imgs/java_log_211218_9.png alt=java_log_211218_9.png></p><h2 id=3-指定配置>3、指定配置</h2><p>给类路径下放上每个日志框架自己的配置文件;SpringBoot就不使用默认配置的了</p><table><thead><tr><th style=text-align:left>日志框架</th><th style=text-align:left>配置文件</th></tr></thead><tbody><tr><td style=text-align:left>Logback</td><td style=text-align:left>logback-spring.xml</td></tr><tr><td style=text-align:left>Log4j2</td><td style=text-align:left>log4j2-spring.xml,log4j2.xml</td></tr><tr><td style=text-align:left>JUL</td><td style=text-align:left>logging.properties</td></tr></tbody></table><blockquote><p>logbackxml:直接就被日志框架识别了</p></blockquote><h2 id=4-解析日志配置>4、解析日志配置</h2><p>使用SpringBoot解析日志配置</p><p>logback-spring.xml:由SpringBoot解析日志配置</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;encoderclass</span><span style=color:#000>=“ch.qdos.Logback.classic.encoder.PatternLayoutEncoder“</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;springProfile</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;dev&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;pattern&gt;</span>${pattern}<span style=color:#000>&lt;/pattern&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/springProfile&gt;</span>t
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;springProfile</span> <span style=color:#836c28>name=</span><span style=color:#c41a16>&#34;pro&#34;</span><span style=color:#000>&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;pattern&gt;</span>$d{yyyyMMdd:HH:mm:ss.SSS}[%thread]%-Slevel%msgtn<span style=color:#000>&lt;/pattern&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/springProfile&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/encoder&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>application.properties<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span>spring.profiles.active=dev
+</span></span></code></pre></td></tr></table></div></div></div></p><p>另参考：springboot不同环境日志：<a href=https://springboot.io/t/topic/757>https://springboot.io/t/topic/757</a><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span>java -jar xxx.jar --spring.profiles.active<span style=color:#000>=</span><span style=color:#a90d91>test</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><h2 id=5-日志切换为log4j2>5、日志切换为log4j2</h2><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;groupId&gt;</span>org.springframework.boot<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;artifactId&gt;</span>spring-boot-starter-web<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;exclusions&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>&lt;!-- 排除Logback --&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;exclusion&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;artifactId&gt;</span>spring-boot-starter-logging<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;groupId&gt;</span>org.springframework.boot<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/exclusion&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/exclusions&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!--添加log4j2--&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;groupId&gt;</span>org.springframework.boot<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;artifactId&gt;</span>spring-boot-starter-log4j2<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div><h1 id=reference>Reference</h1><p><a href=https://zhuanlan.zhihu.com/p/64353891>Java日志从入门到实践</a></p><p><a href=https://cloud.tencent.com/developer/article/1754967>slf4j中的桥接器是如何运作的</a></p><p><a href=https://developer.aliyun.com/article/600529>Java日志框架-Slf4j</a></p><p><a href=https://my.oschina.net/xianggao/blog/519199>slf4j + log4j原理实现及源码分析</a></p><p><a href=https://mp.weixin.qq.com/s/q8np4mj_ojpC7OZl5z-aNA>从零实现一个日志框架（带源码）</a></p><p><a href=https://blog.csdn.net/weixin_30642869/article/details/98631187>slf自己主动绑定实现类过程推断</a></p><p><a href=https://blog.csdn.net/c5113620/article/details/78912084>不同jar包相同同名类--Classloader.getResource--slf4j原理</a></p><p><a href=https://blog.csdn.net/holy_cat/article/details/81409171>浅谈在JAR中同名类冲突问题</a></p><p><a href=https://blog.csdn.net/szzt_lingpeng/article/details/81353639>SLF4J--自动绑定实现类原理（源码）</a></p><p><a href=https://www.cnblogs.com/adeng/p/7026162.html>判断项目中是否有slf4j的实现类</a></p></div><div class=td-content style=page-break-before:always><h1 id=pg-ab257e9e4a50069eaa03c059c289bf0b>2 - lombok功能及原理</h1><h1 id=概述>概述</h1><p>lombok官网：<a href=https://projectlombok.org>https://projectlombok.org</a></p><h1 id=使用>使用</h1><p>1、IDE安装lombok插件</p><p>2、项目引入依赖</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;groupId&gt;</span>org.projectlombok<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;artifactId&gt;</span>lombok<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;version&gt;</span>1.16.20<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;scope&gt;</span>provided<span style=color:#000>&lt;/scope&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div><h1 id=功能>功能</h1><h2 id=data>@Data</h2><p>注解在类上，相当于同时使用了@ToString、@EqualsAndHashCode、@Getter、@Setter和@RequiredArgsConstrutor这些注解，对于POJO类十分有用</p><h2 id=value>@Value</h2><p>用在类上，是@Data的不可变形式，相当于为属性添加final声明，只提供getter方法，而不提供setter方法</p><h2 id=builder>@Builder</h2><p>用在类、构造器、方法上，为你提供复杂的builder APIs，让你可以像如下方式一样调用Person.builder().name("Adam Savage").city("San Francisco").job("Mythbusters").job("Unchained Reaction").build();更多说明参考<a href=https://projectlombok.org/features/Builder>Builder</a></p><h2 id=log>@Log</h2><p>根据不同的注解生成不同类型的log对象，但是实例名称都是log，有六种可选实现类</p><h2 id=slf4j>@Slf4j</h2><p>自动引入log对象</p><h2 id=getter-setter>@Getter/@Setter</h2><p>用在属性上，再也不用自己手写setter和getter方法了，还可以指定访问范围</p><h2 id=nonnull>@NonNull</h2><p>给方法参数增加这个注解会自动在方法内对该参数进行是否为空的校验，如果为空，则抛出NPE（NullPointerException）</p><h2 id=cleanup>@Cleanup</h2><p>自动管理资源，用在局部变量之前，在当前变量范围内即将执行完毕退出之前会自动清理资源，自动生成try-finally这样的代码来关闭流</p><h1 id=原理>原理</h1><h2 id=java注解>java注解</h2><p>从JDK5开始,Java增加对元数据（描述数据属性的信息）的支持，也就是注解，可以把注解理解为代码里的特殊标记，这些标记可以在编译，类加载，运行时被读取，并执行相应的处理。通过注解开发人员可以在不改变原有代码和逻辑的情况下在源代码中嵌入补充信息。</p><h2 id=注解解析方式>注解解析方式</h2><p>JDK5引入了注解的同时，也提供了两种解析方式。</p><p>1、运行时解析</p><p>2、编译时解析</p><h3 id=运行时解析>运行时解析</h3><p>运行时能够解析的注解，必须将@Retention设置为RUNTIME，这样就可以通过反射拿到该注解。java.lang,reflect反射包中提供了一个接口AnnotatedElement，该接口定义了获取注解信息的几个方法，Class、Constructor、Field、Method、Package等.</p><h3 id=编译时解析>编译时解析</h3><p>编译时解析有两种机制：</p><p>1、Annotation Processing Tool</p><p>2、Pluggable Annotation Processing API：插入式注解处理器</p><p>APT自JDK5产生，JDK7已标记为过期，不推荐使用，JDK8中已彻底删除。新的解析机制为 <a href="https://www.jcp.org/en/jsr/detail?id=269">JSR 269规范</a>（可插拔批注处理API）。</p><p>在JAVA 1.6后，JDK提供了一种方式，可以让我们修改编译过程，在编译期融入我们自己编译逻辑，也就是插入式注解处理器，它提供了一组编译器的插入式注解处理器的标准API在编译期间对注解进行处理。解决了APT没有集成到javac中，只能在运行时通过反射来获取注解值，运行时代码效率降低等问题。</p><p>javac的编译过程，大致可以分为3个过程，分别是：</p><p>1、解析与填充符号表过程</p><p>读取命令行上指定的所有源文件，将其解析为语法树，然后将所有外部可见的定义输入到编译器的符号表中。</p><p>2、插入式注解处理器的注解处理过程</p><p>调用所有适当的注解处理器。如果任何注解处理器生成任何新的源文件或类文件，则将重新启动编译，直到没有新文件创建为止。</p><p>3、分析与字节码生成过程</p><p>最后，分析器创建的语法树将被分析并转换为类文件。在分析过程中，可能会找到对其他类的引用。编译器将检查这些类的源和类路径。如果在源路径上找到它们，则这些文件也将被编译，尽管它们将不受注解处理。</p><p><img src=../imgs/lombok_1.png alt=lombok_1.png></p><h2 id=自定义支持jsr269>自定义支持JSR269</h2><p>一般javac的编译过程，java文件首先通过进行解析构建出一个AST，然后执行注解处理，最后经过分析优化生成二进制的.class文件。<strong>我们能做到的是，在注解处理阶段进行一些相应处理</strong>。</p><p><img src=../imgs/lombok_2.png alt=lombok_2.png></p><h2 id=定义注解>定义注解</h2><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#000>@Retention</span><span style=color:#000>(</span><span style=color:#000>RetentionPolicy</span><span style=color:#000>.</span><span style=color:#836c28>SOURCE</span><span style=color:#000>)</span> <span style=color:#177500>// 注解只在源码中保留
+</span></span></span><span style=display:flex><span><span style=color:#177500></span><span style=color:#000>@Target</span><span style=color:#000>(</span><span style=color:#000>ElementType</span><span style=color:#000>.</span><span style=color:#836c28>TYPE</span><span style=color:#000>)</span> <span style=color:#177500>// 用于修饰类
+</span></span></span><span style=display:flex><span><span style=color:#177500></span><span style=color:#a90d91>public</span> <span style=color:#000>@interface</span> <span style=color:#000>MyGetter</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>String</span> <span style=color:#000>value</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>Retention 注解上面有一个属性value，它是RetentionPolicy类型的枚举类，RetentionPolicy枚举类中有三个值。<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plain data-lang=plain><span style=display:flex><span>public enum RetentionPolicy {
+</span></span><span style=display:flex><span>    SOURCE, //修饰的注解，注解信息会被编译器抛弃只会留在源文件中，不会留在class文件中
+</span></span><span style=display:flex><span>    CLASS, //注解信息被保留在class文件(字节码文件)中，但运行的时候不会被虚拟机读取
+</span></span><span style=display:flex><span>    RUNTIME // 注解信息被保留在class文件(字节码文件)中，程序编译时会被虚拟机保留在运行时。能够通过反射调用
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div></div></p><p>Target 注解上面也有个属性value，它是ElementType类型的枚举。是用来修饰此注解作用在哪的。<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plain data-lang=plain><span style=display:flex><span>public enum ElementType {
+</span></span><span style=display:flex><span>    TYPE,
+</span></span><span style=display:flex><span>    FIELD,
+</span></span><span style=display:flex><span>    METHOD,
+</span></span><span style=display:flex><span>    PARAMETER,
+</span></span><span style=display:flex><span>    CONSTRUCTOR,
+</span></span><span style=display:flex><span>    LOCAL_VARIABLE,
+</span></span><span style=display:flex><span>    ANNOTATION_TYPE,
+</span></span><span style=display:flex><span>    PACKAGE,
+</span></span><span style=display:flex><span>    TYPE_PARAMETER,
+</span></span><span style=display:flex><span>    TYPE_USE
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div></div></p><h2 id=定义注解处理器>定义注解处理器</h2><p>定义注解处理器，需要继承AbstractProcessor 类。继承完以后基本的框架类型如下</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plain data-lang=plain><span style=display:flex><span>@SupportedSourceVersion(SourceVersion.RELEASE_8) // 支持的Java版本
+</span></span><span style=display:flex><span>@SupportedAnnotationTypes(&#34;aboutjava.annotion.MyGetter&#34;) // 处理器要处理的注解
+</span></span><span style=display:flex><span>public class MyGetterProcessor extends AbstractProcessor {
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    public synchronized void init(ProcessingEnvironment processingEnv) {
+</span></span><span style=display:flex><span>	super.init(processingEnv);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    @Override
+</span></span><span style=display:flex><span>    public boolean process(Set&lt;!--? extends TypeElement--&gt; annotations, RoundEnvironment roundEnv) {
+</span></span><span style=display:flex><span>        return true;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div></div><p>继承了父类的两个方法，方法描述如下
+1、init方法：主要是获得编译时期的一些环境信息</p><p>2、process方法：在编译时，编译器执行的方法。也就是我们写具体逻辑的地方</p><p>编译</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plain data-lang=plain><span style=display:flex><span>javac -processor aboutjava.annotion.MyGetterProcessor aboutjava/annotion/TestAno.java
+</span></span></code></pre></td></tr></table></div></div></div><h2 id=验证>验证</h2><p>这里验证@Slf4j的log字段。步骤如下：</p><p>1、编写代码，引用@Slf4j并使用log变量，编译</p><p>2、将编译好的class反编译，会发现Slf4j会自动将注解转换成</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>private</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>final</span> <span style=color:#000>Logger</span> <span style=color:#000>log</span> <span style=color:#000>=</span> <span style=color:#000>LoggerFactory</span><span style=color:#000>.</span><span style=color:#836c28>getLogger</span><span style=color:#000>(</span><span style=color:#000>XXX</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>);</span>
+</span></span></code></pre></td></tr></table></div></div></div><h1 id=reference>Reference</h1><p><a href="https://blog.csdn.net/qq_43437874/article/details/117292238?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-1.pc_relevant_paycolumn&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-1.pc_relevant_paycolumn">Lombok实现原理</a></p><p><a href="https://c.m.163.com/news/a/FK30K2HE0517EJSQ.html?from=wap_redirect&spss=adap_pc&referFrom=">别再自己用LoggerFactory生成logger实例了</a></p><p><a href=https://zhuanlan.zhihu.com/p/138217840>Lombok注解原理</a></p></div></main></div></div><footer class="bg-dark py-5 row d-print-none"><div class="container-fluid mx-sm-5"><div class=row><div class="col-6 col-sm-4 text-xs-center order-sm-2"></div><div class="col-6 col-sm-4 text-right text-xs-center order-sm-3"></div><div class="col-12 col-sm-4 text-center py-2 order-sm-2"><small class=text-white>&copy; 2023 The Herb 保留所有权利</small>
+<small class=ml-1><a href=# target=_blank rel=noopener>隐私政策</a></small><p class=mt-2><a href=/about/>Herbdocs</a></p></div></div></div></footer></div><script src=https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js integrity=sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin=anonymous></script>
+<script src=/js/tabpane-persist.js></script>
+<script src=/js/main.min.91798a335c881f1b6b805085ba4aa22d1dbd2b0b18d105d05189fa104ddae350.js integrity="sha256-kXmKM1yIHxtrgFCFukqiLR29KwsY0QXQUYn6EE3a41A=" crossorigin=anonymous></script></body></html>

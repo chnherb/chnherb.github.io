@@ -1,0 +1,1103 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – lock</title><link>/tags/lock/</link><description>Recent content in lock on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/lock/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 分布式锁实现及方案比较</title><link>/docs/41.%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8F%8A%E6%96%B9%E6%A1%88%E6%AF%94%E8%BE%83/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/41.%E5%88%86%E5%B8%83%E5%BC%8F/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E5%AE%9E%E7%8E%B0%E5%8F%8A%E6%96%B9%E6%A1%88%E6%AF%94%E8%BE%83/</guid><description>
+&lt;h1 id="背景">背景&lt;/h1>
+&lt;p>单机中可以利用语言自身提供的能力或者借助第三方包来实现对资源的安全并发访问。随着微服务的流行，各种服务都慢慢演变成了分布式架构，部署在不同机器上。这样会使得一些资源在共享上也需要保证安全性问题，需要用到特殊的锁——分布式锁。&lt;/p>
+&lt;h1 id="实现方案">实现方案&lt;/h1>
+&lt;h2 id="数据库方案">数据库方案&lt;/h2>
+&lt;h3 id="数据表简单分布式锁">&lt;strong>数据表简单分布式锁&lt;/strong>&lt;/h3>
+&lt;p>基于数据库来实现分布式锁需要依赖一张数据表，表结构如下：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-sql" data-lang="sql">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">CREATE&lt;/span> &lt;span style="color:#a90d91">TABLE&lt;/span> &lt;span style="color:#000">`&lt;/span>&lt;span style="color:#000">methodLock&lt;/span>&lt;span style="color:#000">`&lt;/span> (
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">`&lt;/span>&lt;span style="color:#000">id&lt;/span>&lt;span style="color:#000">`&lt;/span> &lt;span style="color:#a90d91">int&lt;/span>(&lt;span style="color:#1c01ce">11&lt;/span>) &lt;span style="color:#a90d91">NOT&lt;/span> &lt;span style="color:#a90d91">NULL&lt;/span> &lt;span style="color:#000">AUTO_INCREMENT&lt;/span> &lt;span style="color:#a90d91">COMMENT&lt;/span> &lt;span style="color:#c41a16">&amp;#39;Primary Key&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">`&lt;/span>&lt;span style="color:#000">method_name&lt;/span>&lt;span style="color:#000">`&lt;/span> &lt;span style="color:#a90d91">varchar&lt;/span>(&lt;span style="color:#1c01ce">64&lt;/span>) &lt;span style="color:#a90d91">NOT&lt;/span> &lt;span style="color:#a90d91">NULL&lt;/span> &lt;span style="color:#a90d91">DEFAULT&lt;/span> &lt;span style="color:#c41a16">&amp;#39;&amp;#39;&lt;/span> &lt;span style="color:#a90d91">COMMENT&lt;/span> &lt;span style="color:#c41a16">&amp;#39;Locked Method Name&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">`&lt;/span>&lt;span style="color:#a90d91">desc&lt;/span>&lt;span style="color:#000">`&lt;/span> &lt;span style="color:#a90d91">varchar&lt;/span>(&lt;span style="color:#1c01ce">1024&lt;/span>) &lt;span style="color:#a90d91">NOT&lt;/span> &lt;span style="color:#a90d91">NULL&lt;/span> &lt;span style="color:#a90d91">DEFAULT&lt;/span> &lt;span style="color:#c41a16">&amp;#39;Note Information&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">`&lt;/span>&lt;span style="color:#000">update_time&lt;/span>&lt;span style="color:#000">`&lt;/span> &lt;span style="color:#a90d91">timestamp&lt;/span> &lt;span style="color:#a90d91">NOT&lt;/span> &lt;span style="color:#a90d91">NULL&lt;/span> &lt;span style="color:#a90d91">DEFAULT&lt;/span> &lt;span style="color:#a90d91">CURRENT_TIMESTAMP&lt;/span> &lt;span style="color:#a90d91">ON&lt;/span> &lt;span style="color:#a90d91">UPDATE&lt;/span> &lt;span style="color:#a90d91">CURRENT_TIMESTAMP&lt;/span> &lt;span style="color:#a90d91">COMMENT&lt;/span> &lt;span style="color:#c41a16">&amp;#39;save data time, automatic generation&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">PRIMARY&lt;/span> &lt;span style="color:#a90d91">KEY&lt;/span> (&lt;span style="color:#000">`&lt;/span>&lt;span style="color:#000">id&lt;/span>&lt;span style="color:#000">`&lt;/span>),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">UNIQUE&lt;/span> &lt;span style="color:#a90d91">KEY&lt;/span> &lt;span style="color:#000">`&lt;/span>&lt;span style="color:#000">uidx_method_name&lt;/span>&lt;span style="color:#000">`&lt;/span>(&lt;span style="color:#000">`&lt;/span>&lt;span style="color:#000">method_name&lt;/span>&lt;span style="color:#000">`&lt;/span>) &lt;span style="color:#a90d91">USING&lt;/span> &lt;span style="color:#000">BTREE&lt;/span>) &lt;span style="color:#000">ENGINE&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">InnoDB&lt;/span> &lt;span style="color:#a90d91">DEFAULT&lt;/span> &lt;span style="color:#000">CHARSET&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">utf8&lt;/span> &lt;span style="color:#a90d91">COMMENT&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#39;method in lock&amp;#39;&lt;/span>;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>对方法“method_A”添加锁时，可以采用下面的SQL语句往上表中插入一条记录
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-sql" data-lang="sql">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">insert&lt;/span> &lt;span style="color:#a90d91">into&lt;/span> &lt;span style="color:#000">methodLock&lt;/span>(&lt;span style="color:#000">method_name&lt;/span>,&lt;span style="color:#a90d91">desc&lt;/span>) &lt;span style="color:#a90d91">values&lt;/span> (&lt;span style="color:#000">‘&lt;/span>&lt;span style="color:#000">method_A&lt;/span>&lt;span style="color:#c41a16">&amp;#39;,‘desc&amp;#39;&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>因为数据表在method_name字段上创建了唯一索引，如果同时有多个插入请求提交，数据库会保证只会有一条记录插入成功。这样就可以认为插入记录成功的这个线程获取到了分布式锁，它可以执行后续的方法逻辑。
+当方法执行完成后，需要执行下面的SQL语句来释放锁&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-sql" data-lang="sql">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">delete&lt;/span> &lt;span style="color:#a90d91">from&lt;/span> &lt;span style="color:#000">methodLock&lt;/span> &lt;span style="color:#a90d91">where&lt;/span> &lt;span style="color:#000">method_name&lt;/span> &lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#39;method_A&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>上面利用数据库表简单实现了分布式锁的获取和释放，但是其存在多方面的问题：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;strong>对数据库是强依赖，存在单点问题，一旦数据库挂起，业务系统将不可用&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>没有失效时间，一旦释放锁操作失败，将会一直持有锁，导致其他线程无法获取到锁&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>非阻塞式，因为插入操作一旦失败数据库会直接返回错误信息，线程未获取到锁也不会进入等待重试队列，要再次获取锁，需要再次触发插入操作&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>非可重入锁，同一线程在未释放锁前无法再次获取该锁，因为数据表中的数据已经存在了&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>非公平锁，所有等待锁的线程会同时争抢锁，最终谁能够获取到锁，就要看谁比较幸运数据能够插入成功&lt;/strong>
+当然，上述几个问题也有相应的解决方案&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>数据库单点？可以建立数据库集群，在集群间进行数据同步，一旦主库挂掉，可以快速切到备库，保证分布式锁服务可用&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>没有失效时间？只需要额外建立一个定时任务，定时清理超时数据&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>非阻塞？可以通过while循环，在代码中添加重试逻辑，直到获取锁成功&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>不可重入？在数据库中添加一个字段，记录当前获取到锁的主机和线程信息，下一次在获取锁前，先查询这个字段的信息，如果与当前获取锁的线程信息一致，则可以直接为该线程返回锁&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;strong>不公平？我们可以创建一张中间表来记录所有获取锁的线程，这张表就充当了队列的作用，按照插入时间排序，只有排在第一位的线程有机会获取锁&lt;/strong>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="数据库排他锁分布式锁">&lt;strong>数据库排他锁分布式锁&lt;/strong>&lt;/h3>
+&lt;p>除了可以通过增删操作数据表中的记录以外，其实还可以借助数据中自带的锁来实现分布式锁。&lt;/p>
+&lt;p>仍然借助上面创建的数据表，在MySQL数据库的InnoDB引擎模式下，可以通过下面的方法来实现分布式锁操作，伪代码如下：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">boolean&lt;/span> &lt;span style="color:#000">lock&lt;/span>&lt;span style="color:#000">(){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">connection&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">setAutoCommit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">while&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">true&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">try&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">result&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">select&lt;/span> &lt;span style="color:#000">*&lt;/span> &lt;span style="color:#000">from&lt;/span> &lt;span style="color:#000">methodLock&lt;/span> &lt;span style="color:#000">where&lt;/span> &lt;span style="color:#000">method_name&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">xxx&lt;/span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">update&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">result&lt;/span>&lt;span style="color:#000">==&lt;/span>&lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">true&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">catch&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Exception&lt;/span> &lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">sleep&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">1000&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>在查询语句后面添加“for update”语句，数据库会在查询过程中向数据库表添加独占锁，其他线程就无法再对这行记录加锁了。
+我们可以假定一个线程获取了独占锁就获取了分布式锁，获取到锁以后，就可以执行后续业务逻辑。使用这种方式要注意进行事务的手动管理，在事务提交前执行业务逻辑，执行完成后手动提交事务来释放锁。&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">unlock&lt;/span>&lt;span style="color:#000">(){&lt;/span> &lt;span style="color:#000">connection&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">commit&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>通过上面的这种方式可以高效解决上面提到的解锁和阻塞锁的问题。
+针对解锁问题，在获取锁以后，如果服务突然宕机，不用担心锁不会释放，数据库连接会在在服务宕机后自动断开并释放锁。&lt;/p>
+&lt;p>针对阻塞问题，采用for update语句，其会保持阻塞状态，在成功执行或者执行失败后立即返回。&lt;/p>
+&lt;p>上述方案虽然解决了阻塞和解锁问题，但是数据库的单点、可重入、公平锁等问题仍需要进行额外处理。&lt;/p>
+&lt;h3 id="小结">&lt;strong>小结&lt;/strong>&lt;/h3>
+&lt;p>基于数据库实现分布式锁都依赖于一个数据库表。一种是通过表中记录的存在来确定当前是否存在锁，另一种是通过数据库的排他锁来实现分布式锁。&lt;/p>
+&lt;p>优点就是简单明了，容易理解；缺点也很明显，为了实现一个功能完善的分布式锁，需要一堆额外的优化措施，使得整个方案变得愈加复杂，同时操作数据库需要一定的开销，性能问题不容忽视。&lt;/p>
+&lt;h2 id="redis方案">redis方案&lt;/h2>
+&lt;p>setnx对应api有诸如setIfAbsent(key)&lt;/p>
+&lt;p>可能存在死锁，如果处理的线程抛出异常无法释放锁&lt;/p>
+&lt;p>setnx expire增加超时时间&lt;/p>
+&lt;p>redis实现分布式锁主要使用setnx这个命令实现，该命令的语义为如果该键不存在就设置该键的值，保证只有一个客户端能设置成功。&lt;/p>
+&lt;h3 id="实现1">&lt;strong>实现1&lt;/strong>&lt;/h3>
+&lt;p>加锁：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>setnx key value；
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>expire key expireTime;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>解锁：
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>delete key
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>问题：setnx执行成功，而expire失败后机器宕机，会导致锁永远无法被释放。该方案基本不会被使用。&lt;/p>
+&lt;h3 id="实现2">&lt;strong>实现2&lt;/strong>&lt;/h3>
+&lt;p>redis从2.6.12版本开始，SET命令开始支持超时参数，并且保证整个操作是原子的。&lt;/p>
+&lt;p>加锁:&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>SET key value NX PX expireMillSeconds
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>解锁:
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>delete key
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>问题:
+1、持有锁的线程挂掉后，其他线程必须等待锁超时失效后才能重新争抢；&lt;/p>
+&lt;p>2、不能保证删除锁的线程是锁的拥有者。&lt;/p>
+&lt;h3 id="实现3">&lt;strong>实现3&lt;/strong>&lt;/h3>
+&lt;p>加锁:&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">boolean&lt;/span> &lt;span style="color:#000">tryLock&lt;/span>&lt;span style="color:#000">(){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">SET&lt;/span> &lt;span style="color:#000">key&lt;/span> &lt;span style="color:#000">expireTime&lt;/span> &lt;span style="color:#000">NX&lt;/span> &lt;span style="color:#000">PX&lt;/span> &lt;span style="color:#000">expireMillSeconds&lt;/span> &lt;span style="color:#000">是否成功&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">true&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span> &lt;span style="color:#a90d91">else&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Date&lt;/span> &lt;span style="color:#000">expireTime&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">get&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">key&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">expireTime&lt;/span> &lt;span style="color:#000">&amp;lt;&lt;/span> &lt;span style="color:#000">currentTime&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">cas&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">key&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">expireTime&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">currentExpireTime&lt;/span> &lt;span style="color:#000">是否成功&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">true&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span> &lt;span style="color:#a90d91">else&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span> &lt;span style="color:#a90d91">else&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>解锁:
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>delete key
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>问题:不能保证删除锁的线程是锁的拥有者。&lt;/p>
+&lt;h3 id="实现4-防盗抢">&lt;strong>实现4（防盗抢）&lt;/strong>&lt;/h3>
+&lt;p>加锁:&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>SET key value NX PX expireMillSeconds
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>value设置为一个独特的token。
+解锁:&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>compareAndDelete&lt;span style="color:#000">(&lt;/span>key, token&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="小结-1">&lt;strong>小结&lt;/strong>&lt;/h3>
+&lt;p>redis实现的原理是通过一致性哈希将不同key的散列到不同的机器进行处理，最终也是由master处理写。&lt;/p>
+&lt;p>redis实现的分布式锁性能最优，缺点是超时时间的设定比较困难。&lt;/p>
+&lt;p>如果需要保证只有锁的持有者才能释放锁，建议使用方案实现4，否则使用方案实现3，实现3可以减少锁持有者宕机后其他线程的等待时间。&lt;/p>
+&lt;h2 id="redisson方案">redisson方案&lt;/h2>
+&lt;h3 id="背景-1">背景&lt;/h3>
+&lt;p>redis实现分布式锁存在的问题, 为了解决redis单点问题, 我们会部署redis集群, 在Sentinel集群中, 主节点突然挂掉了。同时主节点中有把锁还没有来得及同步到从节点。这样就会导致系统中同样一把锁被两个客户端同时持有, 不安全性由此产生。redis官方为了解决这个问题, 推出了Redlock算法解决这个问题。但是带来的网络消耗较大。&lt;/p>
+&lt;h3 id="简介">简介&lt;/h3>
+&lt;p>Redisson是一个在Redis的基础上实现的Java驻内存数据网格（In-Memory Data Grid）。它不仅提供了一系列的分布式的Java常用对象，还提供了许多分布式服务。其中包括(BitSet, Set, Multimap, SortedSet, Map, List, Queue, BlockingQueue, Deque, BlockingDeque, Semaphore, Lock, AtomicLong, CountDownLatch, Publish / Subscribe, Bloom filter, Remote service, Spring cache, Executor service, Live Object service, Scheduler service) Redisson提供了使用Redis的最简单和最便捷的方法。Redisson的宗旨是促进使用者对Redis的关注分离（Separation of Concern），从而让使用者能够将精力更集中地放在处理业务逻辑上。&lt;/p>
+&lt;h3 id="实现">实现&lt;/h3>
+&lt;p>分布式锁的redisson实现: &lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;groupId&amp;gt;&lt;/span>org.redisson&lt;span style="color:#000">&amp;lt;/groupId&amp;gt;&lt;/span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>redisson&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;version&amp;gt;&lt;/span>3.6.5&lt;span style="color:#000">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>获取锁释放锁&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 程序化配置
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">Config&lt;/span> &lt;span style="color:#000">config&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">useSingleServer&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">setAddress&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34; redis://127.0.0.1:6379&amp;#34;&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">setDatabase&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Redisson&lt;/span> &lt;span style="color:#000">redisson&lt;/span>&lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Redisson&lt;/span>&lt;span style="color:#000">)&lt;/span>&lt;span style="color:#000">Redisson&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">RLockmylock&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">redisson&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getLock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">key&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 获取锁mylock.TockC; …资源操作
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 释放锁mylock.unlock(); 
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 文件方式配置
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">Config&lt;/span> &lt;span style="color:#000">config&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Config&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">fromJSON&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">File&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;config-file.json&amp;#34;&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">RedissonClient&lt;/span> &lt;span style="color:#000">redisson&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Redisson&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// yaml配置
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">Config&lt;/span> &lt;span style="color:#000">config&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Config&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">fromYAML&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">File&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;config-file.yaml&amp;#34;&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">RedissonClient&lt;/span> &lt;span style="color:#000">redisson&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Redisson&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>集群模式
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Config&lt;/span> &lt;span style="color:#000">config&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Config&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">useClusterServers&lt;/span>&lt;span style="color:#000">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">setScanInterval&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">2000&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#177500">// 集群状态扫描间隔时间，单位是毫秒
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">//可以用&amp;#34;rediss://&amp;#34;来启用SSL连接
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">addNodeAddress&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;redis://127.0.0.1:7000&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;redis://127.0.0.1:7001&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">addNodeAddress&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;redis://127.0.0.1:7002&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">RedissonClient&lt;/span> &lt;span style="color:#000">redisson&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Redisson&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>主从模式&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Config&lt;/span> &lt;span style="color:#000">config&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Config&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">useMasterSlaveServers&lt;/span>&lt;span style="color:#000">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">//可以用&amp;#34;rediss://&amp;#34;来启用SSL连接
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">setMasterAddress&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;redis://127.0.0.1:6379&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">addSlaveAddress&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;redis://127.0.0.1:6389&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;redis://127.0.0.1:6332&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;redis://127.0.0.1:6419&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">addSlaveAddress&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;redis://127.0.0.1:6399&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">RedissonClient&lt;/span> &lt;span style="color:#000">redisson&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Redisson&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>使用：&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">RedissonLock&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#000">RedissonClient&lt;/span> &lt;span style="color:#000">redissonClient&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">static&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Config&lt;/span> &lt;span style="color:#000">config&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Config&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">useSingleServer&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">setAddress&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;redis://127.0.0.1:6379&amp;#34;&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">setPassword&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// config.useSingleServer().setAddress(&amp;#34;redis://192.168.188.4:6380&amp;#34;).setPassword(&amp;#34;ty3foGTrNiKi&amp;#34;);
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">redissonClient&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Redisson&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#000">RedissonClient&lt;/span> &lt;span style="color:#000">getRedisson&lt;/span>&lt;span style="color:#000">(){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">redissonClient&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">main&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">[]&lt;/span> &lt;span style="color:#000">args&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#a90d91">throws&lt;/span> &lt;span style="color:#000">InterruptedException&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">RLock&lt;/span> &lt;span style="color:#000">fairLock&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">getRedisson&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getLock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;TEST_KEY&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">fairLock&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">toString&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// fairLock.lock();
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 尝试加锁，最多等待10秒，上锁以后10秒自动解锁
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">boolean&lt;/span> &lt;span style="color:#000">res&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">fairLock&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">tryLock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">10&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">10&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">TimeUnit&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">SECONDS&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">res&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">fairLock&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">unlock&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">//有界阻塞队列
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">RBoundedBlockingQueue&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">JSONObject&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">queue&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">getRedisson&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getBoundedBlockingQueue&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;anyQueue&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 如果初始容量（边界）设定成功则返回`真（true）`，
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 如果初始容量（边界）已近存在则返回`假（false）`。
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">trySetCapacity&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">10&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">JSONObject&lt;/span> &lt;span style="color:#000">o&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">JSONObject&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">o&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">put&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">1&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(!&lt;/span>&lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">contains&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">o&lt;/span>&lt;span style="color:#000">)){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">offer&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">o&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">JSONObject&lt;/span> &lt;span style="color:#000">o2&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">JSONObject&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">o2&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">put&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">2&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 此时容量已满，下面代码将会被阻塞，直到有空闲为止。
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(!&lt;/span>&lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">contains&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">o2&lt;/span>&lt;span style="color:#000">)){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">offer&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">o2&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 获取但不移除此队列的头；如果此队列为空，则返回 null。
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">JSONObject&lt;/span> &lt;span style="color:#000">obj&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">peek&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">//获取并移除此队列的头部，在指定的等待时间前等待可用的元素（如果有必要）。
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">JSONObject&lt;/span> &lt;span style="color:#000">ob&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">poll&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">10&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">TimeUnit&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">MINUTES&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">//获取并移除此队列的头，如果此队列为空，则返回 null。
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">Iterator&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">JSONObject&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">iterator&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">iterator&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">while&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">iterator&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">hasNext&lt;/span>&lt;span style="color:#000">()){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">JSONObject&lt;/span> &lt;span style="color:#000">i&lt;/span> &lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">iterator&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">next&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">i&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">toJSONString&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">iterator&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">remove&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">while&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">size&lt;/span>&lt;span style="color:#000">()&amp;gt;&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">JSONObject&lt;/span> &lt;span style="color:#000">obs&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">poll&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">obs&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">toJSONString&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">JSONObject&lt;/span> &lt;span style="color:#000">someObj&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">queue&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">poll&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">someObj&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">toJSONString&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h2 id="zookeeper方案">zookeeper方案&lt;/h2>
+&lt;h3 id="基础知识">基础知识&lt;/h3>
+&lt;p>基于ZooKeeper，是使用它的临时有序节点来实现的分布式锁。&lt;/p>
+&lt;p>节点类型：&lt;/p>
+&lt;p>1、&lt;strong>持久节点&lt;/strong>：创建后一直存在，直到主动删除；&lt;/p>
+&lt;p>2、&lt;strong>临时节点&lt;/strong>：临时节点的生命周期和客户端会话绑定，客户端节点失效后，这个节点会自动被清除；&lt;/p>
+&lt;p>3、&lt;strong>持久顺序节点&lt;/strong>：基本特性和持久节点一致，只是在创建节点时路径名后面增加一个自增的数字后缀；数字后缀的值记录在父节点的一个4bytes的字段中。&lt;/p>
+&lt;p>4、&lt;strong>临时顺序节点&lt;/strong>：基本特性同临时节点，同样节点路径名带有自增数字。&lt;/p>
+&lt;h3 id="实现原理">实现原理&lt;/h3>
+&lt;p>加锁流程:&lt;/p>
+&lt;p>1、创建永久节点如 resourcex 代表争抢的资源；&lt;/p>
+&lt;p>2、所有想获取锁的客户端都到 resourcex 目录下创建临时顺序节点；&lt;/p>
+&lt;p>3、客户端获取当前目录下所有子节点，判断自己的节点是否位于子节点第一个；&lt;/p>
+&lt;p>4、如果是第一个，则获取到锁，返回成功；&lt;/p>
+&lt;p>5、如果不是第一个，则说明前面已经有客户端获取到锁了，那么需要获取自己节点的前一个节点，并监听前一个节点的状态，当监听到前一个节点被删除后返回步骤3。&lt;/p>
+&lt;p>解锁的流程:&lt;/p>
+&lt;p>删除当前客户端注册的临时节点即可。&lt;/p>
+&lt;p>锁超时：&lt;/p>
+&lt;p>Zookeeper不需要配置锁超时，创建临时节点的客户端维护着一个和服务端的session，服务端通过session判断客户端是否在线，当客户端机器宕机时，服务端会删除对应的临时节点。&lt;/p>
+&lt;h3 id="原生使用">原生使用&lt;/h3>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">105
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">106
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">107
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">108
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">109
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">110
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">111
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">112
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">113
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">114
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">package&lt;/span> &lt;span style="color:#000">com.huangbo&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">org.apache.zookeeper.*&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">org.apache.zookeeper.data.Stat&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.util.List&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.util.TreeSet&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.util.concurrent.CountDownLatch&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.util.concurrent.TimeUnit&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.util.concurrent.locks.Condition&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.util.concurrent.locks.Lock&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">ZkLock&lt;/span> &lt;span style="color:#a90d91">implements&lt;/span> &lt;span style="color:#000">Lock&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">ZooKeeper&lt;/span> &lt;span style="color:#000">zk&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">root&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#c41a16">&amp;#34;/locks&amp;#34;&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">lockName&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 当前线程创建的序列node
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">ThreadLocal&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">nodeId&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">ThreadLocal&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">&amp;gt;();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 用来同步等待zkclient连接到了服务端
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">CountDownLatch&lt;/span> &lt;span style="color:#000">connectedSignal&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">CountDownLatch&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">1&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">final&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">sessionTimeout&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">3000&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">final&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">byte&lt;/span>&lt;span style="color:#000">[]&lt;/span> &lt;span style="color:#000">data&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#a90d91">byte&lt;/span>&lt;span style="color:#000">[&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">];&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">ZkLock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">lockName&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">lockName&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">lockName&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">try&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">zk&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">ZooKeeper&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">config&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">sessionTimeout&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Watcher&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">process&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">WatchedEvent&lt;/span> &lt;span style="color:#000">event&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">//建立连接
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">event&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getState&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">==&lt;/span> &lt;span style="color:#000">Event&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">KeeperState&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">SyncConnected&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">connectedSignal&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">countDown&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">});&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">connectedSignal&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">await&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Stat&lt;/span> &lt;span style="color:#000">stat&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">zk&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">exists&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">root&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">null&lt;/span> &lt;span style="color:#000">==&lt;/span> &lt;span style="color:#000">stat&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">zk&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">root&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">data&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">ZooDefs&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Ids&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">OPEN_ACL_UNSAFE&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">CreateMode&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">PERSISTENT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span> &lt;span style="color:#a90d91">catch&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Exception&lt;/span> &lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">throw&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">RuntimeException&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 添加watch监听临时顺序节点的删除
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">LockWatcher&lt;/span> &lt;span style="color:#a90d91">implements&lt;/span> &lt;span style="color:#000">Watcher&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">CountDownLatch&lt;/span> &lt;span style="color:#000">latch&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">LockWatcher&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">CountDownLatch&lt;/span> &lt;span style="color:#000">latch&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">latch&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">latch&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">process&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">WatchedEvent&lt;/span> &lt;span style="color:#000">event&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">lock&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">try&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 创建临时节点
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">myNode&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">zk&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">root&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34;/&amp;#34;&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">lockName&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">data&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">ZooDefs&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Ids&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">OPEN_ACL_UNSAFE&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">CreateMode&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">EPHEMERAL_SEQUENTIAL&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Thread&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">currentThread&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">myNode&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34;created&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 取出所有子节点
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">subNodes&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">zk&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getChildren&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">root&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">TreeSet&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">sortedNodes&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">TreeSet&lt;/span>&lt;span style="color:#000">&amp;lt;&amp;gt;();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">node&lt;/span> &lt;span style="color:#000">:&lt;/span> &lt;span style="color:#000">subNodes&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">sortedNodes&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">add&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">root&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34;/&amp;#34;&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">node&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">smallNode&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">sortedNodes&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">first&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">myNode&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">equals&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">smallNode&lt;/span>&lt;span style="color:#000">))&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 如果是最小的节点，则表示取得锁
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Thread&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">currentThread&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">myNode&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34;get lock&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">nodeId&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">set&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">myNode&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">preNode&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">sortedNodes&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">lower&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">myNode&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">CountDownLatch&lt;/span> &lt;span style="color:#000">latch&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">CountDownLatch&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">1&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Stat&lt;/span> &lt;span style="color:#000">stat&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">zk&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">exists&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">preNode&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">LockWatcher&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">latch&lt;/span>&lt;span style="color:#000">));&lt;/span> &lt;span style="color:#177500">// 同时注册监听
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 判断比自己小一个数的节点是否存在，如果不存在则无需等待锁，同时注册监听
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">stat&lt;/span> &lt;span style="color:#000">!=&lt;/span> &lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Thread&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">currentThread&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">myNode&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34; waiting for &amp;#34;&lt;/span> &lt;span style="color:#000">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">root&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34;/&amp;#34;&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">preNode&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34; released lock&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">latch&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">wait&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#177500">// 等待，这里应该一直等待其他线程释放锁
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">nodeId&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">set&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">myNode&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">latch&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span> &lt;span style="color:#a90d91">catch&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Exception&lt;/span> &lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">throw&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">RuntimeException&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">lockInterruptibly&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#a90d91">throws&lt;/span> &lt;span style="color:#000">InterruptedException&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">boolean&lt;/span> &lt;span style="color:#000">tryLock&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">boolean&lt;/span> &lt;span style="color:#000">tryLock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">long&lt;/span> &lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">TimeUnit&lt;/span> &lt;span style="color:#000">unit&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#a90d91">throws&lt;/span> &lt;span style="color:#000">InterruptedException&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">unlock&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">try&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Thread&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">currentThread&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34;unlock &amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">null&lt;/span> &lt;span style="color:#000">!=&lt;/span> &lt;span style="color:#000">nodeId&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">zk&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">delete&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">nodeId&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">get&lt;/span>&lt;span style="color:#000">(),&lt;/span> &lt;span style="color:#000">-&lt;/span>&lt;span style="color:#000">1&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">nodeId&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">remove&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span> &lt;span style="color:#a90d91">catch&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">InterruptedException&lt;/span> &lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">printStackTrace&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span> &lt;span style="color:#a90d91">catch&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">KeeperException&lt;/span> &lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">printStackTrace&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Condition&lt;/span> &lt;span style="color:#000">newCondition&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h3 id="小结-2">&lt;strong>小结&lt;/strong>&lt;/h3>
+&lt;p>zk实现的原理主要是ZAB协议控制所有写请求都转发到leader节点执行，以保证新建节点的唯一性。zk实现的分布式锁可用性较高，实现简单，自动锁释放，缺点是创建和删除节点的性能较差。zk分布式锁对于锁的qps和锁数量都有一定的要求，在锁QPS超过100或者锁的数量超过50万，建议不要使用基于ZK的分布式锁，应寻求其他分布式锁方案。&lt;/p>
+&lt;h1 id="方案比较">方案比较&lt;/h1>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:left">&lt;/th>
+&lt;th style="text-align:left">mysql&lt;/th>
+&lt;th style="text-align:left">redis&lt;/th>
+&lt;th style="text-align:left">redisson&lt;/th>
+&lt;th style="text-align:left">zookeeper&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:left">实现复杂度&lt;/td>
+&lt;td style="text-align:left">复杂&lt;/td>
+&lt;td style="text-align:left">简单&lt;/td>
+&lt;td style="text-align:left">简单&lt;/td>
+&lt;td style="text-align:left">简单&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">性能&lt;/td>
+&lt;td style="text-align:left">3&lt;/td>
+&lt;td style="text-align:left">1&lt;/td>
+&lt;td style="text-align:left">1&lt;/td>
+&lt;td style="text-align:left">2&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">可用性&lt;/td>
+&lt;td style="text-align:left">3&lt;/td>
+&lt;td style="text-align:left">2&lt;/td>
+&lt;td style="text-align:left">2&lt;/td>
+&lt;td style="text-align:left">1&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">可重入性&lt;/td>
+&lt;td style="text-align:left">需要额外增加字段支持&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">锁超时&lt;/td>
+&lt;td style="text-align:left">需要额外增加字段支持&lt;/td>
+&lt;td style="text-align:left">支持，超时后失效&lt;/td>
+&lt;td style="text-align:left">支持，超时后失效&lt;/td>
+&lt;td style="text-align:left">支持，宕机后节点自动失效&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="总结">总结&lt;/h2>
+&lt;ol>
+&lt;li>mysql方案看起来最简单，但实现过程中的细节较多，性能一般，适用于特别简单或者没有其他方案可选的场景，一般不建议使用该方法。&lt;/li>
+&lt;li>redis 性能是最高的，使用场景最多，但可能存在单点问题，要么业务上自己处理，要么使用官方推荐的 RedLock，实际生产中需要注意 redis 多机房带来的锁问题。&lt;/li>
+&lt;li>zookeeper 的性能不如 redis，当 qps 高于 100 或锁数量大于 50 万时建议使用redis（性能数据来源于参考文档）。&lt;/li>
+&lt;/ol>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://redis.io/commands/set">https://redis.io/commands/set&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://zookeeper.apache.org/doc/r3.1.2/zookeeperOver.html">Apache zookeeper&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://www.cnblogs.com/zhili/p/redisdistributelock.html">Redis实现分布式锁的正确姿势&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://xiaomi-info.github.io/2019/12/17/redis-distributed-lock">小米-分布式锁的实现之redis篇&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://zhuanlan.zhihu.com/p/100140241">知乎-基于Redis的分布式锁详解&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://juejin.cn/post/6844903830442737671">掘金-基于Redis的分布式锁实现&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://mp.weixin.qq.com/s/64bYwgsb9h87SLQ-aiPvhA">Redisson 分布式锁实战与watch dog机制解读&lt;/a>&lt;/p></description></item></channel></rss>

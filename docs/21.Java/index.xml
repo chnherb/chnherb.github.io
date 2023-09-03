@@ -1,0 +1,13 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – Java</title><link>/docs/21.Java/</link><description>Recent content in Java on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/docs/21.Java/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 基础</title><link>/docs/21.Java/01.%E5%9F%BA%E7%A1%80/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/01.%E5%9F%BA%E7%A1%80/</guid><description>
+&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>Java基础&lt;/p></description></item><item><title>Docs: JVM</title><link>/docs/21.Java/03.JVM/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/03.JVM/</guid><description>
+&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>JVM&lt;/p></description></item><item><title>Docs: 并发</title><link>/docs/21.Java/05.%E5%B9%B6%E5%8F%91/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/05.%E5%B9%B6%E5%8F%91/</guid><description>
+&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>Java并发&lt;/p></description></item><item><title>Docs: Web</title><link>/docs/21.Java/07.Web/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/07.Web/</guid><description>
+&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>Java web相关，如JSP、tomcat等&lt;/p></description></item><item><title>Docs: 框架</title><link>/docs/21.Java/08.%E6%A1%86%E6%9E%B6/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/08.%E6%A1%86%E6%9E%B6/</guid><description>
+&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>Java框架&lt;/p></description></item><item><title>Docs: 第三方包</title><link>/docs/21.Java/09.%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/09.%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85/</guid><description>
+&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>Java第三方包&lt;/p></description></item></channel></rss>

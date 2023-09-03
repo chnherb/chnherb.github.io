@@ -1,0 +1,109 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – Shebang</title><link>/tags/Shebang/</link><description>Recent content in Shebang on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/Shebang/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Shebang</title><link>/docs/10.OS/shell/Shebang/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/10.OS/shell/Shebang/</guid><description>
+&lt;h1 id="简介">简介&lt;/h1>
+&lt;p>在计算机领域，Shebang（也称为Hashbang）是一个由井号和叹号构成的字符序列 &lt;code>#!&lt;/code> ，其出现在文本文件中的第一行的前两个字符。&lt;/p>
+&lt;p>在文件中存在 Shebang 的情况下，类 Unix 操作系统的程序加载器会分析 Shebang 后的内容，将这些内容作为解释器指令，并调用该指令，并将载有 Shebang 的文件路径作为该解释器的参数。&lt;/p>
+&lt;p>例如，以指令 &lt;code>#!/bin/sh&lt;/code> 开头的文件在执行时会实际调用 /bin/sh 程序。&lt;/p>
+&lt;p>由于 # 符号在许多脚本语言中都是注释标识符，Shebang 的内容会被这些脚本解释器自动忽略。 在 # 字符不是注释标识符的语言中，例如 &lt;a href="https://zh.wikipedia.org/wiki/Scheme">Scheme&lt;/a>，解释器也可能忽略以 #! 开头的首行内容，以提供与 Shebang 的兼容性。&lt;/p>
+&lt;h1 id="env-bash">env bash&lt;/h1>
+&lt;p>使用方式：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#633820">#!/usr/bin/env bash
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="env-的作用">env 的作用&lt;/h2>
+&lt;p>env 命令用于显式系统中已存在的环境变量，以及在定义的环境中执行命令。&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ ls /usr/bin | grep env
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>env
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>printenv
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>与 &lt;code>#!/bin/bash&lt;/code> 声明了 bash 所在位置，系统知道去哪里找 bash 相比， &lt;code>#!/usr/bin/env bash&lt;/code> 只声明了 env 所在位置，然后去 $PATH 中找 bash 的位置。
+比如执行 &lt;code>env python&lt;/code> 时，它其实会去 &lt;code>env | grep PATH&lt;/code> 中的几个路径中依次寻找 python 的可执行文件。&lt;/p>
+&lt;h1 id="env-bash和bash对比">env bash和bash对比&lt;/h1>
+&lt;h2 id="env-bash优缺点">env bash优缺点&lt;/h2>
+&lt;p>优点：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;code>#!/usr/bin/env bash&lt;/code> 不必在系统的特定位置查找命令解释器，为多系统间的移植提供了极大的灵活性和便利性（某些系统的一些命令解释器并不在 /bin 或一些约定的目录下，而是一些比较奇怪的目录）&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>不了解主机环境时，&lt;code>#!/usr/bin/env bash&lt;/code> 可以使开发工作快速开展
+缺点：&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>对安全性比较看重时，该写法会出现安全隐患&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>该写法会从 $PATH 中查找命令解释器所在的位置并匹配第一个找到的位置，这意味着可以伪造一个假的命令解释器，并将伪造后的命令解释器所在目录写入 PATH 环境变量中并位于靠前位置，这样就形成了安全隐患。&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>因为 Shebang 解析的设计导致无法传递多个多个参数&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>如 &lt;code>#!/usr/bin/perl -w&lt;/code> 和 &lt;code>#!/bin/csh -f&lt;/code> ，而如果使用 &lt;code>#!/usr/bin/env perl -w&lt;/code> 这种写法的话，perl -w 会被当成一个参数，但根本找不到 perl -w 这个命令解释器，就会出错。&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>某些系统 env 命令的位置不在 /usr/bin 下&lt;/li>
+&lt;/ul>
+&lt;h2 id="bash优缺点">bash优缺点&lt;/h2>
+&lt;p>优点：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>准确指出所需命令解释器的位置&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>安全性相对较高&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>可以传递多个参数
+缺点：&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>移植性相对较差，很多系统的命令解释器位置不一致&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>一些命令解释器的位置记不住&lt;/p>
+&lt;/li>
+&lt;/ul></description></item></channel></rss>

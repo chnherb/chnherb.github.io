@@ -1,0 +1,483 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – mod</title><link>/tags/mod/</link><description>Recent content in mod on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/mod/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: mod包冲突解决实战01</title><link>/docs/22.Golang/mod%E5%8C%85%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E5%AE%9E%E6%88%9801/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/22.Golang/mod%E5%8C%85%E5%86%B2%E7%AA%81%E8%A7%A3%E5%86%B3%E5%AE%9E%E6%88%9801/</guid><description>
+&lt;h1 id="背景">背景&lt;/h1>
+&lt;p>Go升级包之后编译报错&lt;/p>
+&lt;h1 id="常用命令">常用命令&lt;/h1>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>go mod tidy
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>go mod why xxx包
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>go list -m -versions xx包
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ go mod &lt;span style="color:#a90d91">help&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Usage:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        go mod &amp;lt;command&amp;gt; &lt;span style="color:#000">[&lt;/span>arguments&lt;span style="color:#000">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>The commands are:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        download    download modules to &lt;span style="color:#a90d91">local&lt;/span> cache
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        edit        edit go.mod from tools or scripts
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        graph       print module requirement graph
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        init        initialize new module in current directory
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        tidy        add missing and remove unused modules
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        vendor      make vendored copy of dependencies
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        verify      verify dependencies have expected content
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        why         explain why packages or modules are needed
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h1 id="分析过程">分析过程&lt;/h1>
+&lt;h2 id="错误1">错误1&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-go" data-lang="go">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">$&lt;/span> &lt;span style="color:#a90d91">go&lt;/span> &lt;span style="color:#000">mod&lt;/span> &lt;span style="color:#000">tidy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">code&lt;/span>.&lt;span style="color:#000">byted&lt;/span>.&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">life&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">poi_api&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">pack&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">code&lt;/span>.&lt;span style="color:#000">byted&lt;/span>.&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">life&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">schema_builder&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">builder&lt;/span> &lt;span style="color:#000">tested&lt;/span> &lt;span style="color:#000">by&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">code&lt;/span>.&lt;span style="color:#000">byted&lt;/span>.&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">life&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">schema_builder&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">builder&lt;/span>.&lt;span style="color:#000">test&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">code&lt;/span>.&lt;span style="color:#000">byted&lt;/span>.&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">aweme&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">goprofile_api&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">clients&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">code&lt;/span>.&lt;span style="color:#000">byted&lt;/span>.&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">ucenter&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">act_passport_lib&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">code&lt;/span>.&lt;span style="color:#000">byted&lt;/span>.&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">luckycat&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">activity_common_util&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">settings&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">code&lt;/span>.&lt;span style="color:#000">byted&lt;/span>.&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">luckycat&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">activity_common_util&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">byteconf&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">code&lt;/span>.&lt;span style="color:#000">byted&lt;/span>.&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">ttarch&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">byteconf_sdk&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">code&lt;/span>.&lt;span style="color:#000">byted&lt;/span>.&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">toutiao&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">conf_middleground_json_engine_lib&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">model&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">celconf&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">github&lt;/span>.&lt;span style="color:#000">com&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">google&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">cel&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#a90d91">go&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">cel&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">github&lt;/span>.&lt;span style="color:#000">com&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">google&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">cel&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#a90d91">go&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">parser&lt;/span> &lt;span style="color:#000">imports&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">github&lt;/span>.&lt;span style="color:#000">com&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr4&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">runtime&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">Go&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span>: &lt;span style="color:#000">ambiguous&lt;/span> &lt;span style="color:#a90d91">import&lt;/span>: &lt;span style="color:#000">found&lt;/span> &lt;span style="color:#a90d91">package&lt;/span> &lt;span style="color:#000">github&lt;/span>.&lt;span style="color:#000">com&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr4&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">runtime&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">Go&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#000">multiple&lt;/span> &lt;span style="color:#000">modules&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">github&lt;/span>.&lt;span style="color:#000">com&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr4&lt;/span> &lt;span style="color:#000">v0&lt;/span>&lt;span style="color:#1c01ce">.0.0&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#1c01ce">20200503195918&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#1c01ce">621&lt;/span>&lt;span style="color:#000">b933c7a7f&lt;/span> (&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">Users&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">admin&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#a90d91">go&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">pkg&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">mod&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">github&lt;/span>.&lt;span style="color:#000">com&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr4&lt;/span>&lt;span style="color:#000">@&lt;/span>&lt;span style="color:#000">v0&lt;/span>&lt;span style="color:#1c01ce">.0.0&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#1c01ce">20200503195918&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#1c01ce">621&lt;/span>&lt;span style="color:#000">b933c7a7f&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">runtime&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">Go&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        &lt;span style="color:#000">github&lt;/span>.&lt;span style="color:#000">com&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr4&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">runtime&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">Go&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span> &lt;span style="color:#000">v0&lt;/span>&lt;span style="color:#1c01ce">.0.0&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#1c01ce">20210521184019&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#000">c5ad59b459ec&lt;/span> (&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">Users&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">admin&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#a90d91">go&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">pkg&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">mod&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">github&lt;/span>.&lt;span style="color:#000">com&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr4&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">runtime&lt;/span>&lt;span style="color:#000">/&lt;/span>!&lt;span style="color:#a90d91">go&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">antlr&lt;/span>&lt;span style="color:#000">@&lt;/span>&lt;span style="color:#000">v0&lt;/span>&lt;span style="color:#1c01ce">.0.0&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#1c01ce">20210521184019&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#000">c5ad59b459ec&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="解决1">解决1&lt;/h2>
+&lt;p>分析：尝试升级 cel-go 依赖库&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ go get github.com/google/cel-go
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>然后 go mod tidy，提示
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>To upgrade to the versions selected by go 1.16:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        go mod tidy -go&lt;span style="color:#000">=&lt;/span>1.16 &lt;span style="color:#000">&amp;amp;&amp;amp;&lt;/span> go mod tidy -go&lt;span style="color:#000">=&lt;/span>1.17
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>If reproducibility with go 1.16 is not needed:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>        go mod tidy -compat&lt;span style="color:#000">=&lt;/span>1.17
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>For other options, see:
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>便执行
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>go mod tidy -go&lt;span style="color:#000">=&lt;/span>1.16 &lt;span style="color:#000">&amp;amp;&amp;amp;&lt;/span> go mod tidy -go&lt;span style="color:#000">=&lt;/span>1.17
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h2 id="错误2">错误2&lt;/h2>
+&lt;p>编译报错：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>2023/09/03 16:20:41 ../compile_path/pkg/mod/code.byted.org/iesarch/samsarahq_thunder@v0.0.0-20230227104850-d8b99a2a24a4/graphql/directive.go:141:55: cannot use NewMultiMapParameters&lt;span style="color:#000">(&lt;/span>expressArguments, r.E.AssignData, r.E.RawData, sourceMap&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">type&lt;/span> MultiMapParameters&lt;span style="color:#000">)&lt;/span> as &lt;span style="color:#a90d91">type&lt;/span> govaluate.MapParameters in argument to expression.Eval
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">499&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2023/09/03 16:20:41 ../compile_path/pkg/mod/code.byted.org/iesarch/samsarahq_thunder@v0.0.0-20230227104850-d8b99a2a24a4/graphql/eval_calculator.go:32:48: cannot use NewMultiMapParameters&lt;span style="color:#000">(&lt;/span>m...&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">type&lt;/span> MultiMapParameters&lt;span style="color:#000">)&lt;/span> as &lt;span style="color:#a90d91">type&lt;/span> govaluate.MapParameters in argument to e.expression.Eval
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">500&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2023/09/03 16:20:41 ../compile_path/pkg/mod/code.byted.org/iesarch/samsarahq_thunder@v0.0.0-20230227104850-d8b99a2a24a4/graphql/resolver.go:408:55: cannot use NewMultiMapParameters&lt;span style="color:#000">(&lt;/span>expressArguments, r.E.AssignData, r.E.RawData, sourceMap&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">type&lt;/span> MultiMapParameters&lt;span style="color:#000">)&lt;/span> as &lt;span style="color:#a90d91">type&lt;/span> govaluate.MapParameters in argument to expression.Eval
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">501&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2023/09/03 16:20:49 &lt;span style="color:#177500"># code.byted.org/eventbus/client-go/discovery&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="解决2">解决2&lt;/h2>
+&lt;p>通过报错信息可以发现 code.byted.org/iesarch/samsarahq_thunder 依赖 code.byted.org/whale/govaluate 包，但出现参数不匹配的问题。&lt;/p>
+&lt;p>对比之前master代码，发现 code.byted.org/iesarch/samsarahq_thunder 版本无变化，code.byted.org/whale/govaluate 版本由 v1.0.1 升级到了 v1.0.5（也可以查看该包所有版本）。顾降级该版本。&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>replace code.byted.org/whale/govaluate &lt;span style="color:#000">=&lt;/span>&amp;gt; code.byted.org/whale/govaluate v1.0.1
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>重新执行：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>go mod tidy
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>然后重新编译&lt;/p>
+&lt;h2 id="错误3">错误3&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>2023/09/03 16:50:14 + go build -mod&lt;span style="color:#000">=&lt;/span>mod -o data.life.poi_api -opt&lt;span style="color:#000">=&lt;/span>beast
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">497&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2023/09/03 16:50:50 &lt;span style="color:#177500"># code.byted.org/eventbus/client-go/discovery&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">498&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2023/09/03 16:50:50 ../compile_path/pkg/mod/code.byted.org/eventbus/client-go@v1.10.1/discovery/consul_resolver.go:48:8: invalid argument cluster &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">type&lt;/span> func&lt;span style="color:#000">()&lt;/span> string&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#a90d91">for&lt;/span> len
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">499&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2023/09/03 16:50:50 ../compile_path/pkg/mod/code.byted.org/eventbus/client-go@v1.10.1/discovery/consul_resolver.go:49:11: cannot use defaultCluster &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">type&lt;/span> string&lt;span style="color:#000">)&lt;/span> as &lt;span style="color:#a90d91">type&lt;/span> func&lt;span style="color:#000">()&lt;/span> string in assignment
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">500&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2023/09/03 16:50:50 ../compile_path/pkg/mod/code.byted.org/eventbus/client-go@v1.10.1/discovery/consul_resolver.go:54:26: cannot use cluster &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">type&lt;/span> func&lt;span style="color:#000">()&lt;/span> string&lt;span style="color:#000">)&lt;/span> as &lt;span style="color:#a90d91">type&lt;/span> string in argument to newConsulResolver
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="解决3">解决3&lt;/h2>
+&lt;p>分析 code.byted.org/eventbus/client-go 原来master代码是 v1.10.1，现在的版本还是一样，查找该包所有版本：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>go list -m -versions code.byted.org/eventbus/client-go
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>也可直接升级到最新版本：
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>go get code.byted.org/eventbus/client-go
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>查看mod文件升级到 v1.13.5，然后tidy之后重新编译。&lt;/p>
+&lt;h2 id="问题4">问题4&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># code.byted.org/eventbus/client-go/discovery&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>/home/byteide/go/pkg/mod/code.byted.org/eventbus/client-go@v1.10.1/discovery/consul_resolver.go:48:8: invalid argument cluster &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">type&lt;/span> func&lt;span style="color:#000">()&lt;/span> string&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#a90d91">for&lt;/span> len
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>/home/byteide/go/pkg/mod/code.byted.org/eventbus/client-go@v1.10.1/discovery/consul_resolver.go:49:11: cannot use defaultCluster &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">type&lt;/span> string&lt;span style="color:#000">)&lt;/span> as &lt;span style="color:#a90d91">type&lt;/span> func&lt;span style="color:#000">()&lt;/span> string in assignment
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>/home/byteide/go/pkg/mod/code.byted.org/eventbus/client-go@v1.10.1/discovery/consul_resolver.go:54:26: cannot use cluster &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">type&lt;/span> func&lt;span style="color:#000">()&lt;/span> string&lt;span style="color:#000">)&lt;/span> as &lt;span style="color:#a90d91">type&lt;/span> string in argument to newConsulResolver
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># github.com/mattn/go-sqlite3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sqlite3-binding.c: In &lt;span style="color:#a90d91">function&lt;/span> ‘sqlite3SelectNew’:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sqlite3-binding.c:128049:10: warning: &lt;span style="color:#a90d91">function&lt;/span> may &lt;span style="color:#a90d91">return&lt;/span> address of &lt;span style="color:#a90d91">local&lt;/span> variable &lt;span style="color:#000">[&lt;/span>-Wreturn-local-addr&lt;span style="color:#000">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">128049&lt;/span> |   &lt;span style="color:#a90d91">return&lt;/span> pNew;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>       |          ^~~~
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sqlite3-binding.c:128009:10: note: declared here
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">128009&lt;/span> |   Select standin;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="解决4">解决4&lt;/h2>
+&lt;p>参考：&lt;/p>
+&lt;blockquote>
+&lt;p>&lt;a href="https://github.com/mattn/go-sqlite3/issues/822">https://github.com/mattn/go-sqlite3/issues/822&lt;/a>
+&lt;a href="https://github.com/mattn/go-sqlite3/issues/803">https://github.com/mattn/go-sqlite3/issues/803&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>查看&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ go env | grep -i CGO_CFLAGS
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">CGO_CFLAGS&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#34;-g -O2&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>解决：
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">CGO_CFLAGS&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#34;-g -O2 -Wno-return-local-addr&amp;#34;&lt;/span> bash build.sh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p></description></item></channel></rss>

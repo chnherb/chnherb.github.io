@@ -1,0 +1,207 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – JVM</title><link>/tags/JVM/</link><description>Recent content in JVM on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/JVM/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: JVM</title><link>/docs/21.Java/03.JVM/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/03.JVM/</guid><description>
+&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>JVM&lt;/p></description></item><item><title>Docs: JVM调优</title><link>/docs/21.Java/03.JVM/JVM%E8%B0%83%E4%BC%98/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/03.JVM/JVM%E8%B0%83%E4%BC%98/</guid><description>
+&lt;h1 id="优化系统思路">优化系统思路&lt;/h1>
+&lt;ol>
+&lt;li>
+&lt;p>首先排查 DB 的问题
+如评估索引是否合理，是否需要引入分布式缓存、是否需要分库分表等&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>扩容
+横向和纵向扩容，解决系统压力过大导致的硬件能力不足出现的问题&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>代码优化
+检查代码上是否存在资源浪费的情况，或者逻辑上有优化的空间，比如通过并行的方式处理请求等等）&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>JVM排查并优化
+观察是否存在多次GC问题或者GC时间过长等等&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>网络和操作系统层面优化
+查看内存/CPU/网络/硬盘读写指标是否正常等&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;h1 id="jvm调优">JVM调优&lt;/h1>
+&lt;h2 id="参考指标">参考指标&lt;/h2>
+&lt;ul>
+&lt;li>吞吐量&lt;/li>
+&lt;li>停顿时间&lt;/li>
+&lt;li>垃圾回收频率&lt;/li>
+&lt;/ul>
+&lt;h2 id="调优方法">调优方法&lt;/h2>
+&lt;h3 id="内存分配策略">内存分配策略&lt;/h3>
+&lt;p>内存区域大小以及相关策略（比如整块堆内存占多少、年轻代占多少、老年代占多少、Sur&lt;a href="https://www.zhihu.com/search?q=vivo&amp;amp;search_source=Entity&amp;amp;hybrid_search_source=Entity&amp;amp;hybrid_search_extra=%7B%22sourceType%22%3A%22answer%22%2C%22sourceId%22%3A2760498114%7D">vivo&lt;/a>r占多少、晋升老年代的条件等等）&lt;/p>
+&lt;p>比如 -Xmx：设置堆的最大值、-Xms：设置堆的初始值、-Xmn：表示年轻代的大小、-XX:SurvivorRatio：伊甸区和幸存区的比例等等&lt;/p>
+&lt;p>按经验来说：IO密集型的可以稍微把「年轻代」空间加大些，因为大多数对象都是在年轻代就会灭亡。内存计算密集型的可以稍微把「老年代」空间加大些，对象存活时间会更长些&lt;/p>
+&lt;h3 id="垃圾回收器">垃圾回收器&lt;/h3>
+&lt;blockquote>
+&lt;p>选择合适的垃圾回收器，以及各个垃圾回收器的各种调优参数&lt;/p>
+&lt;/blockquote>
+&lt;p>比如（-XX:+UseG1GC：指定 JVM 使用的垃圾回收器为 G1、-XX:MaxGCPauseMillis：设置目标停顿时间、-XX:InitiatingHeapOccupancyPercent：当整个堆内存使用达到一定比例，全局并发标记阶段 就会被启动等等）&lt;/p>
+&lt;h2 id="调优步骤">调优步骤&lt;/h2>
+&lt;ol>
+&lt;li>监控GC状态&lt;/li>
+&lt;li>生成dump文件&lt;/li>
+&lt;li>分析dump文件&lt;/li>
+&lt;li>调整GC类型/内存分配&lt;/li>
+&lt;/ol>
+&lt;h1 id="调优参数参考">调优参数参考&lt;/h1>
+&lt;h2 id="堆大小">堆大小&lt;/h2>
+&lt;p>参数-Xms -Xmx标志限定堆的最小、最大值。&lt;strong>为了防止垃圾收集器在最小、最大之间收缩堆而产生额外的时间，通常把最大、最小设置为相同的值。&lt;/strong>&lt;/p>
+&lt;h2 id="堆内存分配比例">堆内存分配比例&lt;/h2>
+&lt;p>年轻代和老年代默认比例是 1:2 分配堆内存，可以通过调整二者之间的比例 NewRadio 来调整二者之间的大小。&lt;/p>
+&lt;p>年轻代通过 -XX:newSize -XX:MaxNewSize 来设置其绝对大小。同样为了防止堆收缩，通常将二者设置成同样大小。&lt;/p>
+&lt;h2 id="年轻代-老年代大小">年轻代/老年代大小&lt;/h2>
+&lt;ul>
+&lt;li>
+&lt;p>更大的年轻代必然导致更小的老年代：大的年轻代会延长普通GC的周期，且增加每次 YGC 的时间。小的老年代导致更频繁的 FullGC。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>更小的年轻代必然导致更大的老年代：小的年轻代会导致 YGC 很频繁，但每次 GC 时间会很短。大的老年代会减少 FullGC 的频率。
+如何选择应该依赖应用程序的对象生命周期分布情况：&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>如果应用存在大量的临时对象，应该选择更大的年轻代&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>如果应用存在相对较多的持久对象，老年代应该适当增大
+但是很多应用都没有这样明显的特征。所以抉择时应该根据以下几点：&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>本着 FullGC 尽量少的原则，让老年代尽量缓存常用对象（默认比例1:2也是基于这个原则）&lt;/li>
+&lt;li>观察一段时间，查看峰值时老年代占用内存大小，在不影响 FullGC 的前提下，适当加大年轻代，比如将比例控制成 1:1。但应该给老年代至少预留三分之一的增长空间。&lt;/li>
+&lt;/ol>
+&lt;h2 id="垃圾回收算法">垃圾回收算法&lt;/h2>
+&lt;p>在配置较好的机器上（如多核、大内存），可以为老年代选择并行回收算法：-XX:+UseParallelOldGC。&lt;/p>
+&lt;h2 id="线程堆栈大小">线程堆栈大小&lt;/h2>
+&lt;p>每个线程默认开启 1M 的堆栈，用于存放栈帧、调用参数、局部变量等。可以根据实际情况调小，理论上总内存大小不变的情况下，这样可以开启更多的线程。当然也受限于操作系统。&lt;/p>
+&lt;h1 id="调优策略">调优策略&lt;/h1>
+&lt;h2 id="fullgc">FullGC&lt;/h2>
+&lt;p>FullGC 会对整个堆进行整理，包括 年轻代、老年代、永久代，所以会比较慢，因此应该尽可能减少 FullGC 的次数。&lt;/p>
+&lt;p>可能的原因：&lt;/p>
+&lt;ul>
+&lt;li>老年代被写满&lt;/li>
+&lt;li>永久代空间不足&lt;/li>
+&lt;li>System.gc() 被显示调用&lt;/li>
+&lt;/ul>
+&lt;h1 id="工具">工具&lt;/h1>
+&lt;p>JDK 自带了很多监控工具，都位于 JDK 的 bin 目录下，其中最常用的是 jconsole 和 jvisualvm 这两款视图监控工具。&lt;/p>
+&lt;h2 id="jconsole">jconsole&lt;/h2>
+&lt;p>JMX的可视化管理工具。&lt;/p>
+&lt;p>用于对 JVM 中的内存、线程和类等进行监控；&lt;/p>
+&lt;h2 id="jvisualvm">jvisualvm&lt;/h2>
+&lt;p>JDK 自带的全能分析工具。&lt;/p>
+&lt;p>可以分析：内存快照、线程快照、程序死锁、监控内存的变化、gc 变化等。&lt;/p>
+&lt;h2 id="jps">jps&lt;/h2>
+&lt;p>虚拟机进程状况工具。&lt;/p>
+&lt;p>用来输出JVM中运行的进程状态「基础」信息（进程号、主类）。这个命令很常用的就是用来看当前服务器有多少Java进程在运行，它们的进程号和加载主类是什么。&lt;/p>
+&lt;h2 id="jstat">jstat&lt;/h2>
+&lt;p>虚拟机统计信息监控工具。&lt;/p>
+&lt;p>监视虚拟机各种运行状态信息，可以显示本地或者是远程虚拟机进程中「统计类」信息，如类装载、编译相关信息统计、各个内存区域GC概况和统计、垃圾收集、JIT编译等运行数据。这个命令很常用于看GC的情况。&lt;/p>
+&lt;h2 id="jinfo">jinfo&lt;/h2>
+&lt;p>通过jinfo命令来查看和调整Java进程的「运行参数」。&lt;/p>
+&lt;h2 id="jmap">jmap&lt;/h2>
+&lt;p>通过jmap命令来查看Java进程的「内存信息」。可以生成虚拟机的内存转储快照（heapdump文件）。常用于将JVM内存信息dump到文件，然后用MAT( Memory Analyzer tool 内存解析工具)对文件进行分析。&lt;/p>
+&lt;h2 id="jstack">jstack&lt;/h2>
+&lt;p>堆栈跟踪工具。&lt;/p>
+&lt;p>查看JVM「线程信息」，用于生成虚拟机当前时刻的线程快照。这个命令用常用语排查死锁相关的问题。&lt;/p>
+&lt;h2 id="jhat">jhat&lt;/h2>
+&lt;p>分析内存转储快照，不推荐使用，而且慢&lt;/p>
+&lt;h2 id="arthas">Arthas&lt;/h2>
+&lt;p>还有近期比较热门的Arthas（阿里开源的诊断工具），涵盖了上面很多命令的功能且自带图形化界面。这也是常用的排查和分析工具。&lt;/p>
+&lt;h1 id="jit优化技术">JIT优化技术&lt;/h1>
+&lt;p>JIT优化技术比较出名的有两种：方法内联和逃逸分析。&lt;/p>
+&lt;h2 id="方法内联">方法内联&lt;/h2>
+&lt;p>把「目标方法」的代码复制到「调用的方法」中，避免发生真实的方法调用。&lt;/p>
+&lt;p>因为每次方法调用都会生成栈帧（压栈出栈记录方法调用位置等等）会带来一定的性能损耗，所以「方法内联」的优化可以提高一定的性能。&lt;/p>
+&lt;p>在JVM中也有相关的参数来指定（-XX:MaxFreqInlineSize、-XX:MaxInlineSize）。&lt;/p>
+&lt;h2 id="逃逸分析">逃逸分析&lt;/h2>
+&lt;p>判断一个对象是否被外部方法引用或外部线程访问的分析技术，如果「没有被引用」，就可以对其进行优化，如：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>锁消除（同步忽略）
+该对象只在方法内部被访问，不会被别的地方引用，那么就一定是线程安全的，可以把锁相关的代码给忽略掉&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>栈上分配
+该对象只会在方法内部被访问，直接将对象分配在「栈」中&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;blockquote>
+&lt;p>Java默认是将对象分配在「堆」中，是需要通过JVM垃圾回收期进行回收，需要损耗一定的性能，而栈内分配则快很多&lt;/p>
+&lt;/blockquote>
+&lt;ol start="3">
+&lt;li>标量替换/分离对象
+当程序真正执行的时候可以不创建这个对象，而直接创建它的成员变量来代替。将对象拆分后，可以分配对象的成员变量在栈或寄存器上，原本的对象就无需分配内存空间了。&lt;/li>
+&lt;/ol>
+&lt;h1 id="调优案例">调优案例&lt;/h1>
+&lt;h2 id="内存分配大小">内存分配大小&lt;/h2>
+&lt;p>现象：&lt;/p>
+&lt;blockquote>
+&lt;p>部分机器出现异常：GC overhead limit exceeded&lt;/p>
+&lt;/blockquote>
+&lt;p>该异常代表GC为了释放很小的空间却耗费了太多的时间，原因一般有两个：&lt;/p>
+&lt;ol>
+&lt;li>堆太小&lt;/li>
+&lt;li>有死循环或大对象
+因为是部分机器，所以排查原因2，怀疑是部分机器中堆设置太小，通过 &lt;code>ps -ef | grep java&lt;/code> 查看内存分配大小（如堆-Xms -Xmx），如果太小而该应用又比较吃内存，适当调大堆中各区域大小。&lt;/li>
+&lt;/ol>
+&lt;h2 id="内存分配比例">内存分配比例&lt;/h2>
+&lt;p>现象：&lt;/p>
+&lt;blockquote>
+&lt;p>系统经常出现卡顿&lt;/p>
+&lt;/blockquote>
+&lt;p>查看GC情况：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ jstat -gcutil
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>S0 S1 E O P YGC YGCT FGC FGCT GCT
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>13.01 0.00 5.19 62.67 20.76 &lt;span style="color:#1c01ce">56&lt;/span> 2.032 &lt;span style="color:#1c01ce">6&lt;/span> 7.012 9.026
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到不同GC耗时和次数，Young GC 执行了 56 次，耗时 2.032 秒，平均耗时 36 ms 在正常范围内。FullGC 执行了 6 次，耗时 7.012 秒，平均耗时超过1秒。可以判断是 FullGC 耗时较长导致的。进一步查询年轻代和老年代的大小比例 NewRatio=9，可以得出原因：&lt;/p>
+&lt;ol>
+&lt;li>年轻代太小，导致对象提前进入老年代，触发老年代发生 FullGC&lt;/li>
+&lt;li>老年代太大，进行 FullGC 耗时较大
+优化方法：调整 NewRatio 大小。&lt;/li>
+&lt;/ol>
+&lt;p>这样就是把对象控制在年轻代就清理掉，防止进入老年代。&lt;/p>
+&lt;h2 id="对象未释放">对象未释放&lt;/h2>
+&lt;p>现象：&lt;/p>
+&lt;blockquote>
+&lt;p>性能测试过程中，发现内存占用率高，Full GC 频繁。&lt;/p>
+&lt;/blockquote>
+&lt;p>使用 &lt;code>sudo -u admin -H jmap -dump:format=b,file=FileName.hprof pid&lt;/code> 来 dump 内存生成 dump 文件，并使用 MAT 进行分析。&lt;/p>
+&lt;p>可能得问题：内存泄漏&lt;/p>
+&lt;p>1、某数据结构（列表、队列等）引用的大量对象未被释放，导致整个线程占用内存过高（几百兆）。优化相关代码即可。&lt;/p>
+&lt;p>2、匿名对象引用的对象未被释放&lt;/p>
+&lt;h2 id="元数据空间太小">元数据空间太小&lt;/h2>
+&lt;p>查看GC log，发现 FullGC 时，老年代占据的内存比例很小（如低于60%）却发生了 FullGC，metaspace 占用的空间远大于默认的分配值。&lt;/p>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://mp.weixin.qq.com/s/RFwXYdzeRkTG5uaebVoLQw">美团：Java中9种常见的CMS GC问题分析与解决&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://zhuanlan.zhihu.com/p/373853432">优化 FullGC&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://mikechen.cc/3321.html">JVM性能调优6大步骤&lt;/a>&lt;/p></description></item></channel></rss>

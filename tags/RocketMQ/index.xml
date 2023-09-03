@@ -1,0 +1,790 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – RocketMQ</title><link>/tags/RocketMQ/</link><description>Recent content in RocketMQ on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/RocketMQ/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: RocketMQ源码分析</title><link>/docs/43.MQ/RocketMQ%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/43.MQ/RocketMQ%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/</guid><description>
+&lt;h1 id="源码环境搭建">源码环境搭建&lt;/h1>
+&lt;h2 id="源码下载">源码下载&lt;/h2>
+&lt;p>&lt;a href="https://github.com/apache/rocketmq">https://github.com/apache/rocketmq&lt;/a>&lt;/p>
+&lt;p>可直接clone或下载压缩包，这里以 release-4.7.1 版本为例分析。&lt;/p>
+&lt;h2 id="模块启动">模块启动&lt;/h2>
+&lt;p>主要模块：&lt;/p>
+&lt;p>1、broker：broker 模块&lt;/p>
+&lt;p>2、client：客户端（生产者、消费者）&lt;/p>
+&lt;p>3、example：示例代码&lt;/p>
+&lt;p>4、namesrv：NameServer 实现相关类&lt;/p>
+&lt;p>Tips：配置关键代码提示，类似 todo、fixme&lt;/p>
+&lt;p>在 IDEA 下方的 TODO 中，点击 Filter 图标的 Edit Filters。配置 Patterns，如 &lt;code>\bk1&lt;/code> 、 &lt;code>\bk2&lt;/code> 、 &lt;code>\bkkk&lt;/code> 等；配置 Filters ，选择 刚才配置的 patterns。&lt;/p>
+&lt;p>参考链接：&lt;a href="https://www.jetbrains.com.cn/help/idea/using-todo.html">https://www.jetbrains.com.cn/help/idea/using-todo.html&lt;/a>&lt;/p>
+&lt;h3 id="源码调试">源码调试&lt;/h3>
+&lt;p>Execute Maven Goal（IDEA 右边栏 maven 图标）&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>clean install -Dmaven.test.skip&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#a90d91">true&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="配置文件">配置文件&lt;/h3>
+&lt;p>在根目录下新建 conf 文件夹，将 distribution/conf 下 broker.conf、logback_broker.xml、logback_namesrv.xml、logback_tools.xml 拷贝到该目录下。&lt;/p>
+&lt;h3 id="启动-namesrv">启动 namesrv&lt;/h3>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">apache&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rocketmq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">namesrv&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">NamesrvStartup&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 指定环境变量，项目根目录，用于找其下的 conf 目录
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">ROCKETMQ_HOME&lt;/span>&lt;span style="color:#000">=/&lt;/span>&lt;span style="color:#000">Users&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">bo&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">source_code&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">rocketmq&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 启动成功，会出现如下日志
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">The&lt;/span> &lt;span style="color:#000">Name&lt;/span> &lt;span style="color:#000">Server&lt;/span> &lt;span style="color:#000">boot&lt;/span> &lt;span style="color:#000">success&lt;/span>&lt;span style="color:#000">.&lt;/span> &lt;span style="color:#000">serializeType&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">JSON&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="启动-broker">启动 broker&lt;/h3>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">apache&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rocketmq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">broker&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">BrokerStartup&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 指定环境变量，项目根目录，用于找其下的 conf 目录
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">ROCKETMQ_HOME&lt;/span>&lt;span style="color:#000">=/&lt;/span>&lt;span style="color:#000">Users&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">bo&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">source_code&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">rocketmq&lt;/span>&lt;span style="color:#000">;&lt;/span>&lt;span style="color:#000">NAMESRV_ADDR&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">127&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">0&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">0&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">1&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">9876&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 指定程序参数
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#000">c&lt;/span> &lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">Users&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">bo&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">source_code&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">rocketmq&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">conf&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">broker&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 启动成功
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">The&lt;/span> &lt;span style="color:#000">broker&lt;/span>&lt;span style="color:#000">[&lt;/span>&lt;span style="color:#000">broker&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#000">a&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">192&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">168&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">2&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">104&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">10911&lt;/span>&lt;span style="color:#000">]&lt;/span> &lt;span style="color:#000">boot&lt;/span> &lt;span style="color:#000">success&lt;/span>&lt;span style="color:#000">.&lt;/span> &lt;span style="color:#000">serializeType&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">JSON&lt;/span> &lt;span style="color:#000">and&lt;/span> &lt;span style="color:#000">name&lt;/span> &lt;span style="color:#000">server&lt;/span> &lt;span style="color:#000">is&lt;/span> &lt;span style="color:#000">127&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">0&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">0&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">1&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">9876&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="启动-consumer">启动 consumer&lt;/h3>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">apache&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rocketmq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">example&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">quickstart&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Consumer&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 在 consumer.setConsumeFromWhere xx 前指定 namesrv addr
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">consumer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">setNamesrvAddr&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;127.0.0.1:9876&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 或配置环境变量
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">NAMESRV_ADDR&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">127&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">0&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">0&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">1&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">9876&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="启动-producer">启动 producer&lt;/h3>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">apache&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rocketmq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">example&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">quickstart&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Producer&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 在 producer.start(); 前指定 namesrv addr
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">producer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">setNamesrvAddr&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;127.0.0.1:9876&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 或配置环境变量
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">NAMESRV_ADDR&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">127&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">0&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">0&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">1&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">9876&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h1 id="namesrv">NameSrv&lt;/h1>
+&lt;h2 id="nameserver整体结构">NameServer整体结构&lt;/h2>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_1.png" alt="20221231_rocketmq_1.png">&lt;/p>
+&lt;h1 id="broker">Broker&lt;/h1>
+&lt;h2 id="broker架构图">Broker架构图&lt;/h2>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_2.png" alt="20221231_rocketmq_2.png">&lt;/p>
+&lt;h2 id="broker-注册">Broker 注册&lt;/h2>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_3.png" alt="20221231_rocketmq_3.png">&lt;/p>
+&lt;h1 id="senddefaultimpl">sendDefaultImpl&lt;/h1>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">apache&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rocketmq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">client&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">impl&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">producer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DefaultMQProducerImpl&lt;/span>&lt;span style="color:#000">#&lt;/span>&lt;span style="color:#000">sendDefaultImpl&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="checkmessage">checkMessage&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Validators&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">checkMessage&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">msg&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">defaultMQProducer&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="trytofindtopicpublishinfo">tryToFindTopicPublishInfo&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">tryToFindTopicPublishInfo&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">msg&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getTopic&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="selectonemessagequeue">selectOneMessageQueue&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">selectOneMessageQueue&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">topicPublishInfo&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">lastBrokerName&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>Message Queue选择机制&lt;/p>
+&lt;h2 id="updatefaultitem">updateFaultItem&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">updateFaultItem&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">mq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getBrokerName&lt;/span>&lt;span style="color:#000">(),&lt;/span> &lt;span style="color:#000">endTimestamp&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">beginTimestampPrev&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#a90d91">true&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>容错机制下的选择逻辑&lt;/p>
+&lt;h1 id="producer">Producer&lt;/h1>
+&lt;h2 id="producer-功能">Producer 功能&lt;/h2>
+&lt;p>Producer 有两种：&lt;/p>
+&lt;p>1、普通发送者 DefaultMQProducer。只需要构建一个 Netty 客户端，往 Broker 发送消息即可。&lt;/p>
+&lt;p>注意：异步回调只是在 Producer 接收到 Broker 的响应后自行调整流程，不需要提供 Netty 服务。&lt;/p>
+&lt;p>2、事务消息发送者 TransactionMQProducer。需要构建一个 Netty 客户端，往 Broker 发送消息。同时也要构建 Netty 服务端，供 Broker 回查本地事务状态。&lt;/p>
+&lt;h2 id="producer-总体流程">Producer 总体流程&lt;/h2>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_4.png" alt="20221231_rocketmq_4.png">&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_5.png" alt="20221231_rocketmq_5.png">&lt;/p>
+&lt;h2 id="检查消息合法性">检查消息合法性&lt;/h2>
+&lt;p>&lt;strong>org.apache.rocketmq.client.Validators#checkMessage&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>Topic名称中是否包含了非法字符&lt;/li>
+&lt;li>Topic名称长度是否超过了最大的长度限制，由常量TOPIC_MAX_LENGTH来决定，其默认值为127&lt;/li>
+&lt;li>当前消息体是否是NULL或者是空消息&lt;/li>
+&lt;li>当前消息体是否超过了最大限制，由常量maxMessageSize决定，值为1024 * 1024 * 4，也就是4M。
+&lt;img src="../imgs/20221231_rocketmq_6.png" alt="20221231_rocketmq_6.png">&lt;/li>
+&lt;/ul>
+&lt;h2 id="获取topic的详情">获取Topic的详情&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">apache&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rocketmq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">client&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">impl&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">producer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DefaultMQProducerImpl&lt;/span>&lt;span style="color:#000">#&lt;/span>&lt;span style="color:#000">tryToFindTopicPublishInfo&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>当通过了消息的合法性校验之后，需要知道应该把消息发送给谁，此时就需要通过当前消息所属的Topic拿到Topic的详细数据。
+&lt;img src="../imgs/20221231_rocketmq_7.png" alt="20221231_rocketmq_7.png">&lt;/p>
+&lt;p>获取Topic的方法源码在上面已经给出来了，首先会从内存中维护的一份Map中获取数据。顺带一提，这里的Map是ConcurrentHashMap，是线程安全的，和Golang中的Sync.Map类似。&lt;/p>
+&lt;p>当然，首次发送 Map 肯定是空的，此时会调用NameServer的接口，通过Topic去获取详情的Topic数据，会在上面的方法中将其加入到Map中去，这样一来下次再往该Topic发送消息就能够直接从内存中获取。这里就是简单的实现的缓存机制 。&lt;/p>
+&lt;p>从方法名称来看，是通过Topic获取路由数据。实际上该方法，通过调用NameServer提供的API，更新了两部分数据，分别是：&lt;/p>
+&lt;p>1）Topic路由信息&lt;/p>
+&lt;p>2）Topic下的Broker相关信息&lt;/p>
+&lt;p>而这两部分数据都来源于同一个结构体TopicRouteData。&lt;/p>
+&lt;p>注意 TopicPublishInfo 这个结构体，包含 TopicRouteData&lt;/p>
+&lt;h2 id="producer-路由信息">Producer 路由信息&lt;/h2>
+&lt;p>当获取到了需要发送到的Broker详情，包括地址和MessageQueue，那么此时问题的关注点是具体发送到哪一个Message Queue中去。&lt;/p>
+&lt;p>核心代码：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">apache&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rocketmq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">client&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">impl&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">producer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DefaultMQProducerImpl&lt;/span>&lt;span style="color:#000">#&lt;/span>&lt;span style="color:#000">tryToFindTopicPublishInfo&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>路由信息的管理流程
+&lt;img src="../imgs/20221231_rocketmq_8.png" alt="20221231_rocketmq_8.png">&lt;/p>
+&lt;h2 id="producer-负载均衡">Producer 负载均衡&lt;/h2>
+&lt;p>默认会把消息平均地发送到所有 MessageQueue 里，这时设计到 Message Queue 的选择机制&lt;/p>
+&lt;h3 id="messagequeue-核心选择逻辑">MessageQueue 核心选择逻辑&lt;/h3>
+&lt;p>流程图&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_9.png" alt="20221231_rocketmq_9.png">&lt;/p>
+&lt;p>核心逻辑，用大白话讲就是将一个随机数和 Message Queue（TopicPublishInfo中）的容量取模。这个随机数存储在 Thread Local 中，首次计算的时候，会直接随机一个数。&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">apache&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rocketmq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">client&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">common&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">ThreadLocalIndex&lt;/span>&lt;span style="color:#000">#&lt;/span>&lt;span style="color:#000">getAndIncrement&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">org&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">apache&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rocketmq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">client&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">latency&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">MQFaultStrategy&lt;/span>&lt;span style="color:#000">#&lt;/span>&lt;span style="color:#000">selectOneMessageQueue&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到，主逻辑被变量 sendLatencyFaultEnable 分为了两部分。&lt;/p>
+&lt;h3 id="容错机制下的选择逻辑">容错机制下的选择逻辑&lt;/h3>
+&lt;p>该变量表意为发送延迟故障。本质上是一种容错的策略，在原有的MessageQueue选择基础上，再过滤掉不可用的Broker，对之前失败的Broker，按一定的时间做退避。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_10.png" alt="20221231_rocketmq_10.png">&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">updateFaultItem&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">mq&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getBrokerName&lt;/span>&lt;span style="color:#000">(),&lt;/span> &lt;span style="color:#000">endTimestamp&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">beginTimestampPrev&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#a90d91">true&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到，如果调用Broker信息发生了异常，那么就会调用 updateFault 这个方法，来更新Broker 的 Aviable 情况。注意这个参数 isolation 的值为 true。接下来从源码级别来验证上面说的退避 3000ms 的事实。
+可以看到，isolation 值是 true，则 duration 通过三元运算符计算出来结果为 30000，也就是 30 秒。所以可以得出结论，如果发送消息抛出了异常，那么直接会将该 Broker 设置为 30 秒内不可用。&lt;/p>
+&lt;p>而如果只是发送延迟较高，则会根据如下的 map，根据延迟的具体时间，来判断该设置多少时间的不可用。&lt;/p>
+&lt;h3 id="正常情况下的选择逻辑">正常情况下的选择逻辑&lt;/h3>
+&lt;p>而正常情况下，如果当前发送故障延迟没有启用，则会走常规逻辑，同样的会去for循环计算，循环中取到了 MessageQueue 之后会去判断是否和上次选择的 MessageQueue 属于同一个Broker，如果是同一个 Broker，则会重新选择，直到选择到不属于同一个 Broker 的 MessageQueue，或者直到循环结束。这也是为了将消息均匀的分发存储，防止数据倾斜。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_11.png" alt="20221231_rocketmq_11.png">&lt;/p>
+&lt;h2 id="发送消息">发送消息&lt;/h2>
+&lt;p>选到了具体的Message Queue之后就会开始执行发送消息的逻辑，就会调用底层Netty的接口给发送出去，这块暂时没啥可看的。&lt;/p>
+&lt;h1 id="broker的启动流程">Broker的启动流程&lt;/h1>
+&lt;h2 id="主从同步">主从同步&lt;/h2>
+&lt;p>在上面提到过，RocketMQ有自己的主从同步，但是有两个不同的版本，版本的分水岭是在4.5版本。这两个版本区别是什么呢？&lt;/p>
+&lt;p>1）4.5之前：有点类似于Redis中，我们手动的将某台机器通过命令slave of 变成另一台Redis的Slave节点，这样一来就变成了一个较为原始的一主一从的架构。为什么说原始呢？因为如果此时Master节点宕机，我们需要人肉的去做故障转移。RocketMQ的主从架构也是这种情况。&lt;/p>
+&lt;p>2）4.5之后：引入了Dleger，可以实现一主多从，并且实现自动的故障转移。这就跟Redis后续推出了Sentinel是一样的。Dleger也是类似的作用。&lt;/p>
+&lt;p>下图是Broker启动代码中的源码。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_12.png" alt="20221231_rocketmq_12.png">&lt;/p>
+&lt;p>可以看到判断了是否开启了Dleger，默认是不开启的。所以就会执行其中的逻辑。&lt;/p>
+&lt;p>刚好我们就看到了，里面有&lt;strong>Rocket主从同步数据&lt;/strong>的相关代码。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_13.png" alt="20221231_rocketmq_13.png">&lt;/p>
+&lt;p>如果当前Broker节点的角色是Slave，则会启动一个周期性的定时任务，定期（也就是10秒）去Master Broker同步全量的数据。同步的数据包括：&lt;/p>
+&lt;p>1）Topic的相关配置&lt;/p>
+&lt;p>2）Cosumer的消费偏移量&lt;/p>
+&lt;p>3）延迟消息的Offset&lt;/p>
+&lt;p>4）订阅组的相关数据和配置&lt;/p>
+&lt;h2 id="注册broker">注册Broker&lt;/h2>
+&lt;p>完成了主动同步定时任务的启动之后，就会去调用registerBrokerAll去注册Broker。可能这里会有点疑问，我这里是Broker启动，只有当前一个Broker实例，那这个All是什么意思呢？&lt;/p>
+&lt;p>All是指所有的NameServer，Broker启动的时候会将自己注册到每一个NameServer上去。为什么不只注册到一个NameServer就完事了呢？这样一来还可以提高效率。归根结底还是高可用的问题。&lt;/p>
+&lt;p>如果Broker只注册到了一台NameServer上，万一这台NameServer挂了呢？这个Broker对所有客户端就都不可见了。实际上Broker还在正常的运行。&lt;/p>
+&lt;p>进到registerBrokerAll中去。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_14.png" alt="20221231_rocketmq_14.png">&lt;/p>
+&lt;p>可以看到，这里会判断是否需要进行注册。通过上面的截图可以看到，此时forceRegister的值为true，而是否要注册，决定权就交给了needRegister&lt;/p>
+&lt;p>为什么需要判断是否需要注册呢？因为Broker一旦注册到了NameServer之后，由于Producer不停的在写入数据，Consumer也在不停的消费数据，Broker也可能因为故障导致某些Topic下的Message Queue等关键的路由信息发生变动。&lt;/p>
+&lt;p>这样一来，NameServer中的数据和Broker中的数据就会不一致。&lt;/p>
+&lt;h2 id="如何判断是否需要注册">如何判断是否需要注册&lt;/h2>
+&lt;p>大致的思路是，Broker会从每一个NameServer中获取到当前Broker的数据，并和当前Broker节点中的数据做对比。但凡有一台NameServer数据和当前Broker不一致，都会进行注册操作。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_15.png" alt="20221231_rocketmq_15.png">&lt;/p>
+&lt;p>接下来，我们从源码层面验证这个逻辑。关键的逻辑在图中也标注了出来。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_16.png" alt="20221231_rocketmq_16.png">&lt;/p>
+&lt;p>可以看到， 就是通过对比Broker中的数据版本和NameServer中的数据版本来实现的。这个版本，注册的时候会写到注册的数据中存入NameServer中。&lt;/p>
+&lt;p>这里由于是有多个，所以RocketMQ用线程池来实现了多线程操作，并且用CountDownLatch来等待所有的返回结果。经典的用空间换时间，Golang里面也有类似的操作，那就是sync.waitGroup。&lt;/p>
+&lt;p>关于任何一个数据不匹配，都会进行重新注册的事实，我们也从源码层面来验证一下。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_17.png" alt="20221231_rocketmq_17.png">&lt;/p>
+&lt;p>可以看到，如果任何一台NameServer的数据发生了Change，都会break，返回true。&lt;/p>
+&lt;p>这里的结果列表使用的是CopyOnWriteList来实现的。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_18.png" alt="20221231_rocketmq_18.png">&lt;/p>
+&lt;p>因为这里是多线程去执行的判断逻辑，而正常的列表不是线程安全的。CopyOnWriteArrayList之所以是线程安全的，这归功于COW（Copy On Write），读请求时共用同一个List，涉及到写请求时，会复制出一个List，并在写入数据的时候加入独占锁。比起直接对所有操作加锁，读写锁的形式分离了读、写请求，使其互不影响，只对写请求加锁，降低了加锁的次数、减少了加锁的消耗，提升了整体操作的并发。&lt;/p>
+&lt;h2 id="执行注册逻辑">执行注册逻辑&lt;/h2>
+&lt;p>这块就是构建数据，然后多线程并发的去发送请求，用CopyOnWriteArrayList来保存结果。不过，上面我们提到过，Broker注册的时候，会把数据版本发送到NameServer并且存储起来，这块我们可以看看发送到NameServer的数据结构。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_19.png" alt="20221231_rocketmq_19.png">&lt;/p>
+&lt;p>可以看到，Topic的数据分为了两部分，一部分是核心的逻辑，另一部分是DataVersion，也就是我们刚刚一直提到的数据版本。&lt;/p>
+&lt;h1 id="消息存储">消息存储&lt;/h1>
+&lt;p> &lt;/p>
+&lt;p>源码入口：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>org.apache.rocketmq.store.DefaultMessageStore#start
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="commit-log">Commit log&lt;/h2>
+&lt;p>流程图&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_20.png" alt="20221231_rocketmq_20.png">&lt;/p>
+&lt;p>Producer 发送的消息是存储在一种叫 commit log 的文件中的，Producer 端每次写入的消息是不等长的，当该 CommitLog 文件写入满 1G，就会新建另一个新的 CommitLog，继续写入。此次采取的是顺序写入。&lt;/p>
+&lt;p>那么问题来了，Consumer 来消费的时候，Broker 是如何快速找到对应的消息的呢？首先排除遍历文件查找的方法， 因为 RocketMQ 是以高吞吐、高性能著称的，肯定不可能采取这种对于很慢的操作。那RocketMQ是如何做的呢？答案是 ConsumerQueue。&lt;/p>
+&lt;h2 id="consumerqueue">ConsumerQueue&lt;/h2>
+&lt;p>ConsumerQueue是什么？是文件。引入的目的是什么呢？提高消费的性能。&lt;/p>
+&lt;p>Broker在收到一条消息的时候，写入Commit Log的同时，还会将当前这条消息在commit log中的offset、消息的size和对应的Tag的Hash写入到consumer queue文件中去。&lt;/p>
+&lt;p>每个 MessageQueue 都会有对应的 ConsumerQueue 文件存储在磁盘上，每个 ConsumerQueue 文件包含了30W条消息，每条消息的 size 大小为 20 字节，包含了 8 字节 CommitLog 的 Offset、4 字节的消息长度、8 字节的 Tag 的哈希值。这样一来，每个ConsumerQueue 的文件大小就约为5.72M。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_21.png" alt="20221231_rocketmq_21.png">&lt;/p>
+&lt;p>当该 ConsumerQueue 文件写满了之后，就会再新建一个 ConsumerQueue 文件，继续写入。&lt;/p>
+&lt;p>所以，ConsumerQueue 文件可以看成是 CommitLog 文件的索引。&lt;/p>
+&lt;h2 id="文件同步刷盘与异步刷盘">文件同步刷盘与异步刷盘&lt;/h2>
+&lt;p>源码入口：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>org.apache.rocketmq.store.CommitLog#putMessage -&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>org.apache.rocketmq.store.CommitLog#handleDiskFlush
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>其中主要涉及到是否开启了对外内存 TransientStorePoolEnable。如果开启了堆外内存，会在启动时申请一个跟 CommitLog 文件大小一致的堆外内存，这部分内存可以确保不会被交换到虚拟内存中。
+ &lt;/p>
+&lt;h2 id="过期文件删除">过期文件删除&lt;/h2>
+&lt;p>入口：在 DefaultMessageStore 的 start 方法中调用&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>org.apache.rocketmq.store.DefaultMessageStore#addScheduleTask
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p> 
+默认情况下，Broker 会启动后台线程，每 60 秒检查 CommitLog、ConsumeQueue 文件。然后对超过 72 小时的数据进行删除。也就是说，默认情况下，RocketMQ 只会保存 3 天内的数据。这个时间可以通过 fileReservedTime 来配置。注意删除时，并不会检查消息是否被消费了。&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>整个文件存储的核心入口在 DefaultMessageStore 的 start 方法中。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_22.png" alt="20221231_rocketmq_22.png">&lt;/p>
+&lt;p> &lt;/p>
+&lt;h2 id="文件存储小结">文件存储小结&lt;/h2>
+&lt;p>RocketMQ 的存储文件包括消息文件（CommitLog）、消息消费队列文件（ConsumerQueue）、Hash 索引文件（IndexFile）、监测点文件（checkPoint）、abort（关闭异常文件）。单个消息存储文件、消息消费队列文件、Hash 索引文件长度固定以便使用内存映射机制进行文件的读写操作。&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>RocketMQ 组织文件以文件的起始偏移量来命名文件，这样能够根据偏移量快读定位到真实的物理文件。RocketMQ 基于内存映射文件机制提供了同步刷盘和异步刷盘两种机制，异步刷盘是指在消息存储时先追加到内存映射文件，然后启动专门的刷盘线程定时将内存中的文件数据刷写到磁盘。&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>CommitLog，消息存储文件，RocketMQ 为了保证消息发送的高吞吐量，采用单一文件存储所有主题消息，保证消息存储时完全的顺序写，但这样给文件读取带来了不便，为此 RocketMQ 为了方便消息消费构建了消息消费队列文件，基于主题与队列进行组织，同时 RocketMQ 为消息实现了 Hash 索引，可以为消息设置索引键，根据索引能够快速从 CommitLog 文件中检索消息。&lt;/p>
+&lt;h1 id="consumer">Consumer&lt;/h1>
+&lt;h2 id="消费者功能">消费者功能&lt;/h2>
+&lt;p>1、消费者分为 拉模式消费者 和 推模式消费者。&lt;/p>
+&lt;p>消费者的使用过程也跟生产者差不多，都是先 start 然后开始消费&lt;/p>
+&lt;p>2、消费者以消费者组的模式开展。消费者组之间有集群模式和广播模式两种消费模式。&lt;/p>
+&lt;p>3、消费者负载均衡，即消费者如何绑定消费队列的&lt;/p>
+&lt;p>4、推模式的消费者，MessageListenerConcurrently 和 MessageListenerOrderly 两种消息监听器的处理逻辑，为什么后者能否保证消息顺序&lt;/p>
+&lt;p> &lt;/p>
+&lt;h2 id="consumer-启动">consumer 启动&lt;/h2>
+&lt;p>源码入口：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>org.apache.rocketmq.client.consumer.DefaultMQPushConsumer#start
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>PullMessageService 主要处理拉取消息服务，RebalanceService 主要处理客户端的负载均衡。&lt;/p>
+&lt;h2 id="消费模型">消费模型&lt;/h2>
+&lt;p>在Consumer中，默认都是采用集群消费，这块在Consumer的代码中也有体现。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_23.png" alt="20221231_rocketmq_23.png">&lt;/p>
+&lt;p>而消费模式的不同，会影响到管理offset的具体实现。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_24.png" alt="20221231_rocketmq_24.png">&lt;/p>
+&lt;p>可以看到，当消费模型是广播模式时，Offset的持久化管理会使用实现LocalFileOffsetStorage&lt;/p>
+&lt;p>当消费模式是集群消费时，则会使用RemoteBrokerOffsetStore。&lt;/p>
+&lt;p>具体原因是什么呢？首先我们得知道广播模式和集群模式的区别在哪儿：&lt;/p>
+&lt;p>1）广播模式下，一条消息会被ConsumerGroup中的每一台机器所消费&lt;/p>
+&lt;p>2）集群模式下，一条消息只会被ConsumerGroup中的一台机器消费&lt;/p>
+&lt;p>所以在广播模式下，每个ConsumerGroup的消费进度都不一样，所以需要由Consumer自身来管理Offset。而集群模式下，同个ConsumerGroup下的消费进度其实是一样的，所以可以交由Broker统一管理。&lt;/p>
+&lt;h2 id="消费模式">消费模式&lt;/h2>
+&lt;p>消费模式则分为顺序消费和并发消费，分别对应实现MessageListenerOrderly和MessageListenerConcurrently两种方式。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_25.png" alt="20221231_rocketmq_25.png">&lt;/p>
+&lt;p>不同的消费方式会采取不同的底层实现，配置完成之后就会调用start。&lt;/p>
+&lt;h2 id="消息拉取">消息拉取&lt;/h2>
+&lt;p>拉模式：PullMessageService&lt;/p>
+&lt;p>PullRequests 里有 messageQueue 和 processQueue，其中 messageQueue 负责拉取消息，拉取后将消息存入 processQueue，进行处理。存入后就可以清空 messageQueue，继续拉取。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_26.png" alt="20221231_rocketmq_26.png">&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_27.png" alt="20221231_rocketmq_27.png">&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>接下来来看一个跟最最相关的问题，那就是平时消费的消息到底是怎么样从 Broker 发到的 Consumer。在靠近启动 Rebalance 的地方，Consumer 也开启了一个定时拉取消息的线程。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_28.png" alt="20221231_rocketmq_28.png">&lt;/p>
+&lt;p>这个线程做了什么事呢？它会不停的从一个维护在内存中的Queue中获取一个在写入的时候就构建好的 PullRequest 对象，调用具体实现去不停的拉取消息了。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_29.png" alt="20221231_rocketmq_29.png">&lt;/p>
+&lt;h2 id="处理消息结果">处理消息结果&lt;/h2>
+&lt;p>在这里是否开启AutoCommit，所做的处理差不了很多，大家也都知道，唯一区别就在于是否自动的提交Offset。对于处理成功的逻辑也差不多，我们平时业务逻辑中可能也并不关心消费成功的消息。我们更多关注的是如果消费失败了，RocketMQ是怎么处理的？&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_30.png" alt="20221231_rocketmq_30.png">&lt;/p>
+&lt;p>这是在AutoCommit下，如果消费失败了的处理逻辑。会记录一个失败的TPS，然后这里有一个非常关键的逻辑，那就是checkReconsumeTimes。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_31.png" alt="20221231_rocketmq_31.png">&lt;/p>
+&lt;p>如果当前消息的重试次数，如果大于了最大的重试消费次数，就会把消费发回给Broker。那最大重试次数是如何定义的。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_32.png" alt="20221231_rocketmq_32.png">&lt;/p>
+&lt;p>如果值为-1，那么最大次数就是MAX_VALUE，也就是2147483647。这里有点奇怪啊，按照我们平常的认知，难道不是重试16次吗？然后就看到了很骚的一句注释。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_33.png" alt="20221231_rocketmq_33.png">&lt;/p>
+&lt;p>-1 means 16 times，这代码确实有点，一言难尽。&lt;/p>
+&lt;p>然后，如果超过了最大的次数限制，就会将该消息调用Prodcuer的默认实现，将其发送到死信队列中。当然，死信队列也不是什么特殊的存在，就是一个单独的Topic而已。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_34.png" alt="20221231_rocketmq_34.png">&lt;/p>
+&lt;p>通过getRetryTopic来获取的，默认是给当前的ConsumerGroup名称加上一个前缀。&lt;/p>
+&lt;h2 id="客户端负载均衡策略">客户端负载均衡策略&lt;/h2>
+&lt;p>在消费者示例的 start 方法中，启动 RebalanceService，这个是客户端进行负载均衡策略的启动服务。只负责根据负载均衡策略获取当前客户端分配到的 MessageQueue 示例。&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>5 种负载均衡策略，可以由 Consumer 的 allocateMessageQueueStrategy 属性来选择。&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>最常用的是 AllocateMessageQueueAveragely 平均分配和 AllocateMessageQueueAveragelyByCircle 平均轮询分配。&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>平均分配是把 MessageQueue 按组内的消费者个数平均分配。&lt;/p>
+&lt;p>而平均轮询分配就是把 MessageQueue 按组内的消费者一个一个轮询分配。&lt;/p>
+&lt;p>举例：6 个队列 q1、q2、q3、q4、q5、q6，分配给 3 个消费者 c1、c2、c3。&lt;/p>
+&lt;p>平均分配的结果就是：c1:{q1, q2}, c2:{q3, q4}, c3:{q5, q6}；&lt;/p>
+&lt;p>平均轮询分配的结果就是：c1:{q1, q4}, c2:{q2 q5}, c3:{q3, q6}。&lt;/p>
+&lt;p> &lt;/p>
+&lt;h2 id="并发消费与顺序消费">并发消费与顺序消费&lt;/h2>
+&lt;p>消费过程依然是 DefaultMQPushConsumerImpl 的 consumeMessageService。它有 2 个子类 ConsumeMessageServiceConcurrentlyService 和 ConsumeMessageOrderlyService。其中最主要的差别是 ConsumeMessageOrderlyService 会在消费前把队列锁起来，优先保证拉取同一个队列里的消息。&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>消费过程的入口在 DefaultMQPushConsumerImpl 的 pullMessage 中定义的 PullCallBack 中。&lt;/p>
+&lt;h1 id="负载均衡">负载均衡&lt;/h1>
+&lt;p>什么意思呢？假设我们总共有6个MessageQueue，然后此时分布在了3台Broker上，每个Broker上包含了两个queue。此时Consumer有3台，我们可以大致的认为每个Consumer负责2个MessageQueue的消费。但是这里有一个原则，那就是一个MessageQueue只能被一台Consumer消费，而一台Consumer可以消费多个MessageQueue。&lt;/p>
+&lt;blockquote>
+&lt;p>为什么？道理很简单，RocketMQ支持的顺序消费，是指的分区顺序性，也就是在单个MessageQueue中，消息是具有顺序性的，而如果多台Consumer去消费同一个MessageQueue，就很难去保证顺序消费了。&lt;/p>
+&lt;/blockquote>
+&lt;p>由于有很多个Consumer在消费多个MessageQueue，所以为了不出现数据倾斜，也为了资源的合理分配利用，在Producer发送消息的时候，需要尽可能的将消息均匀的分发给多个MessageQueue。&lt;/p>
+&lt;p>同时，上面那种一个Consumer消费了2个MessageQueue的情况，万一这台Consumer挂了呢？这两个MessageQueue不就没人消费了？&lt;/p>
+&lt;p>以上两种情况分别是Producer端的负载均衡、Consumer端的负载均衡。&lt;/p>
+&lt;h2 id="producer端负载均衡">Producer端负载均衡&lt;/h2>
+&lt;p>关于Producer端上面的负载均衡，上面的流程图已经给了出来，并且给出了源码的验证。首先是容错策略，会去避开一段时间有问题的Broker，并且加上如果选择了上次的Broker，就会重新进行选择。&lt;/p>
+&lt;h2 id="consumer端负载均衡">Consumer端负载均衡&lt;/h2>
+&lt;p>首先Consumer端的负责均衡可以由两个对象触发：&lt;/p>
+&lt;p>1）Broker&lt;/p>
+&lt;p>2）Consumer自身&lt;/p>
+&lt;p>Consumer 也会向所有的 Broker 发送心跳，将消息的消费组名称、订阅关系集合、消息的通信模式和客户端的ID等等。Broker 收到了 Consumer 的心跳之后，会将其存在 Broker 维护的一个 Manager 中，名字叫 ConsumerManager。当Broker监听到了 Consumer 数量发生了变动，就会通知 Consume r进行 Rebalance。&lt;/p>
+&lt;p>但是如果 Broker 通知 Consumer 进行 Rebalance 的消息丢了呢？这也就是为什么需要第Consumer 自身进行触发的原因。Consumer会在启动的时候启动定时任务，周期性的执行rebalance操作。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_35.png" alt="20221231_rocketmq_35.png">&lt;/p>
+&lt;p>默认是20秒执行一次。具体的代码如下。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_36.png" alt="20221231_rocketmq_36.png">&lt;/p>
+&lt;h3 id="具体流程">具体流程&lt;/h3>
+&lt;p>首先，Consumer的Rebalance会获取到本地缓存的Topic的全部数据，然后向Broker发起请求，拉取该Topic和ConsumerGroup下的所有的消费者信息。此处的Broker数据来源就是Consumer之前的心跳发送过去的数据。然后会对Topic中MessageQueue和消费者ID进行排序，然后用消息队列默认分配算法来进行分配，这里的默认分配策略是平均分配。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_37.png" alt="20221231_rocketmq_37.png">&lt;/p>
+&lt;p>首先会均匀的按照类似分页的思想，将MessageQueue分配给Consumer，如果分配的不均匀，则会依次的将剩下的MessageQueue按照排序的顺序，从上往下的分配。所以在这里Consumer 1被分配到了4个MessageQueue，而Consumer 2被分配到了3个MessageQueue。&lt;/p>
+&lt;p>Rebalance完了之后，会将结果和Consumer缓存的数据做对比，移除不在ReBalance结果中的MessageQueue，将原本没有的MessageQueue给新增到缓存中。&lt;/p>
+&lt;h3 id="触发时机">触发时机&lt;/h3>
+&lt;p>1）Consumer启动时 启动之后会立马进行Rebalance&lt;/p>
+&lt;p>2）Consumer运行中 运行中会监听Broker发送过来的Rebalance消息，以及Consumer自身的定时任务触发的Rebalance&lt;/p>
+&lt;p>3）Consumer停止运行 停止时没有直接的调用Rebalance，而是会通知Broker自己下线了，然后Broker会通知其余的Consumer进行Rebalance。&lt;/p>
+&lt;p>换一个角度来分析，其实就是两个方面，一个是队列信息发生了变化，另一种是消费者发生了变化。&lt;/p>
+&lt;h3 id="源码验证">源码验证&lt;/h3>
+&lt;p>然后给出核心的代码验证，获取数据的逻辑如下&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_38.png" alt="20221231_rocketmq_38.png">&lt;/p>
+&lt;p>验证了我们刚刚说的获取了本地的Topic数据缓存，和从Broker端拉取所有的ConsumerID。&lt;/p>
+&lt;p>接下来是验证刚说的排序逻辑。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_39.png" alt="20221231_rocketmq_39.png">&lt;/p>
+&lt;p>接下来是看判断结果是否发生了变化的源码。&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_40.png" alt="20221231_rocketmq_40.png">&lt;/p>
+&lt;p>&lt;img src="../imgs/20221231_rocketmq_41.png" alt="20221231_rocketmq_41.png">&lt;/p>
+&lt;p>可以看到，Consumer通知Broker策略，其本质上就是发送心跳，将更新后的数据通过心跳发送给所有的Broker。&lt;/p>
+&lt;h1 id="延迟消息">延迟消息&lt;/h1>
+&lt;h2 id="延迟消息功能">延迟消息功能&lt;/h2>
+&lt;p>延迟消息的核心使用方法就是在 Message 中设定一个 MessageDelayLevel 参数，对应 18 个延迟级别。然后 Broker 中会创建一个默认的 Schedule_Topic 主题，这个主题下有 18 个队列，对应 18 个延迟级别。消息发过来之后，会把消息存入 Schedule_Topic 主题中对应的队列。然后等延迟消息到了，再转发到目标队列，推送给消费者进行消费。&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>msg.setDelayTimeLevel(2); // 设置延迟级别
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>延迟消息整体流程
+&lt;img src="../imgs/20221231_rocketmq_42.png" alt="20221231_rocketmq_42.png">&lt;/p>
+&lt;p> &lt;/p>
+&lt;p> &lt;/p>
+&lt;p>延迟消息的处理入口在 scheduleMessageService 这个组件中，它会在 broker 启动时也一起加载。&lt;/p>
+&lt;h2 id="延迟消息写入">延迟消息写入&lt;/h2>
+&lt;p>代码见 CommitLog.putMessage 方法&lt;/p>
+&lt;p>在 CommitLog 写入消息时，会判断消息的延迟级别，然后修改 Message 的 Topic 和 Queue，达到转储 Message 的目的。&lt;/p>
+&lt;p> &lt;/p>
+&lt;h2 id="延迟消息转储到目标-topic">延迟消息转储到目标 Topic&lt;/h2>
+&lt;p>核心服务是 ScheduleMessageService，也是 Broker 启动过程中的一个功能组件。&lt;/p>
+&lt;p>然后 ScheduleMessageService 每隔 1 秒钟执行一个 executeOnTimeup 任务，将消息从延迟队列中写入正常 Topic 中。代码见 ScheduleMessageService 中的 DeliverDelayedMessageTimerTask.executeOnTimeup 方法。&lt;/p>
+&lt;p> &lt;/p>
+&lt;p>其中有个需要注意的点事 ScheduleMessageService 的 start 方法中，有一个很关键的 CAS 操作：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>if (started.compareAndSet(false, true)) {
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>保证同一时间只会有一个 DeliveDelayedMessageTimerTask 执行。保证了消息安全的同时业限制了消息进行回传的效率。这也是很多互联网公司在使用 RocketMQ 时，对源码进行定制的一个重点。
+ &lt;/p></description></item></channel></rss>

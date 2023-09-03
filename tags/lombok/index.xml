@@ -1,0 +1,299 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – lombok</title><link>/tags/lombok/</link><description>Recent content in lombok on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/lombok/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: lombok功能及原理</title><link>/docs/21.Java/09.%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85/lombok%E5%8A%9F%E8%83%BD%E5%8F%8A%E5%8E%9F%E7%90%86/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/09.%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85/lombok%E5%8A%9F%E8%83%BD%E5%8F%8A%E5%8E%9F%E7%90%86/</guid><description>
+&lt;h1 id="概述">概述&lt;/h1>
+&lt;p>lombok官网：&lt;a href="https://projectlombok.org">https://projectlombok.org&lt;/a>&lt;/p>
+&lt;h1 id="使用">使用&lt;/h1>
+&lt;p>1、IDE安装lombok插件&lt;/p>
+&lt;p>2、项目引入依赖&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;groupId&amp;gt;&lt;/span>org.projectlombok&lt;span style="color:#000">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>lombok&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;version&amp;gt;&lt;/span>1.16.20&lt;span style="color:#000">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;scope&amp;gt;&lt;/span>provided&lt;span style="color:#000">&amp;lt;/scope&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h1 id="功能">功能&lt;/h1>
+&lt;h2 id="data">@Data&lt;/h2>
+&lt;p>注解在类上，相当于同时使用了@ToString、@EqualsAndHashCode、@Getter、@Setter和@RequiredArgsConstrutor这些注解，对于POJO类十分有用&lt;/p>
+&lt;h2 id="value">@Value&lt;/h2>
+&lt;p>用在类上，是@Data的不可变形式，相当于为属性添加final声明，只提供getter方法，而不提供setter方法&lt;/p>
+&lt;h2 id="builder">@Builder&lt;/h2>
+&lt;p>用在类、构造器、方法上，为你提供复杂的builder APIs，让你可以像如下方式一样调用Person.builder().name(&amp;quot;Adam Savage&amp;quot;).city(&amp;quot;San Francisco&amp;quot;).job(&amp;quot;Mythbusters&amp;quot;).job(&amp;quot;Unchained Reaction&amp;quot;).build();更多说明参考&lt;a href="https://projectlombok.org/features/Builder">Builder&lt;/a>&lt;/p>
+&lt;h2 id="log">@Log&lt;/h2>
+&lt;p>根据不同的注解生成不同类型的log对象，但是实例名称都是log，有六种可选实现类&lt;/p>
+&lt;h2 id="slf4j">@Slf4j&lt;/h2>
+&lt;p>自动引入log对象&lt;/p>
+&lt;h2 id="getter-setter">@Getter/@Setter&lt;/h2>
+&lt;p>用在属性上，再也不用自己手写setter和getter方法了，还可以指定访问范围&lt;/p>
+&lt;h2 id="nonnull">@NonNull&lt;/h2>
+&lt;p>给方法参数增加这个注解会自动在方法内对该参数进行是否为空的校验，如果为空，则抛出NPE（NullPointerException）&lt;/p>
+&lt;h2 id="cleanup">@Cleanup&lt;/h2>
+&lt;p>自动管理资源，用在局部变量之前，在当前变量范围内即将执行完毕退出之前会自动清理资源，自动生成try-finally这样的代码来关闭流&lt;/p>
+&lt;h1 id="原理">原理&lt;/h1>
+&lt;h2 id="java注解">java注解&lt;/h2>
+&lt;p>从JDK5开始,Java增加对元数据（描述数据属性的信息）的支持，也就是注解，可以把注解理解为代码里的特殊标记，这些标记可以在编译，类加载，运行时被读取，并执行相应的处理。通过注解开发人员可以在不改变原有代码和逻辑的情况下在源代码中嵌入补充信息。&lt;/p>
+&lt;h2 id="注解解析方式">注解解析方式&lt;/h2>
+&lt;p>JDK5引入了注解的同时，也提供了两种解析方式。&lt;/p>
+&lt;p>1、运行时解析&lt;/p>
+&lt;p>2、编译时解析&lt;/p>
+&lt;h3 id="运行时解析">运行时解析&lt;/h3>
+&lt;p>运行时能够解析的注解，必须将@Retention设置为RUNTIME，这样就可以通过反射拿到该注解。java.lang,reflect反射包中提供了一个接口AnnotatedElement，该接口定义了获取注解信息的几个方法，Class、Constructor、Field、Method、Package等.&lt;/p>
+&lt;h3 id="编译时解析">编译时解析&lt;/h3>
+&lt;p>编译时解析有两种机制：&lt;/p>
+&lt;p>1、Annotation Processing Tool&lt;/p>
+&lt;p>2、Pluggable Annotation Processing API：插入式注解处理器&lt;/p>
+&lt;p>APT自JDK5产生，JDK7已标记为过期，不推荐使用，JDK8中已彻底删除。新的解析机制为 &lt;a href="https://www.jcp.org/en/jsr/detail?id=269">JSR 269规范&lt;/a>（可插拔批注处理API）。&lt;/p>
+&lt;p>在JAVA 1.6后，JDK提供了一种方式，可以让我们修改编译过程，在编译期融入我们自己编译逻辑，也就是插入式注解处理器，它提供了一组编译器的插入式注解处理器的标准API在编译期间对注解进行处理。解决了APT没有集成到javac中，只能在运行时通过反射来获取注解值，运行时代码效率降低等问题。&lt;/p>
+&lt;p>javac的编译过程，大致可以分为3个过程，分别是：&lt;/p>
+&lt;p>1、解析与填充符号表过程&lt;/p>
+&lt;p>读取命令行上指定的所有源文件，将其解析为语法树，然后将所有外部可见的定义输入到编译器的符号表中。&lt;/p>
+&lt;p>2、插入式注解处理器的注解处理过程&lt;/p>
+&lt;p>调用所有适当的注解处理器。如果任何注解处理器生成任何新的源文件或类文件，则将重新启动编译，直到没有新文件创建为止。&lt;/p>
+&lt;p>3、分析与字节码生成过程&lt;/p>
+&lt;p>最后，分析器创建的语法树将被分析并转换为类文件。在分析过程中，可能会找到对其他类的引用。编译器将检查这些类的源和类路径。如果在源路径上找到它们，则这些文件也将被编译，尽管它们将不受注解处理。&lt;/p>
+&lt;p>&lt;img src="../imgs/lombok_1.png" alt="lombok_1.png">&lt;/p>
+&lt;h2 id="自定义支持jsr269">自定义支持JSR269&lt;/h2>
+&lt;p>一般javac的编译过程，java文件首先通过进行解析构建出一个AST，然后执行注解处理，最后经过分析优化生成二进制的.class文件。&lt;strong>我们能做到的是，在注解处理阶段进行一些相应处理&lt;/strong>。&lt;/p>
+&lt;p>&lt;img src="../imgs/lombok_2.png" alt="lombok_2.png">&lt;/p>
+&lt;h2 id="定义注解">定义注解&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">@Retention&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">RetentionPolicy&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">SOURCE&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#177500">// 注解只在源码中保留
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">@Target&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ElementType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">TYPE&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#177500">// 用于修饰类
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">@interface&lt;/span> &lt;span style="color:#000">MyGetter&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">value&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>Retention 注解上面有一个属性value，它是RetentionPolicy类型的枚举类，RetentionPolicy枚举类中有三个值。
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>public enum RetentionPolicy {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SOURCE, //修饰的注解，注解信息会被编译器抛弃只会留在源文件中，不会留在class文件中
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> CLASS, //注解信息被保留在class文件(字节码文件)中，但运行的时候不会被虚拟机读取
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> RUNTIME // 注解信息被保留在class文件(字节码文件)中，程序编译时会被虚拟机保留在运行时。能够通过反射调用
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>Target 注解上面也有个属性value，它是ElementType类型的枚举。是用来修饰此注解作用在哪的。
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>public enum ElementType {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TYPE,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FIELD,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> METHOD,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> PARAMETER,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> CONSTRUCTOR,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> LOCAL_VARIABLE,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ANNOTATION_TYPE,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> PACKAGE,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TYPE_PARAMETER,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TYPE_USE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h2 id="定义注解处理器">定义注解处理器&lt;/h2>
+&lt;p>定义注解处理器，需要继承AbstractProcessor 类。继承完以后基本的框架类型如下&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>@SupportedSourceVersion(SourceVersion.RELEASE_8) // 支持的Java版本
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>@SupportedAnnotationTypes(&amp;#34;aboutjava.annotion.MyGetter&amp;#34;) // 处理器要处理的注解
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>public class MyGetterProcessor extends AbstractProcessor {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @Override
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> public synchronized void init(ProcessingEnvironment processingEnv) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> super.init(processingEnv);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> @Override
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> public boolean process(Set&amp;lt;!--? extends TypeElement--&amp;gt; annotations, RoundEnvironment roundEnv) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> return true;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>继承了父类的两个方法，方法描述如下
+1、init方法：主要是获得编译时期的一些环境信息&lt;/p>
+&lt;p>2、process方法：在编译时，编译器执行的方法。也就是我们写具体逻辑的地方&lt;/p>
+&lt;p>编译&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>javac -processor aboutjava.annotion.MyGetterProcessor aboutjava/annotion/TestAno.java
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="验证">验证&lt;/h2>
+&lt;p>这里验证@Slf4j的log字段。步骤如下：&lt;/p>
+&lt;p>1、编写代码，引用@Slf4j并使用log变量，编译&lt;/p>
+&lt;p>2、将编译好的class反编译，会发现Slf4j会自动将注解转换成&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">final&lt;/span> &lt;span style="color:#000">Logger&lt;/span> &lt;span style="color:#000">log&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">LoggerFactory&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getLogger&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">XXX&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://blog.csdn.net/qq_43437874/article/details/117292238?spm=1001.2101.3001.6650.1&amp;amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-1.pc_relevant_paycolumn&amp;amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7Edefault-1.pc_relevant_paycolumn">Lombok实现原理&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://c.m.163.com/news/a/FK30K2HE0517EJSQ.html?from=wap_redirect&amp;amp;spss=adap_pc&amp;amp;referFrom=">别再自己用LoggerFactory生成logger实例了&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://zhuanlan.zhihu.com/p/138217840">Lombok注解原理&lt;/a>&lt;/p></description></item></channel></rss>

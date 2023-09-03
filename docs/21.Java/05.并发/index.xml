@@ -1,0 +1,455 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – 并发</title><link>/docs/21.Java/05.%E5%B9%B6%E5%8F%91/</link><description>Recent content in 并发 on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/docs/21.Java/05.%E5%B9%B6%E5%8F%91/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Java并发编程的艺术</title><link>/docs/21.Java/05.%E5%B9%B6%E5%8F%91/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/21.Java/05.%E5%B9%B6%E5%8F%91/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B%E7%9A%84%E8%89%BA%E6%9C%AF/</guid><description>
+&lt;h1 id="java内存模型">Java内存模型&lt;/h1>
+&lt;h2 id="java内存模型的基础">Java内存模型的基础&lt;/h2>
+&lt;p>Java线程之间的通信由Java内存模型（JMM）控制，JMM决定一个线程对共享变量的写入何时对另一个线程可见。&lt;/p>
+&lt;h3 id="重排序类型">重排序类型&lt;/h3>
+&lt;p>3种指令重排序&lt;/p>
+&lt;ul>
+&lt;li>编译器优化的重排序&lt;/li>
+&lt;li>指令级并行的重排序&lt;/li>
+&lt;li>内存系统的重排序
+第1种属于编译器重排序，第2、3种属于处理器重排序。&lt;/li>
+&lt;/ul>
+&lt;p>对于编译器重排序：JMM的编译器重排序规则会禁止特定类型的编译器重排序（不是所有的编译器重排序都要禁止）。&lt;/p>
+&lt;p>对于处理器重排序，JMM的处理器重排序规则会要求Java编译器生成指令序列时，插入特定类型的内存屏障（Memory Barriers，Intel称之为Memory Fence）指令，通过内存屏障指令来禁止特定类型的处理器重排序。&lt;/p>
+&lt;p>为了保证内存可见性，Java编译器在生成指令序列的适当位置会插入内存屏障指令来禁止特定类型的处理器重排序。JMM把内存屏障指令分为4类。&lt;/p>
+&lt;p>其中StoreLoad Barriers是一个“全能型”的屏障，它同时具有其他3个屏障的效果。但该屏障开销较大，要把写缓冲区中的数据全部刷新到内存中（Buffer Fully Flush）。&lt;/p>
+&lt;h3 id="happens-before简介">happens-before简介&lt;/h3>
+&lt;p>密切相关的happens-before规则如下：&lt;/p>
+&lt;ul>
+&lt;li>程序顺序规则：一个线程中的每个操作，happens-before于该线程中的任意后续操作。&lt;/li>
+&lt;li>监视器锁规则：对一个锁的解锁，happens-before于随后对这个锁的加锁。&lt;/li>
+&lt;li>volatile变量规则：对一个volatile域的写，happens-before于任意后续对这个volatile域的读。&lt;/li>
+&lt;li>传递性：如果A happens-before B，且 B happens-before C，那么A happens-before C。&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>happens-before的定义很微妙，两个操作之间具有happens-before，并不意味着前一个操作必须要在后一个操作之前执行！！happens-before仅仅要求前一个操作（执行的结果）对后一个操作可见，且前一个操作按顺序排在第二个操作之前（the first is visible to and ordered before the second）&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="重排序">重排序&lt;/h2>
+&lt;h3 id="数据依赖性">数据依赖性&lt;/h3>
+&lt;p>两个操作访问同一个变量，且两个操作中有一个为写操作，此时这两个操作之间存在数据依赖性。数据依赖分为3种：写后读、写后写、读后写。&lt;/p>
+&lt;blockquote>
+&lt;p>这里的数据依赖性仅对单个处理器中执行的指令序列和单个线程中执行的操作，不同处理器之间和不同线程之间的数据依赖性不被编译器和处理器考虑。&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="as-if-serial语义">as-if-serial语义&lt;/h3>
+&lt;p>as-if-serial语义的意思是：不管怎么重排序（编译器和处理器为了提高并行度），（单线程）程序的执行结果不能被改变。编译器、runtime和处理器都必须遵守as-if-serial语义。&lt;/p>
+&lt;p>不会对存在数据依赖关系的操作做重排序，但是，如果操作之间不存在数据依赖关系，这些操作就可能被编译器和处理器重排序。&lt;/p>
+&lt;h3 id="程序顺序规则">程序顺序规则&lt;/h3>
+&lt;p>即代码顺序。但JMM允许对结果无影响的重排序。&lt;/p>
+&lt;h3 id="重排序对多线程的影响">重排序对多线程的影响&lt;/h3>
+&lt;h2 id="顺序一致性">顺序一致性&lt;/h2>
+&lt;h3 id="顺序一致性内存模型">顺序一致性内存模型&lt;/h3>
+&lt;p>理想化的概念&lt;/p>
+&lt;p>两大特性：&lt;/p>
+&lt;p>1、一个线程中的所有操作必须按照程序的顺序来执行&lt;/p>
+&lt;p>2、（不管程序是否同步）所有线程都只能看到一个单一的操作执行顺序。在顺序一致性内存模型中，每个操作都必须原子执行且立刻对所有线程可见。&lt;/p>
+&lt;blockquote>
+&lt;p>在任意时间点最多只能有一个线程可以连接到内存（串行化）&lt;/p>
+&lt;/blockquote>
+&lt;p>但是，在JMM中没有这个保证。&lt;/p>
+&lt;h3 id="同步程序的顺序一致性效果">同步程序的顺序一致性效果&lt;/h3>
+&lt;p>**顺序一致性模型中，所有操作完全按程序的顺序串行执行。而在JMM中，临界区内的代码可以重排序（但JMM不允许临界区内的代码“逸出”到临界区之外，那样会破坏监视器的语义）。**JMM会在退出临界区和进入临界区这两个关键时间点做一些特殊处理，使得线程在这两个时间点具有与顺序一致性模型相同的内存视图。&lt;/p>
+&lt;p>由于监视器互斥执行的特性线程之间无法“观察”到对方在临界区内的重排序。这种重排序既提高了执行效率，又没有改变程序的执行结果。&lt;/p>
+&lt;h3 id="未同步程序的执行特性">未同步程序的执行特性&lt;/h3>
+&lt;p>要么之前写入的值，要么默认值，不会无中生有。&lt;/p>
+&lt;p>未同步程序在两个模型中的差异：&lt;/p>
+&lt;p>1、顺序一致性模型保证单线程内的操作会按程序的顺序执行，而JMM不保证单线程内的操作会按程序的顺序执行&lt;/p>
+&lt;p>2、顺序一致性模型保证所有线程只能看到一致的操作执行顺序，而JMM不保证所有的线程能看到一致的操作执行顺序。&lt;/p>
+&lt;p>3、&lt;strong>JMM不保证对64位long型和double型变量的写操作具有原子性，而顺序一致性模型保证对所有的内存读/写都具有原子性。&lt;/strong>（总线的工作机制密切相关，32位处理器）&lt;/p>
+&lt;p>注意：在JSR-133之前的旧内存模型中，64位long/double型变量的读/写操作均可被才分为两个32位的读/写操作。从JSR-133内存模型开始（JDK5），仅仅只允许把64位long/double型变量的写操作拆分为两个32位的写操作来执行，但任意的读操作必须具有原子性（即任意读操作必须要在单个读事务中执行）。&lt;/p>
+&lt;h2 id="volatile的内存语义">volatile的内存语义&lt;/h2>
+&lt;p>volatile变量自身具有下列特性：&lt;/p>
+&lt;ul>
+&lt;li>可见性：对一个volatile变量的读，总是能看到（任意线程）对这个volatile变量最后的写入。&lt;/li>
+&lt;li>原子性：对任意单个volatile变量的读/写具有原子性，&lt;strong>但类似于volatile++这种复合操作不具有原子性&lt;/strong>
+&lt;strong>volatile读的内存语义：&lt;/strong>&lt;/li>
+&lt;/ul>
+&lt;p>当读一个volatile变量时，JMM会把该线程对应的本地内存置为无效。线程接下来将从内存中读取共享变量。&lt;/p>
+&lt;p>&lt;strong>volatile写和volatile读的内存语义总结：&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>线程A写一个volatile变量，实质上是线程A向接下来将要读这个volatile变量的某个线程发出了（其对共享变量所做修改的）消息&lt;/li>
+&lt;li>线程B读一个volatile变量，实质上是线程B接受了之前某个线程发出的（在写这个volatile变量之前对共享变量所做修改的）消息&lt;/li>
+&lt;li>线程A写一个volatile变量，随后线程B读这个volatile变量，这个过程实质上是线程A通过主内存向线程B发送消息
+volatile重排序规则：&lt;/li>
+&lt;/ul>
+&lt;p>1、第2个操作是volatile写时，无论第1个操作是什么，都不能重排序&lt;/p>
+&lt;p>2、第1个操作是volatile读时，无论第2个操作是什么，都不能重排序&lt;/p>
+&lt;p>3、第1个操作是volatile写，第二个操作是volatile读时，不能重排序&lt;/p>
+&lt;p>基于保守策略的JMM内存屏障插入策略（可以保证任意处理平台，任意程序中都能得到正确的volatile内存语义）&lt;/p>
+&lt;ul>
+&lt;li>在每个volatile写操作的前面插入一个StoreStore屏障&lt;/li>
+&lt;li>在每个volatile写操作的后面插入一个StoreLoad屏障&lt;/li>
+&lt;li>在每个volatile读操作的后面插入一个LoadLoad屏障&lt;/li>
+&lt;li>在每个volatile读操作的后面插入一个LoadStore屏障&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>注意：第2条，也可以是每个volatile读的前面插入一个StoreLoad屏障。从整体执行效率的角度考虑，JMM最终选择了在每个volatile写操作的后面插入一个StoreLoad屏障&lt;/p>
+&lt;/blockquote>
+&lt;p>&lt;strong>第3、4条策略非常保守，但在实际执行中，只要不改变volatile写-读的内存语义，编译器可以根据具体情况省略不必要的屏障&lt;/strong>&lt;/p>
+&lt;h3 id="jsr-133为什么要增强volatile的内存语义">JSR-133为什么要增强volatile的内存语义&lt;/h3>
+&lt;p>增强：新的java内存模型中不允许volatile变量与普通变量重排序&lt;/p>
+&lt;p>确保volatile的写-读和锁的释放-获取 具有相同的内存语义&lt;/p>
+&lt;p>（个人理解）提醒：普通读、写可能用的是volatile的赋值，所以需要增加内存屏障隔离。&lt;/p>
+&lt;h2 id="锁的内存语义">锁的内存语义&lt;/h2>
+&lt;p>实际上和volatile差不多，也是将本地内存置为无效，刷新主内存等等。&lt;/p>
+&lt;p>锁释放和锁获取的内存语义总结：&lt;/p>
+&lt;ul>
+&lt;li>线程A释放一个锁，是指上市线程A向接下来将要获取这个锁的某个线程发出了（线程A对共享变量所做修改的）消息&lt;/li>
+&lt;li>线程B获取一个锁，实质上是线程B接收了之前某个线程发出的（在释放这个锁之前对共享变量所做修改的）消息&lt;/li>
+&lt;li>线程A释放锁，随后线程B获取这个锁，这个过程实际上是线程A通过主内存向线程B发送消息。&lt;/li>
+&lt;/ul>
+&lt;h3 id="锁内存语义的实现">锁内存语义的实现&lt;/h3>
+&lt;h2 id="final域的内存语义">final域的内存语义&lt;/h2>
+&lt;h3 id="final域的重排序规则">final域的重排序规则&lt;/h3>
+&lt;p>对于final域，编译器和处理器要遵守两个重排序规则&lt;/p>
+&lt;p>1、在构造函数内对一个final域的写入，与随后把这个被构造对象的引用赋值给一个引用变量，这两个操作之间不能重排序&lt;/p>
+&lt;p>2、初次读一个final域的对象的引用，与随后初次读这个final域，这两个操作之间不能重排序&lt;/p>
+&lt;h3 id="写final域的重排序规则">写final域的重排序规则&lt;/h3>
+&lt;p>1、JMM禁止编译器把final域的写重排序到构造函数之外&lt;/p>
+&lt;p>2、编译器会在final域的写之后，构造函数return之前，插入一个StoreStore屏障。这个屏障禁止处理器把final域的写重排序到构造函数之外&lt;/p>
+&lt;p>写final域的重排序规则可以确保：在对象引用为任意线程可见之前，对象的final域已经被正确初始化过了，而普通域不具有这个保障。&lt;/p>
+&lt;h3 id="读final域的重排序规则">读final域的重排序规则&lt;/h3>
+&lt;p>在一个线程中，初次读该对象引用与初次读该对象包含的final域，JMM禁止处理器重排序这两个操作（注意，这个规则仅仅针对处理器）。编译器会在读final域操作的前面插入一个LoadLoad屏障（间接依赖关系）。&lt;/p>
+&lt;h3 id="jsr-133为什么增强final的语义">JSR-133为什么增强final的语义&lt;/h3>
+&lt;p>防止读到final默认值&lt;/p>
+&lt;p>保证只要对象是正确构造的（被构造对象引用在构造函数中没有“逸出”），不需要使用同步（lock和volatile的使用）就可以保证任意线程都能看到这个final域在构造函数中被初始化之后的值。&lt;/p>
+&lt;h2 id="happens-before">happens-before&lt;/h2>
+&lt;h3 id="happens-before规则">happens-before规则&lt;/h3>
+&lt;p>1、程序顺序规则：一个线程中的每个操作，happens-before于该线程中的任意后续操作&lt;/p>
+&lt;p>2、监视器锁规则：对一个锁的解锁，happens-before于随后对这个锁的加锁&lt;/p>
+&lt;p>3、volatile变量规则：对一个volatile域的写，happens-before于随后对这个锁的加锁&lt;/p>
+&lt;p>4、传递性：略&lt;/p>
+&lt;p>5、start()规则：如果线程A执行操作ThreadB.start()，那么A线程的ThreadB.start()操作happen-before于线程B中的任意操作&lt;/p>
+&lt;p>6、join()规则：如果线程A执行操作ThreadB.join()并成功返回，那么线程B中的任意操作happens-before于线程A从ThreadB.join()操作成功返回&lt;/p>
+&lt;h2 id="双重检查锁定与延迟初始化">双重检查锁定与延迟初始化&lt;/h2>
+&lt;p>&lt;strong>双重检查锁定看起来似乎很完美，但这是一个错误的优化！在线程执行到第一个判空读取到instance不为null时，instance引用的对象有可能还没有完成初始化。&lt;/strong>&lt;/p>
+&lt;p>解释：即线程A初始化化instance时，线程B可能访问到一个未完成初始化的instance，从而造成错误。加锁只能保证线程B不进入锁住的代码，即不再次初始化instance，但不能限制线程B获取instance。&lt;/p>
+&lt;p>问题根源：&lt;/p>
+&lt;p>instance=new Singleton()这行代码可以分解为如下3行伪代码：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">memory&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">allocate&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#177500">// 1：分配对象的内存空间
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">ctorInstance&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">memory&lt;/span>&lt;span style="color:#000">);&lt;/span> &lt;span style="color:#177500">// 2：初始化对象
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">instance&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">memory&lt;/span>&lt;span style="color:#000">;&lt;/span> &lt;span style="color:#177500">// 3：设置instance指向刚分配的内存地址
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>这3行伪代码中的2和3之间，可能会被重排序（在一些JIT编译器上）。
+解决方案：&lt;/p>
+&lt;p>1、禁止第2和第3行伪代码重排序：volatile修饰instance&lt;/p>
+&lt;p>优势：volatile除了可以对&lt;strong>静态字段&lt;/strong>实现延迟初始化外，还可以对&lt;strong>实例字段&lt;/strong>实现延迟初始化。&lt;/p>
+&lt;p>2、允许第2和第3行伪代码重排序，但不允许其他线程“看到”这个重排序：内部类&lt;/p>
+&lt;p>JVM在类初始化期间会获取这个初始化锁，并且每个线程至少获取一次锁来确保这个类已经被初始化过&lt;/p>
+&lt;h3 id="java立即初始化类场景">Java立即初始化类场景&lt;/h3>
+&lt;p>根据Java语言规范，在首次发生下列任意一种情况时，一个类或接口类型T将被立即初始化：&lt;/p>
+&lt;p>1）T是一个类，而且一个T类型的实例被创建&lt;/p>
+&lt;p>2）T是一个类，且T中声明的一个静态方法被调用&lt;/p>
+&lt;p>3）T中声明的一个静态字段被赋值&lt;/p>
+&lt;p>4）T中声明的一个静态字段被使用，而且这个字段不是一个常量字段&lt;/p>
+&lt;p>5）T是一个顶级类（Top Level Class），而且一个断言语句嵌套在T内部被执行&lt;/p>
+&lt;h1 id="java并发编程基础">Java并发编程基础&lt;/h1>
+&lt;h2 id="线程简介">线程简介&lt;/h2>
+&lt;h3 id="线程优先级">线程优先级&lt;/h3>
+&lt;p>整形成员变量priority来控制优先级，范围从1-10，可通过setPriority(int)来修改优先级，默认为5，优先级高的线程&lt;strong>分配时间片的数量&lt;/strong>要多余优先级低的线程。设置线程优先级时，针对频繁阻塞（休眠或I/O操作）的线程需要设置较高优先级，而偏重计算（需要较多CPU时间或者偏运算）的线程则设置较低的优先级，确保处理器不会被独占。&lt;/p>
+&lt;blockquote>
+&lt;p>线程优先级不能作为程序正确性的依赖，因为操作系统可以完全不用理会Java线程对于优先级的设定。&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="daemon线程">Daemon线程&lt;/h3>
+&lt;p>支持型线程，主要被用作程序中后台调度以及支持性工作。可以通过调用Thread.setDaemon(true)将线程设置为Daemon线程。&lt;/p>
+&lt;blockquote>
+&lt;p>Daemon属性需要在启动线程之前设置，不能再启动线程之后设置。&lt;/p>
+&lt;/blockquote>
+&lt;p>Daemon线程被用作完成支持性工作，但是在Java虚拟机退出时Daemon线程中的finally块并不一定会执行。&lt;/p>
+&lt;blockquote>
+&lt;p>在构建Daemon线程时，不能依靠finally块中的内容来确保执行关闭或清理资源的逻辑。&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="理解中断">理解中断&lt;/h3>
+&lt;p>从Java的API中可以看到，许多声明抛出InterruptedException的方法（例如Thread.sleep(long millis)方法）这些方法在抛出InterruptException之前，Java虚拟机会先将该线程的中断标志位清除，然后抛出InterruptedException，此时调用isInterrupted()方法将会返回false。&lt;/p>
+&lt;h3 id="过期的suspend-resume-stop">过期的suspend()、resume()、stop()&lt;/h3>
+&lt;p>suspend()、resume()、stop()方法完成了线程的暂停、回复和终止工作。但是这些API是过期的，不建议使用。&lt;/p>
+&lt;p>不建议使用原因主要有：以suspend()方法为例，再调用后线程不会释放已经占有的资源（比如锁），而是占有着资源进入睡眠状态，容易引发死锁问题。同样，stop()方法在终结一个线程时不会保证线程的资源正常释放，通常是没有给予线程完成资源工作的机会，因此可能会导致程序可能工作在不确定状态下。&lt;/p>
+&lt;blockquote>
+&lt;p>暂停和恢复操作可以使用等待/通知机制来替代&lt;/p>
+&lt;/blockquote>
+&lt;h3 id="安全地终止线程">安全地终止线程&lt;/h3>
+&lt;p>中断最适合用来取消或停止任务。或者利用一个boolean变量（自定义）来控制是否需要停止任务并终结该线程。&lt;/p>
+&lt;h2 id="线程间通信">线程间通信&lt;/h2>
+&lt;h3 id="volatile和synchronized关键字">volatile和synchronized关键字&lt;/h3>
+&lt;h3 id="等待-通知机制">等待/通知机制&lt;/h3>
+&lt;p>使用共享变量+sleep()（休眠用来防止过快的“无效”尝试）看似能够实现所需功能，但存在如下问题：&lt;/p>
+&lt;p>1、难以确保及时性：休眠时长&lt;/p>
+&lt;p>2、难以降低开销：降低时长消耗更多处理器资源&lt;/p>
+&lt;p>Java通过内置的等待/通知机制能够很好的解决以上问题&lt;/p>
+&lt;p>等待/通知的相关方法是任意Java对象都具备的，定义在Object类上。&lt;/p>
+&lt;p>notify()：通知一个在对象上等待的线程，使其从wait()方法返回，而返回的前提是该线程获取到了对象的锁。&lt;/p>
+&lt;p>调用wait()、notify()以及notifyall()时需要注意的细节：&lt;/p>
+&lt;p>1、使用wait()、notify()、notifyAll()时需要先对调用对象加锁&lt;/p>
+&lt;p>2、调用wait()方法后，线程状态由RUNNING变为WAITING，并将当前线程放置到对象的等待队列。&lt;/p>
+&lt;p>3、notify()或notifyAll()方法调用后，等待线程依旧不会从wait()返回，需要notify()或者notifyAll()的线程释放锁之后，等待线程才有机会从wait()返回。&lt;/p>
+&lt;p>4、notify()方法将等待队列中的一个等待线程从等待队列中移到同步队列中，而notifyAll()方法则是将等待队列中所有的线程全部移到同步队列中，被移动的线程状态由WAITING变为BLOCKED。&lt;/p>
+&lt;p>5、从wait()方法返回的前提是获取调用对象的锁。&lt;/p>
+&lt;h3 id="等待-通知的经典范式">等待/通知的经典范式&lt;/h3>
+&lt;p>等待方遵循如下原则：&lt;/p>
+&lt;p>1、获取对象的锁&lt;/p>
+&lt;p>2、如果条件不满足，那么调用对象的wait()方法，被通知后仍要检查条件。&lt;/p>
+&lt;p>3、条件满足则执行对应的逻辑&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">synchronized&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">对象&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">while&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">条件不满足&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">对象&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">wait&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 对应的处理逻辑
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>通知方遵循如下原则：
+1、获得对象的锁&lt;/p>
+&lt;p>2、改变条件&lt;/p>
+&lt;p>3、通知所有等待在对象上的线程&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">synchronized&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">对象&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 改变条件
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">对象&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">notifyAll&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="管道输入-输出流">管道输入/输出流&lt;/h3>
+&lt;p>管道输入/输出流和普通的文件输入/输出流或者网络输入/输出流不同之处在于，它主要用于线程之间的&lt;strong>数据传输&lt;/strong>，而传输的媒介为&lt;strong>内存&lt;/strong>。&lt;/p>
+&lt;p>管道输入/输出流主要包括了如下4种具体实现：PipedOutputStream、PipedInputStream、PipedReader和PipedWriter，前两种面向字节，而后两种面向字符。&lt;/p>
+&lt;h3 id="thread-join-的使用">Thread.join()的使用&lt;/h3>
+&lt;p>线程A调用了thread.join()语句的含义：当前线程A等待thread线程终止之后才从thread.join()返回。还有join(long millis)和join(long millis, int nanos)两个具备超时特性的方法。&lt;/p>
+&lt;p>join源码与上述总结的等待/通知经典范式一致，即加锁、循坏和处理逻辑3个步骤。&lt;/p>
+&lt;h3 id="threadlocal的使用">ThreadLocal的使用&lt;/h3>
+&lt;h2 id="线程应用实例">线程应用实例&lt;/h2>
+&lt;h3 id="等待超时模式">等待超时模式&lt;/h3>
+&lt;h3 id="数据库连接池示例">数据库连接池示例&lt;/h3>
+&lt;h1 id="java中的锁">Java中的锁&lt;/h1>
+&lt;h2 id="lock接口">Lock接口&lt;/h2>
+&lt;p>Lock接口提供的synchronized关键字不具备的主要特性&lt;/p>
+&lt;p>1、尝试非阻塞地获取锁（tryLock）&lt;/p>
+&lt;p>当前线程尝试获取锁，如果这一时刻锁没有被其他线程获取锁，则成功获取并持有锁&lt;/p>
+&lt;p>2、能被中断地获取锁（lockInterruptibly）&lt;/p>
+&lt;p>与synchronized不同，获取到锁的线程能够响应中断，当获取到锁的线程能被中断异常将会被抛出，同时锁会被释放&lt;/p>
+&lt;p>3、超时获取锁&lt;/p>
+&lt;h2 id="队列同步器">队列同步器&lt;/h2>
+&lt;h3 id="队列同步器的接口与实例">队列同步器的接口与实例&lt;/h3>
+&lt;p>同步器可重写的方法&lt;/p>
+&lt;p>1、tryAcquire&lt;/p>
+&lt;p>2、tryRelease&lt;/p>
+&lt;p>3、tryAcquireShared&lt;/p>
+&lt;p>4、tryReleaseShared&lt;/p>
+&lt;p>5、isHeldExclusively：当前同步器是否在独占模式下被线程占用，一般该方法表示是否被当前线程所独占&lt;/p>
+&lt;p>同步器提供的模板方法&lt;/p>
+&lt;p>1、acquire&lt;/p>
+&lt;p>2、acquireInterruptibly：响应中断&lt;/p>
+&lt;p>3、tryAcquireNanos：在acquireInterruptibly基础上增加了超时限制，获取到返回true&lt;/p>
+&lt;p>4、acquireShared&lt;/p>
+&lt;p>5、acquireSharedInterruptibly&lt;/p>
+&lt;p>6、tryAcquireSharedNanos&lt;/p>
+&lt;p>7、release&lt;/p>
+&lt;p>8、releaseShared&lt;/p>
+&lt;p>9、getQueuedThreads：获取等待在同步队列中的线程集合&lt;/p>
+&lt;p>同步器提供的模板方法基本分为3类：独占式获取与释放同步状态、共享式获取与释放同步状态和查询同步队列中的等待线程情况。&lt;/p>
+&lt;h3 id="队列同步器的实现分析">队列同步器的实现分析&lt;/h3>
+&lt;p>主要包括：同步队列、独占式同步状态获取与释放、共享式同步状态获取与释放以及超时获取同步状态等同步器的核心数据结构与模板方法。&lt;/p>
+&lt;p>1、同步队列&lt;/p>
+&lt;p>2、独占式同步状态获取与释放&lt;/p>
+&lt;p>acquire，该方法对中断不敏感&lt;/p>
+&lt;p>3、重入锁&lt;/p>
+&lt;p>公平锁多一个hasQueuedPredecessors()方法判断，即加入了同步队列中当前节点是否有前驱节点的判断。&lt;/p>
+&lt;p>非公平锁的上下文切换次数比公平锁低，效率更高。&lt;/p>
+&lt;h3 id="读写锁">读写锁&lt;/h3>
+&lt;p>ReadWriteLock仅定义了获取读锁和写锁的两个方法，即readLock()和writeLock()方法。而其实现——ReentrantReadWriteLock，除了接口方法之外，还提供了一些便于外界监控其内部工作状态的方法，如下：&lt;/p>
+&lt;p>1、getReadLockCount：返回读锁被获取的次数。该次数不等于获取读锁的线程数（可重入。&lt;/p>
+&lt;p>2、getReadHoldCount：返回当前线程获取读锁的次数。该方法在Java6中加入到ReentrantReadWriteLock中，使用ThreadLocal保存当前线程获取的次数&lt;/p>
+&lt;p>3、isWriteLocked：判断写锁是否被获取&lt;/p>
+&lt;p>4、getWriteHoldCount：返回当前写锁被获取的次数&lt;/p>
+&lt;p>&lt;strong>读写状态的设计&lt;/strong>&lt;/p>
+&lt;p>读写锁的自定义同步器需要在同步状态（一个整型变量）上维护多个读线程和一个写线程的状态，使得该状态的设计成为读写锁实现的关键。&lt;/p>
+&lt;p>如果在一个整型变量上维护多种状态，就一定需要“按位切割使用”这个变量。读写锁将变量切分成了两个部分，&lt;strong>高16位表示读，低16位表示写&lt;/strong>。&lt;/p>
+&lt;p>状态划分的推论：S不等于0时，当写状态（S&amp;amp;0x0000FFFF）等于0时，则读状态（S&amp;gt;&amp;gt;&amp;gt;16）(无符号补0右移16位)大于0，即读锁已被获取&lt;/p>
+&lt;p>&lt;strong>写锁的获取与释放&lt;/strong>&lt;/p>
+&lt;p>写锁是一个支持重进入的排它锁。&lt;/p>
+&lt;p>&lt;strong>读锁的获取与释放&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>锁降级&lt;/strong>&lt;/p>
+&lt;p>锁降级是指写锁降级成为读锁。如果当前线程用油写锁，然后将其释放，最后再获取读锁，这种分段完成的过程不能称之为锁降级。锁降级是指把持住（当前拥有的）写锁，再获取到读锁，随后释放（先前拥有的）写锁的过程。&lt;/p>
+&lt;p>锁降级中读锁的获取是否必要？&lt;/p>
+&lt;p>必要的。保证数据的可见性，如果不获取读锁而是直接释放写锁，假设另一线程T修改了数据，那么当前线程无法感知线程T的数据更新&lt;/p>
+&lt;p>RentrantReadWriteLock不支持锁升级。&lt;/p>
+&lt;h2 id="locksupport工具">LockSupport工具&lt;/h2>
+&lt;h2 id="condition接口">Condition接口&lt;/h2>
+&lt;p>Object的监视器方法和Condition接口对比：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:left">对比项&lt;/th>
+&lt;th style="text-align:left">Object Monitor Methods&lt;/th>
+&lt;th style="text-align:left">Condition&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:left">前置条件&lt;/td>
+&lt;td style="text-align:left">获取对象的锁&lt;/td>
+&lt;td style="text-align:left">调用Lock.lock()获取锁&lt;br>调用Lock.newCondition()获取Condition对象&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">调用方式&lt;/td>
+&lt;td style="text-align:left">直接调用&lt;br>如：object.wait()&lt;/td>
+&lt;td style="text-align:left">直接调用&lt;br>如：condition.await()&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">等待队列个数&lt;/td>
+&lt;td style="text-align:left">一个&lt;/td>
+&lt;td style="text-align:left">多个&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">当前线程释放锁并进入等待状态&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">当前线程释放锁并进入等待状态，&lt;br>在等待状态中不响应中断&lt;/td>
+&lt;td style="text-align:left">不支持&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">当前线程释放锁并进入超时等待状态&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">当前线程释放锁并进入等待状态到将来的某个时间&lt;/td>
+&lt;td style="text-align:left">不支持&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">唤醒等待队列的一个线程&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">唤醒等待队列的全部线程&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;td style="text-align:left">支持&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Condition接口与示例&lt;/strong>&lt;/p>
+&lt;p>Condition对象是有Lock对象（调用Lock对象的newCondition()方法）创建出来的。Condition依赖Lock对象。&lt;/p>
+&lt;p>&lt;strong>Condition的实现分析&lt;/strong>&lt;/p>
+&lt;p>主要包括：等待队列、等待和通知。&lt;/p>
+&lt;p>在Object的监视器模型上，一个对象拥有一个同步队列和等待队列。而并发包中的Lock（更确切地说是同步器）拥有一个同步队列和多个等待队列。&lt;/p>
+&lt;p>&lt;strong>等待&lt;/strong>&lt;/p>
+&lt;p>调用Condition的await()方法（或以await开头的方法），&lt;strong>会使当前线程进入等待队列并释放锁，同时线程状态变为等待状态&lt;/strong>。&lt;/p>
+&lt;p>如果从&lt;strong>队列&lt;/strong>（同步队列和等待队列）的角度看await()方法，当调用await()方法时，&lt;strong>相当于同步队列的首节点（获取了锁的节点）移动到了Condition的等待队列中。&lt;/strong>&lt;/p>
+&lt;p>**当等待队列中的节点被唤醒，则唤醒节点的线程开始尝试获取同步状态。**如果不是通过其他线程调用Condition.signal()方法唤醒，而是对等待线程进行中断，则会抛出InterruptedException。&lt;/p>
+&lt;p>&lt;strong>通知&lt;/strong>&lt;/p>
+&lt;p>调用Condition的signal()方法，将会唤醒在等待队列中等待时间最长的节点（首节点），在唤醒节点之前，会将节点移到同步队列中，然后加入到获取同步状态的竞争中。&lt;/p>
+&lt;p>Condition的signalAll()方法，相当于对等待队列中的每个节点均执行一次signal()方法，效果就是将等待队列中所有节点全部移动到同步队列中，并唤醒每个节点的线程。&lt;/p>
+&lt;h1 id="java并发容器和框架">Java并发容器和框架&lt;/h1>
+&lt;h2 id="concurrenthashmap">ConcurrentHashMap&lt;/h2>
+&lt;h2 id="concurrentlinkedqueue">ConcurrentLinkedQueue&lt;/h2>
+&lt;h2 id="java中的阻塞队列">Java中的阻塞队列&lt;/h2>
+&lt;h2 id="fork-join框架">Fork/Join框架&lt;/h2>
+&lt;h3 id="工作窃取算法">工作窃取算法&lt;/h3>
+&lt;p>双端队列&lt;/p>
+&lt;h1 id="java中的13个原子操作类">Java中的13个原子操作类&lt;/h1>
+&lt;h2 id="原子更新基本类型类">原子更新基本类型类&lt;/h2>
+&lt;ul>
+&lt;li>AtomicBoolean&lt;/li>
+&lt;li>AtomicInteger&lt;/li>
+&lt;li>AtomicLong&lt;/li>
+&lt;/ul>
+&lt;h2 id="原子更新数组">原子更新数组&lt;/h2>
+&lt;ul>
+&lt;li>AtomicIntegerArray&lt;/li>
+&lt;li>AtomicLongArray&lt;/li>
+&lt;li>AtomicReferenceArray&lt;/li>
+&lt;li>AtomicIntegerArray&lt;/li>
+&lt;/ul>
+&lt;h2 id="原子更新引用">原子更新引用&lt;/h2>
+&lt;ul>
+&lt;li>AtomicReference&lt;/li>
+&lt;li>AtomicReferenceFieldUpdater&lt;/li>
+&lt;li>AtomicMarkableReference&lt;/li>
+&lt;/ul>
+&lt;h2 id="原子更新字段类">原子更新字段类&lt;/h2>
+&lt;ul>
+&lt;li>AtomicIntegerFieldUpdater&lt;/li>
+&lt;li>AtomicLongFieldUpdater&lt;/li>
+&lt;li>AtomicStamedReference&lt;/li>
+&lt;/ul>
+&lt;h1 id="java中的并发工具类">Java中的并发工具类&lt;/h1>
+&lt;h2 id="等待多线程完成的countdownlatch">等待多线程完成的CountDownLatch&lt;/h2>
+&lt;h2 id="同步屏障cyclicbarrier">同步屏障CyclicBarrier&lt;/h2>
+&lt;h2 id="控制并发线程数的semaphore">控制并发线程数的Semaphore&lt;/h2>
+&lt;h2 id="线程间交换数据的exchanger">线程间交换数据的Exchanger&lt;/h2>
+&lt;h1 id="java中的线程池">Java中的线程池&lt;/h1>
+&lt;h1 id="executor框架">Executor框架&lt;/h1>
+&lt;h1 id="java并发编程实战">Java并发编程实战&lt;/h1></description></item></channel></rss>

@@ -1,0 +1,446 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – 文件系统</title><link>/docs/10.OS/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</link><description>Recent content in 文件系统 on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/docs/10.OS/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Linux文件系统-01设备</title><link>/docs/10.OS/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-01%E8%AE%BE%E5%A4%87/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/10.OS/%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/Linux%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F-01%E8%AE%BE%E5%A4%87/</guid><description>
+&lt;h1 id="linux文件系统">Linux文件系统&lt;/h1>
+&lt;h2 id="简介">简介&lt;/h2>
+&lt;p>Linux有多种文件系统，不同的文件系统支持不同的体系。文件系统是管理数据的，而存储数据的物理设备有硬盘、 U盘、 SD卡、 NAND FLASH、 NOR FLASH、网络存储设备等。不同的存储设备有不同的物理结构，因此就需要不同的文件系统去管理，比如管理 NAND FLASH 使用YAFFS 文件系统，管理硬盘/SD卡使用ext文件系统等。&lt;/p>
+&lt;h2 id="分类">分类&lt;/h2>
+&lt;p>Linux支持很多文件系统格式，常见文件系统类型：&lt;/p>
+&lt;p>ext2 ： 早期linux中常用的文件系统&lt;/p>
+&lt;p>ext3 ： ext2的升级版，带日志功能&lt;/p>
+&lt;p>RAMFS ： 内存文件系统，速度很快&lt;/p>
+&lt;p>NFS ： 网络文件系统，由SUN发明，主要用于远程文件共享&lt;/p>
+&lt;p>MS-DOS ： MS-DOS文件系统&lt;/p>
+&lt;p>VFAT ： Windows 95/98 操作系统采用的文件系统&lt;/p>
+&lt;p>FAT ： Windows XP 操作系统采用的文件系统&lt;/p>
+&lt;p>NTFS： Windows NT/XP 操作系统采用的文件系统&lt;/p>
+&lt;p>HPFS ： OS/2 操作系统采用的文件系统&lt;/p>
+&lt;p>PROC : 虚拟的进程文件系统&lt;/p>
+&lt;p>ISO9660 ： 大部分光盘所采用的文件系统&lt;/p>
+&lt;p>ufsSun : OS 所采用的文件系统&lt;/p>
+&lt;p>NCPFS ： Novell 服务器所采用的文件系统&lt;/p>
+&lt;p>SMBFS ： Samba 的共享文件系统&lt;/p>
+&lt;p>XFS ： 由SGI开发的先进的日志文件系统，支持超大容量文件&lt;/p>
+&lt;p>JFS ：IBM的AIX使用的日志文件系统&lt;/p>
+&lt;p>ReiserFS : 基于平衡树结构的文件系统&lt;/p>
+&lt;p>udf: 可擦写的数据光盘文件系统&lt;/p>
+&lt;p>大体可分以下几类：&lt;/p>
+&lt;h3 id="磁盘文件系统">磁盘文件系统&lt;/h3>
+&lt;p>指本地主机中实际可以访问到的文件系统，包括硬盘、CD-ROM、DVD、USB存储器、磁盘阵列等。常见格式有：Ext2、Ext3、Ext4、JFS、NTFS、UFS、FAT、FAT16、FAT32等&lt;/p>
+&lt;h3 id="网络文件系统">网络文件系统&lt;/h3>
+&lt;p>是可以远程访问的文件系统，在服务器端仍是本地磁盘文件系统，客户机通过网络远程访问数据。 常见格式有：NFS、Samba等&lt;/p>
+&lt;h3 id="专有-虚拟文件系统">专有/虚拟文件系统&lt;/h3>
+&lt;p>不驻留在磁盘上的文件系统。常见格式有：TMPFS、PROCFS等。&lt;/p>
+&lt;h1 id="磁盘文件系统-1">磁盘文件系统&lt;/h1>
+&lt;p>目前Ext4（Extended File sytem，扩展文件系统）是广泛使用的一种磁盘文件系统格式。是在Ext3基础上发展起来的，对有效性保护、数据完整性、数据访问速度、向下兼容性等方面做了改进，其特点是日志文件系统：可将整个磁盘的写入动作完整地记录在磁盘的某个区域上，以便在必要时回溯追踪。&lt;/p>
+&lt;p>磁盘是一种计算机的外部存储器设备，由一个或多个覆盖有磁性材料的铝制或玻璃制的碟片组成，用来存储用户的信息，这种信息可以反复地被读取和改写。磁盘主要分为一下几类：&lt;/p>
+&lt;h2 id="ide磁盘">IDE磁盘&lt;/h2>
+&lt;p>Integrated Drive Electronics，价格低廉，兼容性强，性价比高，但是数据传输慢，不支持热插拔等。&lt;/p>
+&lt;h2 id="scsi磁盘">SCSI磁盘&lt;/h2>
+&lt;p>Small Computer System Interface，传输速率高，读写性能好，运行稳定，可连接多个设备，支持热插拔，占用CPU低，但是价格相对较贵，一般用于工作站或服务器上。&lt;/p>
+&lt;h2 id="sata磁盘">SATA磁盘&lt;/h2>
+&lt;p>Serial Advanced Technology Attachment，结构简单、支持热插拔。&lt;/p>
+&lt;h1 id="磁盘分区">磁盘分区&lt;/h1>
+&lt;p>为了便于管理和使用，通常会对磁盘进行分区。&lt;/p>
+&lt;p>&lt;img src="../imgs/file_sys_01_1.png" alt="file_sys_01_1.png">&lt;/p>
+&lt;h2 id="主分区">主分区&lt;/h2>
+&lt;p>必须要存在的分区，最多能创建4个，最少1个，编号只能是1 - 4 （比如sda1、sda2、sda3、sda4），可以直接格式化，然后安装系统直接存放文件。&lt;/p>
+&lt;h2 id="扩展分区">扩展分区&lt;/h2>
+&lt;p>会占用主分区位置，即主分区+扩展分区之和最多4个。相当于独立的磁盘，有独立的分区表，但不能独立的存放数据&lt;/p>
+&lt;h2 id="逻辑分区">逻辑分区&lt;/h2>
+&lt;p>扩展分区不能直接存放数据，必须经过再次分割成为逻辑分区后才能存放数据。一个扩展分区中的逻辑分区可以有任意多个，编号只能从5开始。&lt;/p>
+&lt;h2 id="交换分区">交换分区&lt;/h2>
+&lt;p>安装系统时建立的，一块特殊的硬盘空间，当实际内存不够用时，操作系统会从内存中取出部分暂时不用的数据，放在swap中，为当前程序腾出足够的内存空间。swap不会使用到目录树的挂载，无需指定挂载点（即cd无法进入）。&lt;/p>
+&lt;h1 id="设备">设备&lt;/h1>
+&lt;p>设备接入系统后都是以文件的形式存在&lt;/p>
+&lt;h2 id="设备文件名称">设备文件名称&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:left">设备类型&lt;/th>
+&lt;th style="text-align:left">文件名称&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:left">SATA/SAS/USB&lt;/td>
+&lt;td style="text-align:left">/dev/sda,/dev/sdb （s= SATA, d=DISK a=第几块）&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">IDE&lt;/td>
+&lt;td style="text-align:left">/dev/hd0,/dev/hd1 （h= hard）&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">VIRTIO-BLOCK&lt;/td>
+&lt;td style="text-align:left">/dev/vda,/dev/vdb （v=virtio）虚拟io输出&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">M2（SSD）&lt;/td>
+&lt;td style="text-align:left">/dev/nvme0,/dev/nvme1（nvme=m2）&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">SD/MMC/EMMC(卡)&lt;/td>
+&lt;td style="text-align:left">/dev/mmcblk0,/dev/mmcblk1（mmcblk=mmc卡 ）&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">光驱&lt;/td>
+&lt;td style="text-align:left">/cdrom,/dev/sr0,/dev/sr1&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h2 id="设备命令规则">设备命令规则&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>/dev/sd a 5
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-1 -2 -3 -4
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>分别以数字代替上述位置
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-1：硬件设备所在目录
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-2：设备，sd表示SCSI设备，hd表示IDE设备
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-3：磁盘的顺序号以字母a、b、c...表示
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-4：分区的顺序号，以1、2、3...表示
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>举例：
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>/dev/sda # 表示第一个SCSI硬盘
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>/dev/sda1 # 表示第一个SCSI硬盘的第一个主分区
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>/dev/sdb3 # 表示第二个SCSI硬盘的第3个主分区
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>/dev/hdb # 表示第二个IDE硬盘的第2个主分区
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h1 id="文件系统结构">文件系统结构&lt;/h1>
+&lt;p>除了swap分区外，其他主分区、扩展分区、逻辑分区都是在根分区（/）目录上操作的。Linux文件系统是一个树形的分层组织结构，根作为整个文件系统的唯一起点，其他所有目录都从该点出发。根分区下的一级目录有：&lt;/p>
+&lt;ul>
+&lt;li>bin&lt;/li>
+&lt;li>boot&lt;/li>
+&lt;li>dev&lt;/li>
+&lt;li>etc&lt;/li>
+&lt;li>home&lt;/li>
+&lt;li>lib&lt;/li>
+&lt;li>mnt&lt;/li>
+&lt;li>opt&lt;/li>
+&lt;li>proc&lt;/li>
+&lt;li>root&lt;/li>
+&lt;li>sbin&lt;/li>
+&lt;li>srv&lt;/li>
+&lt;li>sys&lt;/li>
+&lt;li>tmp&lt;/li>
+&lt;li>usr&lt;/li>
+&lt;li>var&lt;/li>
+&lt;/ul>
+&lt;h1 id="操作命令">操作命令&lt;/h1>
+&lt;h2 id="fdisk">fdisk&lt;/h2>
+&lt;p>磁盘分区表操作工具。命令格式：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>fdisk &lt;span style="color:#000">[&lt;/span>-l&lt;span style="color:#000">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>常用选项：
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>-l: 输出后面接的装置所有的分区内容。
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h2 id="file">file&lt;/h2>
+&lt;p>file命令用于辨识文件类型。命令的格式为：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>file &lt;span style="color:#000">[&lt;/span>-b -c -L -v -z&lt;span style="color:#000">][&lt;/span>-f &amp;lt;名称文件&amp;gt;&lt;span style="color:#000">][&lt;/span>-m &amp;lt;魔法数字文件&amp;gt;...&lt;span style="color:#000">][&lt;/span>文件或目录...&lt;span style="color:#000">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>常用选项：
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>-b: 列出辨识结果时不显示文件名称
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-c: 详细列出指令执行过程
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-f &amp;lt;名称文件&amp;gt;: 执行名称文件
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-L: 直接显示符号链接所指向的文件的类别
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-m &amp;lt;魔法数字文件&amp;gt;: 执行魔法数字文件
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-v: 显示版本信息
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-z: 尝试解读压缩文件内容
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">[&lt;/span>文件或目录...&lt;span style="color:#000">]&lt;/span>: 要确定类型的文件列表，多个文件之间以空格隔开，也可以使用shell通配符匹配
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h2 id="ln">ln&lt;/h2>
+&lt;p>link files的缩写，是为某一个文件在另外一个位置建立一个同步的链接。&lt;/p>
+&lt;p>命令格式：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>ln &lt;span style="color:#000">[&lt;/span>参数&lt;span style="color:#000">][&lt;/span>源文件或目录&lt;span style="color:#000">][&lt;/span>目标文件或目录&lt;span style="color:#000">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>常用选项：
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>-b: 删除、覆盖之前建立的链接
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-d: 允许超级用户制作目录的硬链接
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-f: 强制执行
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-i: 交互模式，文件存在则提示是否覆盖
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-n: 把符号连接视为一般目录
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-s: 软链接&lt;span style="color:#000">(&lt;/span>符号链接&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-v: 显示详细处理过程
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h2 id="mount">mount&lt;/h2>
+&lt;h3 id="挂载本地设备">挂载本地设备&lt;/h3>
+&lt;p>对分区/dev/sda3的操作命令：&lt;/p>
+&lt;p>1、挂载：mount /dev/sda1 /mnt/asd，这样挂载分区到文件系统上，才能看/mnt/asd里的东西。&lt;/p>
+&lt;p>2、查看：ls -hl /mnt/asd&lt;/p>
+&lt;p>3、卸载：umount /dev/sda1&lt;/p>
+&lt;p>文件系统：指定要卸载的文件系统或者其对应的设备文件名&lt;/p>
+&lt;p>(1)、通过设备名卸载：umount -v /dev/sda1&lt;/p>
+&lt;p>(2)、通过挂载点卸载：umount -v /mnt/mymount/&lt;/p>
+&lt;h3 id="挂载网络设备">挂载网络设备&lt;/h3>
+&lt;p>挂载 NFS 服务作为网络磁盘：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>sudo mount -t nfs &amp;lt;NFS_server_IP&amp;gt;:&amp;lt;NFS_share_path&amp;gt; &amp;lt;mount_point&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span># sudo mount -t nfs 192.168.1.100:/nfs/share /mnt/nfs
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>挂载后，可以在 &lt;code>/mnt/nfs&lt;/code> 目录下查看 NFS 服务器上的文件。
+要在系统启动时自动挂载 NFS，可以将以上命令添加到 &lt;code>/etc/fstab&lt;/code> 文件中，例如：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>192.168.1.100:/nfs/share /mnt/nfs nfs defaults 0 0
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>注意：在生产环境中，使用前需要调整访问安全性的设置，并确保挂载的代码的正确性。&lt;/p>
+&lt;h2 id="设备查看">设备查看&lt;/h2>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:left">命令&lt;/th>
+&lt;th style="text-align:left">作用&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:left">fdisk -l&lt;/td>
+&lt;td style="text-align:left">查看磁盘分区情况&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">lsblk&lt;/td>
+&lt;td style="text-align:left">设备使用情况&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">blkid&lt;/td>
+&lt;td style="text-align:left">设备管理方式及设备ID&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">df&lt;/td>
+&lt;td style="text-align:left">查看正在被系统挂载的设备&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">cat /proc/partitions&lt;/td>
+&lt;td style="text-align:left">查看系统识别设备&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/device_naming.html">https://docs.aws.amazon.com/zh_cn/AWSEC2/latest/UserGuide/device_naming.html&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://blog.csdn.net/qq_43114229/article/details/120826140?utm_medium=distribute.pc_relevant.none-task-blog-2~default~baidujs_baidulandingword~default-1-120826140-blog-104561836.235%5Ev27%5Epc_relevant_3mothn_strategy_recovery&amp;amp;spm=1001.2101.3001.4242.2&amp;amp;utm_relevant_index=4">Linux存储设备管理&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://blog.51cto.com/u_15467009/5575719">https://blog.51cto.com/u_15467009/5575719&lt;/a>&lt;/p></description></item></channel></rss>

@@ -1,0 +1,227 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – 读书笔记</title><link>/docs/91.%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/</link><description>Recent content in 读书笔记 on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/docs/91.%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 大话设计模式</title><link>/docs/91.%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E5%A4%A7%E8%AF%9D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/91.%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E5%A4%A7%E8%AF%9D%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/</guid><description>
+&lt;p>2019-11-05&lt;/p>
+&lt;h1 id="第一章-简单工厂模式">第一章：简单工厂模式&lt;/h1>
+&lt;p>加减乘除实现计算接口，计算接口有两个属性，一个计算方法。工厂类case判断计算类型，实例化出具体的实现类。&lt;/p>
+&lt;p>UML类图&lt;/p>
+&lt;p>1、矩形代表一个类，类图分三层，第一层：类的名称（抽象类使用斜体）；第二层：类的特性（字段和属性）；第三层：类的操作（方法或行为）。“+”表示public，“-”表示private，“#”表示protected。&lt;/p>
+&lt;p>2、接口，与类的区别主要是顶端有&amp;lt;&lt;interface>&amp;gt;显示，第一层：接口名称；第二层：接口方法。（棒棒糖表示法：圆圈旁为接口方法）。&lt;/p>
+&lt;p>3、继承关系，空心三角形+实线。&lt;/p>
+&lt;p>4、实现接口关系，空心三角形+虚线。&lt;/p>
+&lt;p>5、关联关系，实线箭头。当一个类“知道”另一个类时，可以用关联（association）。如“企鹅”关联“气候”。&lt;/p>
+&lt;p>6、聚合关系，空心的菱形+实线箭头。表示一种弱的“拥有”关系，提现的是A对象可以包含B对象，但B对象不是A对象的一部分，如“雁群”与“大雁”。&lt;/p>
+&lt;p>7、合成（组合）关系，实心的菱形+实线箭头。合成（composition）是一种强的“拥有”关系，体现了严格的部分和整体的关系，部分和整体的生命周期一样。如“鸟”与“翅膀”。&lt;/p>
+&lt;p>8、依赖关系，虚线箭头。如“动物”与“氧气”、“动物”与“水”。&lt;/p>
+&lt;h1 id="第二章-商场促销-策略模式">第二章：商场促销——策略模式&lt;/h1>
+&lt;p>“面向对象的编程，并不是类越多越好，类的划分是为了封装，但分类的基础是抽象，具有相同属性和功能的对象的抽象集合才是类”——不要滥用子类！&lt;/p>
+&lt;p>策略模式——将不同类型算法分别封装起来，可以互相替换，此模式让算法的变化，不会影响到使用算法的客户。&lt;/p>
+&lt;p>Context，维护对Strategy对象的引用。抽象算法类：正常算法A；打折算法B；满减算法B。&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">//简单工厂模式
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">CashSuper&lt;/span> &lt;span style="color:#000">cashSpuer&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">CashFactory&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">createCashAccept&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">item&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">toString&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">…&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">cashSpuer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getResult&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">//策略模式
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">CashContext&lt;/span> &lt;span style="color:#000">cashContext&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">CashContext&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">CashXXX&lt;/span>&lt;span style="color:#000">(,,));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">…&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">cashContext&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getResult&lt;/span>&lt;span style="color:#000">(,);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">//策略模式与简单工厂结合的方法
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">CashContext&lt;/span> &lt;span style="color:#000">cashContext&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">CashContext&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">item&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">toString&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">…&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">cashContext&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getResult&lt;/span>&lt;span style="color:#000">(,);&lt;/span> 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>简单工厂需要让客户端认识两个类CashSuper和CashFactory，而策略模式与简单工厂结合的用法，客户端只需要认识一个雷CashContext就可以。耦合更加降低。
+优点：简化了单元测试。&lt;/p>
+&lt;p>2019-11-06&lt;/p>
+&lt;h1 id="第三章-拍摄ufo-单一职责原则">第三章：拍摄UFO——单一职责原则&lt;/h1>
+&lt;h1 id="第四章-考研求职两不误-开放-封闭原则">第四章：考研求职两不误——开放-封闭原则&lt;/h1>
+&lt;p>开放-封闭原则：软件实体（类、模块、函数等等）应该可以扩展，但是不可修改。&lt;/p>
+&lt;h1 id="第五章-会修电脑不会修收音机-依赖倒转原则">第五章：会修电脑不会修收音机？——依赖倒转原则&lt;/h1>
+&lt;p>依赖倒转原则：&lt;/p>
+&lt;p>A. 高层模块不应该依赖底层模块&lt;/p>
+&lt;p>B. 抽象不应该依赖细节。细节应该依赖抽象。&lt;/p>
+&lt;p>里氏代换原则——子类型必须能够替换掉它们的父类型。&lt;/p>
+&lt;p>“只有当子类可以替换掉父类，软件单位的功能不受到影响时，父类才能真正被复用，而子类也能够在父类的基础上增加新的行为。”&lt;/p>
+&lt;h1 id="第六章-穿什么有这么重要-装饰模式">第六章：穿什么有这么重要？——装饰模式&lt;/h1>
+&lt;p>装饰模式——动态地给一个对象添加一些额外的职责，就增加功能来说，装饰模式比生成子类更加灵活。&lt;/p>
+&lt;h1 id="第七章-为别人做嫁衣-代理模式">第七章：为别人做嫁衣——代理模式&lt;/h1>
+&lt;h1 id="第八章-雷锋依然在人间-工厂方法模式">第八章：雷锋依然在人间——工厂方法模式&lt;/h1>
+&lt;p>工厂方法模式（Factory Method）——定义一个用于创建对象的接口，让子类决定实例化哪一个类。工厂方法使一个类的实例化延迟到其子类。&lt;/p>
+&lt;p>简单工厂违背了“开放——封闭原则”&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">//简单工厂模式
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">LeiFeng&lt;/span> &lt;span style="color:#000">studentA&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">SimpleFactory&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">createLeiFeng&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">“&lt;/span>&lt;span style="color:#000">学雷锋的大学生&lt;/span>&lt;span style="color:#000">”&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">studentA&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">buyRice&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">LeiFeng&lt;/span> &lt;span style="color:#000">studentB&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">SimpleFactory&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">createLeiFeng&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">“&lt;/span>&lt;span style="color:#000">学雷锋的大学生&lt;/span>&lt;span style="color:#000">”&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">studentB&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">sweep&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">LeiFeng&lt;/span> &lt;span style="color:#000">studentC&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">SimpleFactory&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">createLeiFeng&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">“&lt;/span>&lt;span style="color:#000">学雷锋的大学生&lt;/span>&lt;span style="color:#000">”&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">studentC&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">wash&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 工厂方法模式
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">IFactory&lt;/span> &lt;span style="color:#000">factory&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">UndergraduateFactory&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Leifeng&lt;/span> &lt;span style="color:#000">student&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">factory&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">createLeifeng&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">student&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">BuyRice&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">student&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Sweep&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">student&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Wash&lt;/span>&lt;span style="color:#000">();&lt;/span> 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>2019-11-08&lt;/p>
+&lt;h1 id="第九章-简历复印-原型模式">第九章：简历复印——原型模式&lt;/h1>
+&lt;p>浅复制与深复制&lt;/p>
+&lt;h1 id="第十章-考题抄错会做也白搭-模板方法模式">第十章：考题抄错会做也白搭——模板方法模式&lt;/h1>
+&lt;p>模板方法——当我们要完成在某一细节层次一致的一个过程或一系列步骤，但其个别步骤在更详细的层次上的实现可能不同时，我们通常考虑用模板方法模式来处理。&lt;/p>
+&lt;h1 id="第十一章-无熟人难办事-迪米特法则">第十一章：无熟人难办事？——迪米特法则&lt;/h1>
+&lt;p>迪米特法则——也叫最少知识原则。如果两个类不必彼此直接通信，那么这两个类就不应当发生直接的相互作用。如果其中一个类需要调用另一个类的某个方法的话，可以通过第三者转发这个调用。&lt;/p>
+&lt;h1 id="第十二章-牛市股票还会亏钱-外观模式-facade">第十二章：牛市股票还会亏钱？——外观模式（Facade）&lt;/h1>
+&lt;p>外观模式——为子系统中的一组接口提供一个一致的界面，此模式定义了一个高层接口，这个接口使得这一子系统更加容易使用。&lt;/p>
+&lt;h1 id="第十三章-好菜每回味不同-建造者模式">第十三章：好菜每回味不同——建造者模式&lt;/h1>
+&lt;h1 id="第十四章-老板回来-我不知道-观察者模式">第十四章：老板回来，我不知道——观察者模式&lt;/h1>
+&lt;h1 id="第十五章-就不能不换db吗-抽象工厂模式">第十五章：就不能不换DB吗？——抽象工厂模式&lt;/h1>
+&lt;p>抽象工厂模式（Abstract Factory）——提供一个创建一系列相关或互相依赖对象的接口，而无需指定它们具体的类。&lt;/p>
+&lt;p>抽象工厂需要更改的工厂类太多，简单工厂switch case太多，反射加抽象工厂的数据访问程序。&lt;/p>
+&lt;h1 id="第十六章-无尽加班何时休-状态模式">第十六章：无尽加班何时休——状态模式&lt;/h1>
+&lt;p>状态模式（State）——当一个对象的内在状态改变时允许改变其行为，这个对象看起来像是改变了其类。&lt;/p>
+&lt;p>“状态模式主要解决的是当控制一个对象状态转换的条件表达式过于复杂时的情况。把状态的判断逻辑转移到表示不同状态的一系列类当中，可以把复杂的判断逻辑简化。”&lt;/p>
+&lt;p>状态模式好处与用处&lt;/p>
+&lt;p>“装填模式的好处是将与特定状态相关的行为局部化，并且将不同状态的行为分割开来。”&lt;/p>
+&lt;p>“将特定状态相关的行为都放入一个对象中，由于所有与状态相关的代码都存在于某个ConcreteState中，所以通过定义新的子类可以很容易地增加新的状态和转换。”&lt;/p>
+&lt;p>“状态模式通过把各种状态转移逻辑分布到State的子类之间，来减少相互间的依赖。”&lt;/p>
+&lt;p>“当一个对象的行为取决于他的状态，并且它必须在运行时刻根据状态改变它的行为时，就可以考虑使用状态模式了。”&lt;/p>
+&lt;h1 id="第十七章-在nba中我需要翻译-适配器模式">第十七章：在NBA中我需要翻译——适配器模式&lt;/h1>
+&lt;p>适配器模式——将一个类的接口转换成客户希望的另外一个接口。Adapter模式使得原本由于接口不兼容而不能一起工作的那些类可以一起工作。&lt;/p>
+&lt;h1 id="第十八章-备忘录模式">第十八章：备忘录模式&lt;/h1>
+&lt;p>备忘录（Memento）——在不破坏封装性的前提下，捕获一个对象的内部状态，并在该对象之外保存这个状态。这样以后就可将该对象恢复到原先保存的状态。&lt;/p>
+&lt;h1 id="第十九章-分公司-一部门-组合模式">第十九章：分公司=一部门——组合模式&lt;/h1>
+&lt;h1 id="第二十章-想走-可以-先买票-迭代器模式">第二十章：想走？可以！先买票——迭代器模式&lt;/h1>
+&lt;p>迭代器模式（Iterator）——提供一种方法顺序访问一个聚合对象中各个元素，而又不暴露该对象的内部表示。&lt;/p>
+&lt;h1 id="第二十一章-有些类也需计划生育-单例模式">第二十一章：有些类也需计划生育——单例模式&lt;/h1>
+&lt;h1 id="第二十二章-手机软件何时统一-桥接模式">第二十二章：手机软件何时统一——桥接模式&lt;/h1>
+&lt;p>合成/聚合复用原则——尽量使用合成/聚合，尽量不要使用类继承。&lt;/p>
+&lt;p>桥接模式——将抽象部分与它的实现部分分离，使它们都可以独立地变化。&lt;/p>
+&lt;p>“手机品牌”与“手机软件”是弱的聚合关系，像一座桥。&lt;/p>
+&lt;h1 id="第二十三章-烤羊肉串引来的思考-命令模式">第二十三章：烤羊肉串引来的思考——命令模式&lt;/h1>
+&lt;h1 id="第二十四章-加薪非要老总批-职责链模式">第二十四章：加薪非要老总批？——职责链模式&lt;/h1>
+&lt;p>职责链模式——使多个对象都有机会处理请求，从而避免请求的发送者和接受者之间的耦合关系。将这个对象连成一条链，并沿着这条链传递该请求，直到有一个对象处理它为止。&lt;/p>
+&lt;h1 id="第二十五章-世界需要和平-中介者模式">第二十五章：世界需要和平——中介者模式&lt;/h1>
+&lt;p>中介者模式（Mediator）——用一个中介对象来封装一系列的对象交互。中介者使各对象不需要显式地相互引用，从而使其耦合松散，而且可以独立地改变它们之间的交互。&lt;/p>
+&lt;h1 id="第二十六章-项目多也别傻做-享元模式">第二十六章：项目多也别傻做——享元模式&lt;/h1>
+&lt;p>享元模式（Flyweight）——运用共享技术有效地支持大量细粒度的对象。&lt;/p>
+&lt;h1 id="第二十七章-其实你不懂老板的心-解释器模式">第二十七章：其实你不懂老板的心——解释器模式&lt;/h1>
+&lt;p>解释器模式——给定一个语言，定义它的文法的一种表示，并定义一个解释器，这个解释器使用该表示来解释语言中的句子。&lt;/p>
+&lt;h1 id="第二十八章-男人和女人-访问者模式">第二十八章：男人和女人——访问者模式&lt;/h1>
+&lt;p>访问者模式（Visitor）——表示一个作用于某对象结构中的各元素的操作。它使你可以在不改变各元素的类的前提下定义作用于这些元素的新操作。 &lt;/p></description></item><item><title>Docs: 代码整洁之道</title><link>/docs/91.%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/91.%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E4%BB%A3%E7%A0%81%E6%95%B4%E6%B4%81%E4%B9%8B%E9%81%93/</guid><description>
+&lt;h1 id="命名技巧">&lt;strong>命名技巧&lt;/strong>&lt;/h1>
+&lt;h2 id="某团队对于repository层的约定">&lt;strong>某团队对于repository层的约定&lt;/strong>&lt;/h2>
+&lt;p>插入：add() addAll()&lt;/p>
+&lt;p>更新：save() saveAll()&lt;/p>
+&lt;p>删除：remove() removeAll()&lt;/p>
+&lt;p>聚合根查询：find() findAll()&lt;/p>
+&lt;p>关键词检索：searchXX()&lt;/p>
+&lt;p>命名技巧&lt;/p>
+&lt;h2 id="方法名">&lt;strong>方法名&lt;/strong>&lt;/h2>
+&lt;p>动词开头：如createXXX()&lt;/p>
+&lt;p>避免混用：query/fetch/find/search&lt;/p>
+&lt;p>规避特殊词：一般方法避免get/set开头&lt;/p>
+&lt;h1 id="变量">&lt;strong>变量&lt;/strong>&lt;/h1>
+&lt;h2 id="1-尽量避免使用单字母或缩写">&lt;strong>1、尽量避免使用单字母或缩写&lt;/strong>&lt;/h2>
+&lt;p>即使在for循环中：pos/index也比i/j/k要优雅&lt;/p>
+&lt;h2 id="2-变量名长度适中">&lt;strong>2、变量名长度适中&lt;/strong>&lt;/h2>
+&lt;p>maxAudienceNum&lt;/p>
+&lt;p>limitOfAudienceNumInstatium //舒适区&lt;/p>
+&lt;h2 id="3-用词技巧">&lt;strong>3、用词技巧&lt;/strong>&lt;/h2>
+&lt;p>1、布尔变量&lt;/p>
+&lt;p>status //bad&lt;/p>
+&lt;p>isDone //good&lt;/p>
+&lt;p>2、静态变量&lt;/p>
+&lt;p>flag //bad&lt;/p>
+&lt;p>dataReady //good&lt;/p>
+&lt;p>3、常量&lt;/p>
+&lt;p>int VERSION = 410&lt;/p>
+&lt;p>4、集合变量&lt;/p>
+&lt;p>List&lt;Student> students&lt;/p></description></item><item><title>Docs: 对伪心理学说不</title><link>/docs/91.%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E5%AF%B9%E4%BC%AA%E5%BF%83%E7%90%86%E5%AD%A6%E8%AF%B4%E4%B8%8D/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/91.%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/%E5%AF%B9%E4%BC%AA%E5%BF%83%E7%90%86%E5%AD%A6%E8%AF%B4%E4%B8%8D/</guid><description>
+&lt;p>2019-10-20 &lt;/p>
+&lt;p>理论的可证伪性原则，全能理论永远不能被证伪，证伪具有解放意义。&lt;/p>
+&lt;p>如果一个理论不可证伪，并且和自然界的真实事件没有关联，那么它就是无用的。&lt;/p>
+&lt;p>   &lt;/p>
+&lt;h1 id="操作主义和本质主义">操作主义和本质主义&lt;/h1>
+&lt;p>科学的独特优势并不在于是一个不会犯错的过程，而在于它提供了一种消除错误的方式，它能不断消除我们认识中的错误。&lt;/p>
+&lt;p>本质主义者喜欢咬文嚼字。在科学领域里，确定某概念的意义，是在与该术语有关的现象得到一定程度的研究之后，而非研究之前。一个精确的概念性术语来自科学过程中固有的那种数据和理论间的相互作用，而不是关于语言用法的辩论。本质主义者让我们陷入无休止的文字争论，而许多科学家坚信这样的文字游戏使我们脱离了事物的实质。总之，科学家的目的是解释现象，而非对措词进行分析。在所有的科学学科里，进步的关键在于放弃本质主义，接受操作主义。&lt;/p>
+&lt;p>信度和效度，鞋码器测智力只有信度没有效度，需要同时兼顾。&lt;/p>
+&lt;p>心理学所面临的一个难题就是，公众要求心理学去回答本质主义问题，而通常其他科学家并不需要回答类似的问题。如地心引力vs智力。心理学和其他科学门类一样，正在试图不断地完善其操作性定义，使理论概念能够更加准确地反映真实世界的原貌。&lt;/p>
+&lt;h1 id="个例与见证">个例与见证&lt;/h1>
+&lt;p>过于依赖见证证据的问题一直存在。此类证据的鲜活性常常掩盖了更加可靠的信息，并且混淆视听。&lt;/p>
+&lt;h1 id="巴纳姆效应">巴纳姆效应&lt;/h1>
+&lt;p>大多数成年人都会认为泛化的个性总结都是准确的，并且都是对自己独特的描述。&lt;/p>
+&lt;h1 id="选择性偏差">选择性偏差&lt;/h1>
+&lt;p>维纳讲了一个二战期间的故事，这个故事提醒我们选择性偏差违背常理的一面。他提到一位飞机分析师，这个分析师一直试图通过分析飞机被子弹击中的弹孔分布，来确定飞机上的哪个部门是应该放置加固防弹层的位置。他最后的决定是：把加固防弹层放在返航机上没有弹孔的地方。他的理由是，子弹袭击飞机各个部位的几率是均等的，所以，如果一架飞机能返回，就表示这架飞机被子弹击中的地方必定不会对飞机造成致命损伤。那些没有弹孔的地方，看来都是要害，因为该部位如果被击中，飞机可能就不会返航。因此加固防弹层应该安装在返航机没有被击中的部位！&lt;/p>
+&lt;p>提防选择性偏差的发生，当只有相关时，应避免因果推论。&lt;/p>
+&lt;p>武器效应——如果一件武器出现在手边，会使得某个人更容易做出攻击性反应。这个发现源于实验室，是一个无代表性情境的典型例子。由于这一结果是人为情境的误导产物，因此常被强烈地批评其具有误导性。但事实是这样的，各种实验条件下得出的结果都一样，用不同的方法测量攻击性所得的结果一样，在欧洲和没过获得的结果一样，研究儿童和成人的结果一样，在实验室之外的现场研究中，被试不知道自己在参与实验，得出的结果也一样。&lt;/p>
+&lt;h1 id="避免爱因斯坦综合征">避免爱因斯坦综合征&lt;/h1>
+&lt;p>两个原则——关联性原则和聚合性证据原则&lt;/p>
+&lt;p>伪科学家的两种伎俩：一、解释数据前先将这个理论变得不可证伪，这样就令先前的数据毫无用处；二是宣称先前的数据与他们的主题无关，因而不予考虑。为了实现&amp;quot;不予考虑”的结果，他们通常强调新理论呈现出“前所未有”的新颖性。类似“关于现实的全新观念”和“前所未有”这样的语句被频频使用。&lt;/p>
+&lt;p>遵循关联性原则！！“科学家不能仅仅依靠一个人的观点，而是要依靠千万人的智慧”用一个简单原理来总结：在评估心理学的实证证据时，心中要想的是“科学共识”，而不是“重大突破”；是“渐进整合”，而不是“大步飞跃”。不要对矛盾数据感到绝望，证据融合过程就像幻灯片调焦过程，或许支持了多重假设。&lt;/p>
+&lt;p>“跃进”模式对于心理学来说是一种糟糕的模式。聚合性证据原则描述了心理学上研究结果是如何被整合的：没有一个实验室可以一锤定音的，但是每一个实验至少都能帮助我们排除一些可能的解释，并让我们在接近真理的道路上向前迈进。 &lt;/p></description></item></channel></rss>

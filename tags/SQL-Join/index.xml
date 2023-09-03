@@ -1,0 +1,421 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – SQL Join</title><link>/tags/SQL-Join/</link><description>Recent content in SQL Join on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/SQL-Join/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 02.Join操作</title><link>/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/SQL%E5%BC%95%E6%93%8E/02.Join%E6%93%8D%E4%BD%9C/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/SQL%E5%BC%95%E6%93%8E/02.Join%E6%93%8D%E4%BD%9C/</guid><description>
+&lt;h1 id="背景">背景&lt;/h1>
+&lt;p>业务开发使用数据库时，通常规定不允许使用过多的表Join，如阿里巴巴开发手册中：&lt;/p>
+&lt;blockquote>
+&lt;p>【强制】超过三个表禁止Join。需要Join的字段，数据类型必须绝对一致；多表关联查询时，保证被关联的字段需要有索引。说明：即使双表Join也要注意表索引、SQL性能。&lt;/p>
+&lt;/blockquote>
+&lt;p>大数据数仓中，既有星型结构和雪花结构，但最终交付业务使用的大多是宽表。&lt;/p>
+&lt;h1 id="join基本原理">Join基本原理&lt;/h1>
+&lt;h2 id="join分类">Join分类&lt;/h2>
+&lt;p>Join分为如下几类：&lt;/p>
+&lt;ul>
+&lt;li>Cross Join&lt;/li>
+&lt;li>Inner Join&lt;/li>
+&lt;li>Outer Join
+&lt;ul>
+&lt;li>full join&lt;/li>
+&lt;li>left join&lt;/li>
+&lt;li>right join&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="cross-join">Cross Join&lt;/h3>
+&lt;p>交叉连接，返回连接的两个表所有数据行的&lt;strong>笛卡尔积&lt;/strong>，一般不加条件限制。使用：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-sql" data-lang="sql">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">SELECT&lt;/span>  &lt;span style="color:#000">*&lt;/span>  &lt;span style="color:#a90d91">FROM&lt;/span>  &lt;span style="color:#000">tableA&lt;/span>, &lt;span style="color:#000">tableB&lt;/span> &lt;span style="color:#000">#&lt;/span> &lt;span style="color:#000">等价&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">SELECT&lt;/span>  &lt;span style="color:#000">*&lt;/span>  &lt;span style="color:#a90d91">FROM&lt;/span>  &lt;span style="color:#000">tableA&lt;/span> &lt;span style="color:#a90d91">CROSS&lt;/span> &lt;span style="color:#a90d91">JOIN&lt;/span> &lt;span style="color:#000">tableB&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="inner-join">Inner Join&lt;/h3>
+&lt;p>Inner join 获取两张表的交集，是内联查询，不是产生笛卡尔集，结合ON子句使用，直接基于join condition做连接，生成的join集合就是最终的输出结果，产生的中间数据更小。&lt;/p>
+&lt;h3 id="outer-join">Outer Join&lt;/h3>
+&lt;p>Outer join 获取两张表的并集，是内联查询。&lt;/p>
+&lt;ul>
+&lt;li>full join：产生A和B的并集&lt;/li>
+&lt;li>left join：产生表A的完全集，而B表中匹配的则有值，没有匹配的则以NULL值取代。&lt;/li>
+&lt;li>right join：产生表B的完全集，而A表中匹配的则有值，没有匹配的则以NULL值取代。&lt;/li>
+&lt;/ul>
+&lt;h2 id="关联算法">关联算法&lt;/h2>
+&lt;blockquote>
+&lt;p>Join关联算法可参考本博客：&lt;a href="https://chnherb.github.io/docs/30.%E5%AD%98%E5%82%A8/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%90%86%E8%AE%BA%E6%A6%82%E8%BF%B0/#%E5%85%B3%E8%81%94%E7%AE%97%E6%B3%95">https://chnherb.github.io/docs/30.%E5%AD%98%E5%82%A8/%E5%88%86%E5%B8%83%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%BA%93%E7%90%86%E8%AE%BA%E6%A6%82%E8%BF%B0/#%E5%85%B3%E8%81%94%E7%AE%97%E6%B3%95&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;p>常见的关联算法有三大类，分别是&lt;/p>
+&lt;ul>
+&lt;li>嵌套循环（Nested Loop Join）&lt;/li>
+&lt;li>排序归并（Sort-Merge Join）&lt;/li>
+&lt;li>哈希（Hash Join）&lt;/li>
+&lt;/ul>
+&lt;h1 id="join工程化理论">Join工程化理论&lt;/h1>
+&lt;h2 id="火山模型">火山模型&lt;/h2>
+&lt;p>SQL语法支持的操作类型非常丰富：查询表(TableScan)、过滤数据(Filter)、排序(Order)、限制(Limit)、字段进行运算(Project)、 聚合(Group)、关联(Join)等。为了实现上述的能力，需要一个具备并行化能力且可扩展的架构。&lt;/p>
+&lt;p>1994年Goetz Graefe在论文《Volcano-An Extensible and Parallel Query Evaluation System》提出了一个架构设计思想，这就是大名鼎鼎的火山模型，也称为迭代模型。火山模型包含了文件系统和查询处理两个部分。&lt;/p>
+&lt;p>&lt;img src="../imgs/sql_join_230311_1.png" alt="sql_join_230311_1.png">&lt;/p>
+&lt;p>来源于《Balancing vectorized execution with bandwidth-optimized storage》&lt;/p>
+&lt;h3 id="职责分离">职责分离&lt;/h3>
+&lt;p>将不同操作独立成一个的Operator，Operator采用open-next-close的迭代器模式。如一般的SQL语句对应到Scan、Select、Project三个Operator，数据交互通过next()函数实现。&lt;/p>
+&lt;p>Presto中的Operator：&lt;/p>
+&lt;ul>
+&lt;li>SourceOperator
+&lt;ul>
+&lt;li>TableScanSourceOperator&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>OrderOperator&lt;/li>
+&lt;li>LimitOperator&lt;/li>
+&lt;li>TaskOutputOperator&lt;/li>
+&lt;/ul>
+&lt;h3 id="动态组装">动态组装&lt;/h3>
+&lt;p>Operator基于SQL语句的解析实现动态组装，多个Operator形成一个管道(pipeline)。&lt;/p>
+&lt;p>Presto在火山模型的基础上，吸收了其它思想做了如下优化：&lt;/p>
+&lt;ul>
+&lt;li>Operator数据处理优化成一次一个Page，而不是一次行(也称为tuple)。&lt;/li>
+&lt;li>Page的存储采用列式结构。即相同的列封装到一个Block中。
+&lt;strong>批量处理&lt;/strong>结合&lt;strong>列式存储&lt;/strong>奠定了&lt;strong>向量化计算&lt;/strong>的基础**，&lt;strong>也是&lt;/strong>数据库领域的优化方向**。 &lt;/li>
+&lt;/ul>
+&lt;h2 id="批量处理和列式存储">批量处理和列式存储&lt;/h2>
+&lt;p>Presto源码中，随处可见 Page 和 Block。&lt;/p>
+&lt;p>通常 OLAP 场景不需要读取所有字段，于是衍生了列式存储，如下结构：&lt;/p>
+&lt;p>&lt;img src="../imgs/sql_join_230311_2.png" alt="sql_join_230311_2.png">&lt;/p>
+&lt;p>将数据封装成Page在各个Operator中流转，一方面避免了对象的序列化和反序列化成本，另一方面相比行（tuple）的方式降低了函数调用的开销。类似集装箱运货降低运输成本的思想。&lt;/p>
+&lt;p>示例代码：&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">67
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">68
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">69
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">70
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">71
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">72
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">73
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">74
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">75
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">76
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">77
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">78
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">79
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">80
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">81
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">82
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">83
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">84
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">85
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">86
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">87
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">88
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.facebook.presto.common.Page&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.facebook.presto.common.PageBuilder&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.facebook.presto.common.block.Block&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.facebook.presto.common.block.BlockBuilder&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.facebook.presto.common.type.BigintType&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.facebook.presto.common.type.Type&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.facebook.presto.common.type.VarcharType&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.google.common.collect.Lists&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">io.airlift.slice.Slice&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.util.List&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import static&lt;/span> &lt;span style="color:#000">io.airlift.slice.Slices.utf8Slice&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">PageBlockDemo&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#000">Page&lt;/span> &lt;span style="color:#000">buildPage&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Type&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">types&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Object&lt;/span>&lt;span style="color:#000">[]&amp;gt;&lt;/span> &lt;span style="color:#000">dataSet&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">PageBuilder&lt;/span> &lt;span style="color:#000">pageBuilder&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">PageBuilder&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">types&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 封装成Page
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">for&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Object&lt;/span>&lt;span style="color:#000">[]&lt;/span> &lt;span style="color:#000">row&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">dataSet&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 完成一行
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">pageBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">declarePosition&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">column&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">;&lt;/span> &lt;span style="color:#000">column&lt;/span> &lt;span style="color:#000">&amp;lt;&lt;/span> &lt;span style="color:#000">types&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">size&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">++)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">BlockBuilder&lt;/span> &lt;span style="color:#000">out&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">pageBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getBlockBuilder&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Object&lt;/span> &lt;span style="color:#000">colVal&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">row&lt;/span>&lt;span style="color:#000">[&lt;/span>&lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">];&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">colVal&lt;/span> &lt;span style="color:#000">==&lt;/span> &lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">appendNull&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">else&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Type&lt;/span> &lt;span style="color:#000">type&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">types&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">get&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Class&lt;/span>&lt;span style="color:#000">&amp;lt;?&amp;gt;&lt;/span> &lt;span style="color:#000">javaType&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">type&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getJavaType&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">javaType&lt;/span> &lt;span style="color:#000">==&lt;/span> &lt;span style="color:#a90d91">long&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">type&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">writeLong&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">out&lt;/span>&lt;span style="color:#000">,(&lt;/span>&lt;span style="color:#a90d91">long&lt;/span>&lt;span style="color:#000">)&lt;/span>&lt;span style="color:#000">colVal&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">else&lt;/span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">javaType&lt;/span> &lt;span style="color:#000">==&lt;/span> &lt;span style="color:#000">Slice&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">type&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">writeSlice&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">out&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">utf8Slice&lt;/span>&lt;span style="color:#000">((&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">)&lt;/span>&lt;span style="color:#000">colVal&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">else&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">throw&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">UnsupportedOperationException&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;not implemented&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 生成Page
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">Page&lt;/span> &lt;span style="color:#000">page&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">pageBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">build&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">pageBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">reset&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">page&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">readColumn&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Type&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">types&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">Page&lt;/span> &lt;span style="color:#000">page&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 从Page中读取列
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">for&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">;&lt;/span>&lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">types&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">size&lt;/span>&lt;span style="color:#000">();&lt;/span>&lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">++){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Block&lt;/span> &lt;span style="color:#000">block&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">page&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getBlock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Type&lt;/span> &lt;span style="color:#000">type&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">types&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">get&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Class&lt;/span>&lt;span style="color:#000">&amp;lt;?&amp;gt;&lt;/span> &lt;span style="color:#000">javaType&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">type&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getJavaType&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">print&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;column[&amp;#34;&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#000">type&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getDisplayName&lt;/span>&lt;span style="color:#000">()+&lt;/span>&lt;span style="color:#c41a16">&amp;#34;]&amp;gt;&amp;gt;&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Object&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">colList&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Lists&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">newArrayList&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">pos&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">;&lt;/span>&lt;span style="color:#000">pos&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">block&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getPositionCount&lt;/span>&lt;span style="color:#000">();&lt;/span>&lt;span style="color:#000">pos&lt;/span>&lt;span style="color:#000">++){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">javaType&lt;/span> &lt;span style="color:#000">==&lt;/span> &lt;span style="color:#a90d91">long&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">colList&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">add&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">block&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getLong&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">pos&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">else&lt;/span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">javaType&lt;/span> &lt;span style="color:#000">==&lt;/span> &lt;span style="color:#000">Slice&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">colList&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">add&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">block&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getSlice&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">pos&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">block&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getSliceLength&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">pos&lt;/span>&lt;span style="color:#000">)).&lt;/span>&lt;span style="color:#836c28">toStringUtf8&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">else&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">throw&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">UnsupportedOperationException&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;not implemented&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">colList&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">main&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">[]&lt;/span> &lt;span style="color:#000">args&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 假设有两个字段，一个字段类型为int, 一个字段类型为varchar
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Type&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">types&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Lists&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">newArrayList&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">BigintType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">BIGINT&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">VarcharType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">VARCHAR&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 按行存储
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Object&lt;/span>&lt;span style="color:#000">[]&amp;gt;&lt;/span> &lt;span style="color:#000">dataSet&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Lists&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">newArrayList&lt;/span>&lt;span style="color:#000">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Object&lt;/span>&lt;span style="color:#000">[]{&lt;/span>&lt;span style="color:#000">1L&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#c41a16">&amp;#34;aa&amp;#34;&lt;/span>&lt;span style="color:#000">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Object&lt;/span>&lt;span style="color:#000">[]{&lt;/span>&lt;span style="color:#000">2L&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#c41a16">&amp;#34;ba&amp;#34;&lt;/span>&lt;span style="color:#000">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Object&lt;/span>&lt;span style="color:#000">[]{&lt;/span>&lt;span style="color:#000">3L&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#c41a16">&amp;#34;cc&amp;#34;&lt;/span>&lt;span style="color:#000">},&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Object&lt;/span>&lt;span style="color:#000">[]{&lt;/span>&lt;span style="color:#000">4L&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#c41a16">&amp;#34;dd&amp;#34;&lt;/span>&lt;span style="color:#000">});&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Page&lt;/span> &lt;span style="color:#000">page&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">buildPage&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">types&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">dataSet&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">readColumn&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">types&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">page&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 运行结果：
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">//column[bigint]&amp;gt;&amp;gt;[1, 2, 3, 4]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">//column[varchar]&amp;gt;&amp;gt;[aa, ba, cc, dd]
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h1 id="join工程化实践">Join工程化实践&lt;/h1>
+&lt;h2 id="基本流程">基本流程&lt;/h2>
+&lt;ul>
+&lt;li>Parser:  借助ANTLR的能力即可实现SQL语法的检测。&lt;/li>
+&lt;li>Binding: 基于SQL语句生成AST，利用元数据检测字段和表的映射关系以及Join条件的字段类型。&lt;/li>
+&lt;li>Planner: 基于AST生成查询计划。 &lt;/li>
+&lt;li>Executor: 基于查询计划生成对应的Operator并执行。&lt;/li>
+&lt;/ul>
+&lt;h2 id="落地事项">落地事项&lt;/h2>
+&lt;ul>
+&lt;li>支持所有的Join语义&lt;/li>
+&lt;li>分布式能力&lt;/li>
+&lt;li>性能优化&lt;/li>
+&lt;li>多表Join的顺序选择&lt;/li>
+&lt;li>大表与小表Join&lt;/li>
+&lt;li>Semi Join优化&lt;/li>
+&lt;li>Join算法倾斜&lt;/li>
+&lt;/ul>
+&lt;h2 id="示例-nested-loop-join">示例：Nested Loop Join&lt;/h2>
+&lt;p>以 Nested Loop Join 算法为例，Presto是拆解为两个阶段：&lt;/p>
+&lt;ul>
+&lt;li>组合阶段&lt;/li>
+&lt;li>过滤阶段
+实现JoinOperator时，只需负责两个表数据的笛卡尔积组合即可。核心代码如下：&lt;/li>
+&lt;/ul>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// NestedLoopPageBuilder中实现两个Page计算笛卡尔积的处理逻辑，
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 这里RunLengthEncodedBlock用于一个元素复制，典型地笛卡尔积计算中需要将一列元素从1行复制成多行。
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Page&lt;/span> &lt;span style="color:#000">next&lt;/span>&lt;span style="color:#000">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(!&lt;/span>&lt;span style="color:#000">hasNext&lt;/span>&lt;span style="color:#000">())&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">throw&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">NoSuchElementException&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">noColumnShortcutResult&lt;/span> &lt;span style="color:#000">&amp;gt;=&lt;/span> &lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">rowIndex&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">maxRowIndex&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Page&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">noColumnShortcutResult&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">rowIndex&lt;/span>&lt;span style="color:#000">++;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// Create an array of blocks for all columns in both pages.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">Block&lt;/span>&lt;span style="color:#000">[]&lt;/span> &lt;span style="color:#000">blocks&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Block&lt;/span>&lt;span style="color:#000">[&lt;/span>&lt;span style="color:#000">numberOfProbeColumns&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">numberOfBuildColumns&lt;/span>&lt;span style="color:#000">];&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// Make sure we always put the probe data on the left and build data on the right.
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">indexForRleBlocks&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">buildPageLarger&lt;/span> &lt;span style="color:#000">?&lt;/span> &lt;span style="color:#000">0&lt;/span> &lt;span style="color:#000">:&lt;/span> &lt;span style="color:#000">numberOfProbeColumns&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">indexForPageBlocks&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">buildPageLarger&lt;/span> &lt;span style="color:#000">?&lt;/span> &lt;span style="color:#000">numberOfProbeColumns&lt;/span> &lt;span style="color:#000">:&lt;/span> &lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// For the page with less rows, create RLE blocks and add them to the blocks array
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">i&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">;&lt;/span> &lt;span style="color:#000">i&lt;/span> &lt;span style="color:#000">&amp;lt;&lt;/span> &lt;span style="color:#000">smallPage&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getChannelCount&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#000">i&lt;/span>&lt;span style="color:#000">++)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Block&lt;/span> &lt;span style="color:#000">block&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">smallPage&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getBlock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">i&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">getSingleValueBlock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">rowIndex&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">blocks&lt;/span>&lt;span style="color:#000">[&lt;/span>&lt;span style="color:#000">indexForRleBlocks&lt;/span>&lt;span style="color:#000">]&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">RunLengthEncodedBlock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">block&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">largePage&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getPositionCount&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">indexForRleBlocks&lt;/span>&lt;span style="color:#000">++;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// Put the page with more rows in the blocks array
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">i&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">;&lt;/span> &lt;span style="color:#000">i&lt;/span> &lt;span style="color:#000">&amp;lt;&lt;/span> &lt;span style="color:#000">largePage&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getChannelCount&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#000">i&lt;/span>&lt;span style="color:#000">++)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">blocks&lt;/span>&lt;span style="color:#000">[&lt;/span>&lt;span style="color:#000">indexForPageBlocks&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">i&lt;/span>&lt;span style="color:#000">]&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">largePage&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getBlock&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">i&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Page&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">largePage&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getPositionCount&lt;/span>&lt;span style="color:#000">(),&lt;/span> &lt;span style="color:#000">blocks&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/></description></item></channel></rss>

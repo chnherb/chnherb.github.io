@@ -1,0 +1,571 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – SpringBoot</title><link>/tags/SpringBoot/</link><description>Recent content in SpringBoot on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/SpringBoot/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: ES基本操作整合SpringBoot</title><link>/docs/44.%E6%90%9C%E7%B4%A2/ES%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E6%95%B4%E5%90%88SpringBoot/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/44.%E6%90%9C%E7%B4%A2/ES%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C%E6%95%B4%E5%90%88SpringBoot/</guid><description>
+&lt;h1 id="概述">概述&lt;/h1>
+&lt;h2 id="spring-data-elasticsearch">Spring Data Elasticsearch&lt;/h2>
+&lt;p>参考spring官方文档：&lt;a href="https://spring.io/projects/spring-data-elasticsearch">https://spring.io/projects/spring-data-elasticsearch&lt;/a>&lt;/p>
+&lt;h1 id="引入es">引入ES&lt;/h1>
+&lt;h2 id="引入依赖">引入依赖&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;groupId&amp;gt;&lt;/span>org.springframework.boot&lt;span style="color:#000">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>spring-boot-starter-data-elasticsearch&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>实际是利用spring-data去操作elasticsearch&lt;/p>
+&lt;h2 id="自定义es配置">自定义ES配置&lt;/h2>
+&lt;p>application.properites&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>elasticsearch.host=localhost:9200
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="配置客户端">配置客户端&lt;/h2>
+&lt;p>这里tcp端口9300除了与业务交互，还可以是集群之间心跳检测等。&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">@Configuration&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">RestClientConfig&lt;/span> &lt;span style="color:#a90d91">extends&lt;/span> &lt;span style="color:#000">AbstractElasticsearchConfiguration&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Value&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;${elasticsearch.host}&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">host&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Bean&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">RestHighLevelClient&lt;/span> &lt;span style="color:#000">elasticsearchClient&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">final&lt;/span> &lt;span style="color:#000">ClientConfiguration&lt;/span> &lt;span style="color:#000">clientConfiguration&lt;/span> &lt;span style="color:#000">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">ClientConfiguration&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">builder&lt;/span>&lt;span style="color:#000">()&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">//.connectedTo(&amp;#34;xx.xx.xx.xx:9200&amp;#34;)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">connectedTo&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">host&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">build&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">RestClients&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">clientConfiguration&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">rest&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="heading">&lt;/h3>
+&lt;h1 id="操作es">操作ES&lt;/h1>
+&lt;h2 id="客户端对象">客户端对象&lt;/h2>
+&lt;h3 id="elasticsearchoperations">ElasticsearchOperations&lt;/h3>
+&lt;p>虽然没有显式创建，但是spring data确实创建了这个对象。&lt;/p>
+&lt;p>始终以面向对象的方式去操作ES。&lt;/p>
+&lt;h3 id="resthighlevelclient-推荐">RestHighLevelClient（推荐）&lt;/h3>
+&lt;p>通过REST方式去操作，和Kibana操作一致。&lt;/p>
+&lt;h1 id="elasticsearchoperations-1">ElasticsearchOperations&lt;/h1>
+&lt;p>优点：操作简单&lt;/p>
+&lt;p>缺点：耦合性强，复杂操作可能更复杂&lt;/p>
+&lt;h2 id="相关注解">相关注解&lt;/h2>
+&lt;p>@Document：将这个类对象转换为 ES 中一条文档进行录入&lt;/p>
+&lt;p>indexName：创建索引的名称&lt;/p>
+&lt;p>createIndex：是否创建索引&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">@Document&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">indexName&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">createIndex&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">true&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">Book&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Id&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">Integer&lt;/span> &lt;span style="color:#000">id&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Field&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">type&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">FieldType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Keyword&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">title&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Field&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">type&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">FieldType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Float&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">price&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Field&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">type&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">FieldType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Text&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">analyzer&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#34;ik_max_word&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">description&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// get &amp;amp; set
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="操作">操作&lt;/h2>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// 或者使用注解取代继承
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">ESOptionsTest&lt;/span> &lt;span style="color:#a90d91">extends&lt;/span> &lt;span style="color:#000">SpringBootXXXApplicationTests&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">final&lt;/span> &lt;span style="color:#000">ElasticsearchOperations&lt;/span> &lt;span style="color:#000">elasticsearchOperations&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Autowired&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">ESOptionsTest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ElasticsearchOperations&lt;/span> &lt;span style="color:#000">elasticsearchOperations&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">elasticsearchOperations&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">elasticsearchOperations&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">testIndex&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Book&lt;/span> &lt;span style="color:#000">book&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Book&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 设置各种属性
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">book&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">setxx&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// save 索引一条文档 更新一条文档
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 当文档不存在时添加，存在时更新
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">elasticsearchOperations&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">save&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">book&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 查询
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">book&lt;/span> &lt;span style="color:#000">b&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">elasticsearchOperations&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">get&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;1&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">Book&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 删除
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">Book&lt;/span> &lt;span style="color:#000">b2&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Book&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">p2&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">setId&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">1&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">elasticsearchOperations&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">delete&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">p2&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 删除所有
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">elasticsearchOperations&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">delete&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Query&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">findAll&lt;/span>&lt;span style="color:#000">(),&lt;/span> &lt;span style="color:#000">Book&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 查询所有
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">SearchHits&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Book&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">bookSearchHits&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">elasticsearchOperations&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">search&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Query&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">findAll&lt;/span>&lt;span style="color:#000">(),&lt;/span> &lt;span style="color:#000">Book&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// bookSearchHits.getMaxScore();
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// bookSearchHits.getTotalHits()
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// bookSearchHits.getContent(); //每一条文档内容
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;p>注意：通过这种方式，然后去查询数据时，在返回的hits结果数据集中，_source字段也就文档源数据中会增加一个字段 _class用来记录反序列化的全类名&lt;/p>
+&lt;h1 id="resthighlevelclient">RestHighLevelClient&lt;/h1>
+&lt;h2 id="创建索引映射">创建索引映射&lt;/h2>
+&lt;p>接上文写测试方法，测试类同上类似&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">67
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">68
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">69
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">70
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">71
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">72
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">73
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">RestHighLevelClientTest&lt;/span> &lt;span style="color:#a90d91">extends&lt;/span> &lt;span style="color:#000">SpringBootXXXApplicationTests&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">final&lt;/span> &lt;span style="color:#000">ElasticsearchOperations&lt;/span> &lt;span style="color:#000">elasticsearchOperations&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Autowired&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">RestHighLevelClientTest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">RestHighLevelClient&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">this&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">restHighLevelClient&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@Test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">testRestHighLevelClient&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#a90d91">throws&lt;/span> &lt;span style="color:#000">IOException&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 1、创建索引并指定映射
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">CreateIndexRequest&lt;/span> &lt;span style="color:#000">createIndexRequest&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">CreateIndexRequest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 指定映射，参数1：指定映射(DSL中mappings后的json内容，带大括号)；参数2：指定数据类型
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">createIndexRequest&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">mapping&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;xxx&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">XContentType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">JSON&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 参数1：创建索引请求对象；2：请求配置对象
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">CreateIndexReponse&lt;/span> &lt;span style="color:#000">resp&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">indices&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">create&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">createIndexRequest&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">resp&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">isAcknowledged&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#177500">// 创建状态，true表示成功
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 2、删除索引
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">AcknowledegdReponse&lt;/span> &lt;span style="color:#000">resp2&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">indices&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">delete&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">DeleteIndexRequest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">),&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 3、索引文档(添加文档)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">IndexRequest&lt;/span> &lt;span style="color:#000">indexRequest&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">IndexRequest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">indexRequest&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">id&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;2&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#177500">// 指定文档id
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">source&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;xx&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span> &lt;span style="color:#177500">// 指定文档内容，同之前json内容
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">IndexResponse&lt;/span> &lt;span style="color:#000">resp3&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">index&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">indexRequest&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">resp3&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">status&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#177500">// 状态
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 4、更新文档
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">UpdateRequest&lt;/span> &lt;span style="color:#000">updateRequest&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">UpdateRequest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;1&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">updateRequest&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">doc&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;xx&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">XContent&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">JSON&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">update&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">updateRequest&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 5、删除文档
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">DeleteRequest&lt;/span> &lt;span style="color:#000">deleteRequest&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">DeleteRequest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;1&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">update&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">deleteRequest&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 6、查询文档
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">GetRequest&lt;/span> &lt;span style="color:#000">getRequest&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">GetRequest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;1&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">GetResponse&lt;/span> &lt;span style="color:#000">getResponse&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">get&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">getRequest&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 7、查询
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 查询所有
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">query&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">QueryBuilders&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">matchAllQuery&lt;/span>&lt;span style="color:#000">());&lt;/span> &lt;span style="color:#177500">// 查询所有
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// term查询
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">query&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">QueryBuilders&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">termQuery&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;中国&amp;#34;&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// range范围查询
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">query&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">QueryBuilders&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">rangeQuery&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;price&amp;#34;&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">gt&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">lte&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">1&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">11&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 255、使用完关闭
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">close&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 简单封装查询条件
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">query&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">QueryBuilder&lt;/span> &lt;span style="color:#000">queryBuilder&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#a90d91">throws&lt;/span> &lt;span style="color:#000">IOException&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">SearchRequest&lt;/span> &lt;span style="color:#000">searchRequest&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">SearchRequest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">SearchSourceBuilder&lt;/span> &lt;span style="color:#000">sourceBuilder&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">SearchSourceBuilder&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#177500">// 指定条件对象
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">HightlighterBuilder&lt;/span> &lt;span style="color:#000">hightlighterBuilder&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">HightlighterBuilder&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 高亮器
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">hightlighterBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">requireFieldMatch&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">field&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;description&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">field&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;title&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">preTags&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;&amp;lt;span style=&amp;#39;color:red;&amp;#39;&amp;gt;&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">postTags&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;&amp;lt;/span&amp;gt;&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">sourceBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">query&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">queryBuilder&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">from&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">size&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">10&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">sort&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">SortOrder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">ASC&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">fetchSource&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">[]{&lt;/span>&lt;span style="color:#c41a16">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;title&amp;#34;&lt;/span>&lt;span style="color:#000">})&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">hightlighter&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">hightlighterBuilder&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">postFilter&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">QueryBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">termQuery&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;titile&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;中国&amp;#34;&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">searchRequest&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">source&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">sourceBuilder&lt;/span>&lt;span style="color:#000">);&lt;/span> &lt;span style="color:#177500">// 指定查询条件
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">SearchResponse&lt;/span> &lt;span style="color:#000">searchResponse&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">search&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">searchRequest&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h2 id="对象写入读取">对象写入读取&lt;/h2>
+&lt;p>测试类代码同上&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">@Test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">testWrite2ES&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Book&lt;/span> &lt;span style="color:#000">book&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Book&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#177500">// 这个对象可以不用@Document、@Field相关注解
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">book&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">setxxx&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 写入ES，基本同上文插入文档
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">IndexRequest&lt;/span> &lt;span style="color:#000">indexRequest&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">IndexRequest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">indexRequest&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">id&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">book&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getId&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">toString&lt;/span>&lt;span style="color:#000">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">source&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">ObjectMapper&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">writeValueAsString&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">book&lt;/span>&lt;span style="color:#000">),&lt;/span> &lt;span style="color:#000">XContentType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">JSON&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">IndexResponse&lt;/span> &lt;span style="color:#000">indexResponse&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">index&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">indexRequest&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 读取数据
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">SearchRequest&lt;/span> &lt;span style="color:#000">searchRequest&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">SearchRequest&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;books&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">SearchSourceBuilder&lt;/span> &lt;span style="color:#000">sourceBuilder&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">SearchSourceBuilder&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#177500">// 指定条件对象
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">sourceBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">query&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">QueryBuilders&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">matchAllQuery&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">searchRequest&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">source&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">sourceBuilder&lt;/span>&lt;span style="color:#000">);&lt;/span> &lt;span style="color:#177500">// 指定查询条件
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">SearchResponse&lt;/span> &lt;span style="color:#000">searchResponse&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">search&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">searchRequest&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">SearchHit&lt;/span>&lt;span style="color:#000">[]&lt;/span> &lt;span style="color:#000">hits&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">searchResponse&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getHits&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Book&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">books&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">ArrayList&lt;/span>&lt;span style="color:#000">&amp;lt;&amp;gt;();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">SearchHit&lt;/span> &lt;span style="color:#000">hit&lt;/span>&lt;span style="color:#000">:&lt;/span> &lt;span style="color:#000">hits&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">hit&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getSourceAsString&lt;/span>&lt;span style="color:#000">());&lt;/span> &lt;span style="color:#177500">// json
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">Book&lt;/span> &lt;span style="color:#000">b&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">ObjectMapper&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">readValue&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">hit&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getSourceAsString&lt;/span>&lt;span style="color:#000">(),&lt;/span> &lt;span style="color:#000">Book&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 处理高亮，做替换
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// xxxx
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">books&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">add&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">b&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h2 id="聚合查询">聚合查询&lt;/h2>
+&lt;p>测试类同上&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">@Test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">testAggs&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#a90d91">throws&lt;/span> &lt;span style="color:#000">IOException&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">SearchRequest&lt;/span> &lt;span style="color:#000">searchRequest&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">SearchRequest&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">SearchSourceBuilder&lt;/span> &lt;span style="color:#000">sourceBuilder&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">SearchSourceBuilder&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">sourceBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">query&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">QueryBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">matchAllQuery&lt;/span>&lt;span style="color:#000">())&lt;/span> &lt;span style="color:#177500">//查询条件
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">aggregation&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">AggregationBuilders&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">terms&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;price_group&amp;#34;&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">field&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;price&amp;#34;&lt;/span>&lt;span style="color:#000">))&lt;/span> &lt;span style="color:#177500">// 设置聚合处理
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">size&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">searchRequest&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">source&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">sourceBuilder&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">SearchResponse&lt;/span> &lt;span style="color:#000">searchResponse&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">restHighLevelClient&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">search&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">searchRequest&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">RequestOptions&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">DEFAULT&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 处理聚合结果
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">Aggregations&lt;/span> &lt;span style="color:#000">aggregations&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">searchResponse&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getAggregations&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">ParsedDoubleTerms&lt;/span> &lt;span style="color:#000">parsedDoubleTerms&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">aggregations&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">get&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;price_group&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;?&lt;/span> &lt;span style="color:#a90d91">extends&lt;/span> &lt;span style="color:#000">Terms&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Bucket&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">buckets&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">parsedDoubleTerms&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getBuckets&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Terms&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Bucket&lt;/span> &lt;span style="color:#000">bucket&lt;/span> &lt;span style="color:#000">:&lt;/span> &lt;span style="color:#000">buckets&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">bucket&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getKey&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">bucket&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getDocCount&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div></description></item></channel></rss>

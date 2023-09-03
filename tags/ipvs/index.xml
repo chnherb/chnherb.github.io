@@ -1,0 +1,123 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – ipvs</title><link>/tags/ipvs/</link><description>Recent content in ipvs on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/ipvs/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Linux负载均衡LVS之IPVS</title><link>/docs/10.OS/Linux%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LVS%E4%B9%8BIPVS/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/10.OS/Linux%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1LVS%E4%B9%8BIPVS/</guid><description>
+&lt;h1 id="名词概念">名词概念&lt;/h1>
+&lt;h2 id="lvs">LVS&lt;/h2>
+&lt;p>LVS（Linux Virtual Server）即Linux虚拟服务器，是一个虚拟的服务器集群系统，由&lt;a href="https://baike.baidu.com/item/%E7%AB%A0%E6%96%87%E5%B5%A9">章文嵩&lt;/a>博士在1998年5月成立，在linux2.6+后将lvs自动加入了kernel模块。&lt;/p>
+&lt;p>LVS的用户空间的命令行管理工具为ipvsadm，ipvs是工作在内核中netfilter的INPUT的钩子函数上，对进入的报文在没有进入用户空间前，对这些报文进行操作。&lt;/p>
+&lt;h2 id="ipvs">IPVS&lt;/h2>
+&lt;p>IPVS是LVS（Linux Virtual Server）项目重要组成部分，目前包含于官方Linux Kernel，IPVS依赖于netfilter框架，位于内核源码的net/netfilter/ipvs目录下。&lt;/p>
+&lt;p>&lt;a href="http://www.linuxvirtualserver.org/software/ipvs.html">IPVS&lt;/a>是&lt;a href="http://www.linuxvirtualserver.org/">LVS&lt;/a>项目的一部分，是一款运行在Linux kernel当中的4层负载均衡器，性能异常优秀。 &lt;/p>
+&lt;h2 id="rs">RS&lt;/h2>
+&lt;p>realserver，常简称为RS&lt;/p>
+&lt;h2 id="nat">NAT&lt;/h2>
+&lt;p>网络地址转换(Network Address Translate)&lt;/p>
+&lt;h2 id="snat">SNAT&lt;/h2>
+&lt;p>原地址转换&lt;/p>
+&lt;h2 id="dnat">DNAT&lt;/h2>
+&lt;p>目标地址转换&lt;/p>
+&lt;h2 id="几种ip">几种IP&lt;/h2>
+&lt;p>&lt;img src="../imgs/20220227_ipvs_1.png" alt="20220227_ipvs_1.png">&lt;/p>
+&lt;h3 id="vip">VIP&lt;/h3>
+&lt;p>virtual IP，LVS服务器上接收外网数据包的网卡IP地址。&lt;/p>
+&lt;h3 id="dip">DIP&lt;/h3>
+&lt;p>director IP，LVS服务器上转发数据包到realserver的网卡IP地址。&lt;/p>
+&lt;h3 id="rip">RIP&lt;/h3>
+&lt;p>realserver(常简称为RS)上接收Director转发数据包的IP，即提供服务的服务器IP。&lt;/p>
+&lt;p>CIP:客户端的IP。&lt;/p>
+&lt;h1 id="ipvs的三种转发模式">IPVS的三种转发模式&lt;/h1>
+&lt;h2 id="dr模式-direct-routing">DR模式(Direct Routing)&lt;/h2>
+&lt;p>DR模式下，客户端的请求包到达负载均衡器的虚拟服务IP端口后，负载均衡器不会改写请求包的IP和端口，但是会改写请求包的MAC地址为后端RS的MAC地址，然后将数据包转发；真实服务器处理请求后，响应包直接回给客户端，不再经过负载均衡器。所以DR模式的转发效率是最高的，特别适合下行流量较大的业务场景，比如请求视频等大文件。&lt;/p>
+&lt;h2 id="nat模式-network-address-translation">NAT模式(Network Address Translation)&lt;/h2>
+&lt;p>NAT模式下，请求包和响应包都需要经过LB处理。当客户端的请求到达虚拟服务后，LB会对请求包做目的地址转换（DNAT），将请求包的目的IP改写为RS的IP。当收到RS的响应后，LB会对响应包做源地址转换（SNAT），将响应包的源IP改写为LB的IP。&lt;/p>
+&lt;h2 id="tun模式">TUN模式&lt;/h2>
+&lt;p>采用NAT技术时，由于请求和响应报文都必须经过调度器地址重写，当客户请求越来越多时，调度器的处理能力将成为瓶颈。为了解决这个问题，调度器把请求报文通过IP隧道转发至真实服务器，而真实服务器将响应直接返回给客户，所以调度器只处理请求报文。由于一般网络服务响应报文比请求报文大许多，采用VS/TUN技术后，调度器得到极大的解放，集群系统的最大吞吐量可以提高10倍。&lt;/p>
+&lt;h2 id="fullnat模式">FULLNAT模式&lt;/h2>
+&lt;p>FULLNAT模式下，LB会对请求包和响应包都做SNAT+DNAT。&lt;/p>
+&lt;h1 id="转发模式对比">转发模式对比&lt;/h1>
+&lt;p>三种转发模式性能从高到低：DR &amp;gt; NAT &amp;gt;FULLNAT。&lt;/p>
+&lt;p>虽然FULLNAT模式的性能比不上DR和NAT，但是FULLNAT模式没有组网要求，允许LB和RS部署在不同的子网中，这给运维带来了便利。并且 FULLNAT模式具有更好的可拓展性，可以通过增加更多的LB节点，提升系统整体的负载均衡能力。&lt;/p>
+&lt;h1 id="ipvs实现service">IPVS实现Service&lt;/h1>
+&lt;h2 id="背景知识">背景知识&lt;/h2>
+&lt;p>一定要让Kernel认为VIP是本地地址，这样4层的LVS才能开始工作。&lt;/p>
+&lt;h2 id="网络结构">网络结构&lt;/h2>
+&lt;p>&lt;img src="../imgs/20220227_ipvs_2.png" alt="20220227_ipvs_2.png">&lt;/p>
+&lt;h2 id="步骤">步骤&lt;/h2>
+&lt;p>1、绑定VIP到本地（欺骗内核）&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># ip route add to local 192.168.60.200/32 dev eth0proto kernel&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>2、为该虚IP创建一个IPVS的virtual server
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># ipvsadm -A -t 192.168.60.200:9376 -s rr -p 600&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>3、为该IPVS service创建相应的real server
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># ipvsadm -A -t 192.168.60.200:9376 -r 10.1.2.3:80 -m&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># ipvsadm -A -t 192.168.60.200:9376 -r 10.1.4.5:80 -m&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># ipvsadm -A -t 192.168.60.200:9376 -r 10.1.3.8:80 -m&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://www.cnblogs.com/lipengxiang2009/p/7349271.html">Linux负载均衡LVS（IPVS）&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://www.sohu.com/a/223150286_744906">应用负载均衡之LVS(一)：基本概念和三种模式&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://www.bilibili.com/video/BV1XJ411s7cd?spm_id_from=333.999.0.0">IPVS实现Service&lt;/a>&lt;/p></description></item></channel></rss>

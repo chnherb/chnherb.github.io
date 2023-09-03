@@ -1,0 +1,963 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – 大数据</title><link>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/</link><description>Recent content in 大数据 on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 初探Hbase</title><link>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%88%9D%E6%8E%A2Hbase/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%88%9D%E6%8E%A2Hbase/</guid><description>
+&lt;h1 id="hbase是什么">HBase是什么&lt;/h1>
+&lt;p>HBase是一种构建在HDFS之上的分布式键值存储系统。&lt;/p>
+&lt;p>HBase 是Google Bigtable 的开源实现。HBase不同于一般的关系数据库，它是一个适合于非结构化数据存储的数据库。&lt;/p>
+&lt;p>另一个不同的是HBase基于列的而不是基于行的模式。&lt;/p>
+&lt;p>&lt;strong>适用场景&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>存储大量数据(PB级数据)。&lt;/li>
+&lt;li>高并发写入，瞬间写入量很大（写多，读少）。&lt;/li>
+&lt;li>业务场景简单(无jion，事务), 按单一维度查询（基于rowkey）。&lt;/li>
+&lt;li>非结构化的数据存储，列可以优雅扩展。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>不适用场景&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>事务。&lt;/li>
+&lt;li>join、group by。&lt;/li>
+&lt;li>除了rowkey之外的复杂查询。&lt;/li>
+&lt;li>高并发，低延迟随机读 。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>MT应用场景&lt;/strong>&lt;/p>
+&lt;ul>
+&lt;li>MTtrace&lt;/li>
+&lt;li>云搜&lt;/li>
+&lt;/ul>
+&lt;h1 id="行存储vs列存储">&lt;strong>行存储VS列存储&lt;/strong>&lt;/h1>
+&lt;p>&lt;img src="../imgs/hbase_basic_211212_1.png" alt="hbase_basic_211212_1.png">&lt;/p>
+&lt;p>**行式存储：**一张表的数据都是放在一起&lt;/p>
+&lt;p>**列式存储：**以列为单位聚合数据，不同的列分开存储&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:left">&lt;/th>
+&lt;th style="text-align:left">行式存储&lt;/th>
+&lt;th style="text-align:left">列式存储&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:left">&lt;strong>优点&lt;/strong>&lt;/td>
+&lt;td style="text-align:left">一行记录的写入是一次完成,消耗的时间比列存储少。&lt;/td>
+&lt;td style="text-align:left">读取过程，按列读取不会产生冗余数据。适合列很多，但每次只需查询少数列的场景。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;strong>缺点&lt;/strong>&lt;/td>
+&lt;td style="text-align:left">数据读取时，将一行数据完全读出。存在冗余列&lt;/td>
+&lt;td style="text-align:left">需要将一行记录拆分成单列保存，写入次数更多，时间消耗会更大。&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h1 id="hbase数据模型">&lt;strong>HBase数据模型&lt;/strong>&lt;/h1>
+&lt;p>HBase 以列族为区分列式存储数据库。表可以被看成是一个稀疏的行的集合。一个列族是多个column的集合.&lt;/p>
+&lt;p>&lt;img src="../imgs/hbase_basic_211212_2.png" alt="hbase_basic_211212_2.png">&lt;/p>
+&lt;p>&lt;strong>物理视图&lt;/strong>&lt;/p>
+&lt;p>&lt;img src="../imgs/hbase_basic_211212_3.png" alt="hbase_basic_211212_3.png">&lt;/p>
+&lt;ul>
+&lt;li>anchor 、contents 分别为两个列族，区分存储。&lt;/li>
+&lt;li>cnnsi.com 、my.look.ca为列族anchor两个列，html为列族contents的列。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;strong>行键&lt;/strong>&lt;/p>
+&lt;p>Row Key 是用来检索记录的主键。Row Key 可定义任意字符串，如订单id,事务id。&lt;/p>
+&lt;p>在HBase 内部，Row Key 保存为字节数组。HBase表的行是按Row Key字典序存储的。&lt;/p>
+&lt;p>&lt;strong>列族&lt;/strong>&lt;/p>
+&lt;p>列族一些列的集合，列族必须在表建立的时候声明。column就不需要了，随时可以新建。&lt;/p>
+&lt;p>在物理上，一个的列族成员在文件系统上都是存储在一起。因为存储优化都是针对列族级别的。&lt;/p>
+&lt;p>这就意味着，在表设计的时候要考虑一个colimn family的所有成员的是否有相同的访问方式。&lt;/p>
+&lt;p>&lt;strong>Cells和版本&lt;/strong>&lt;/p>
+&lt;p>对于同一Row Key 的相同列的多次写操作，使用版本来区分。可以把版本理解每次写入的快照。&lt;/p>
+&lt;p>A *{row, column, version}*元组就是一个HBase中的一个单元。Cell的内容是不可分割的字节数组，即我们存储和具体的值。&lt;/p>
+&lt;p>可保存的版本数需要设定，读取这个文件的时候，默认是最近的版本。&lt;/p>
+&lt;p>&lt;strong>操作&lt;/strong>&lt;/p>
+&lt;p>主要操作有&lt;/p>
+&lt;p>Get：指定Row Key查找，性能最高。&lt;/p>
+&lt;p>Scan ：基于Row Key 前缀查找，或全表扫描。&lt;/p>
+&lt;p>Put：向表增加新行 (如果key是新的) 或更新行 (如果key已经存在)。&lt;/p>
+&lt;p>Bulk Loading：批量装载，批量装载特性采用 MapReduce 任务，将表数据输出为HBase的内部数据格式，然后可以将产生的存储文件直接装载到运行的集群中。&lt;/p>
+&lt;p>Delete：从表中删除一行。&lt;/p>
+&lt;p>&lt;strong>TTL&lt;/strong>&lt;/p>
+&lt;p>存活时间——列族可以设置TTL秒数，HBase 在超时后将自动删除数据&lt;/p>
+&lt;h1 id="hbase表设计">&lt;strong>HBase表设计&lt;/strong>&lt;/h1>
+&lt;p>&lt;strong>rowkey&lt;/strong>&lt;/p>
+&lt;p>HBase 的检索都是基于 rowkey，类似sql 里的like 操作，我们需要根据查询场景来合理设置rowkey。参考&lt;a href="https://km.sankuai.com/page/59718515">合理设计hbase rowkey&lt;/a>&lt;/p>
+&lt;p>1：查询最左匹配原则&lt;/p>
+&lt;p>假设查询包含3个维度：shopId，orderId ，如果将rowkey 定义为: shopId_orderId&lt;/p>
+&lt;p>则以下维度的查询比较高效&lt;/p>
+&lt;p>(1) 通过shopId查询&lt;/p>
+&lt;p>(2) 通过shopId + orderId查询&lt;/p>
+&lt;p>但通过orderId查询则比较低效，为全表扫描操作&lt;/p>
+&lt;p>2：避免热点Region&lt;/p>
+&lt;p>HBase 的行会根据rowkey 拆分到不同的 Region 中。&lt;/p>
+&lt;p>如果是连续自增性质的rowkey，则相邻rowkey写入到了同一个Region里，产生热点Region。热点Region容易导致读写出现性能瓶颈。&lt;/p>
+&lt;p>一般的做法是在rowkey 加一个hash前缀。比如hash(shopId)_shopId_orderId&lt;/p>
+&lt;p>3：避免短键过长&lt;/p>
+&lt;p>在满足需求的情况下，行键越短越好。&lt;/p>
+&lt;p>&lt;strong>列簇&lt;/strong>&lt;/p>
+&lt;p>建议列族不要超过3个，按照访问维度划分。&lt;/p>
+&lt;p>尽量使列族名小，最好一个字符。(如 &amp;quot;d&amp;quot; 表示 data/default)。&lt;/p>
+&lt;p>&lt;strong>列名&lt;/strong>&lt;/p>
+&lt;p>最好还是用短属性名，节约存储空间。&lt;/p>
+&lt;p>&lt;strong>版本数&lt;/strong>&lt;/p>
+&lt;p>每个列族可以单独设置，默认是3。按业务需求要合理设置。&lt;/p>
+&lt;p>&lt;strong>数据类型&lt;/strong>&lt;/p>
+&lt;p>任何可被转为字节数组的东西可以作为值存入，输入可以是字符串，数字，复杂对象，甚至图像，只要他们能转为字节。&lt;/p>
+&lt;p>&lt;strong>demo&lt;/strong>&lt;/p>
+&lt;p>业务场景：评价审核日志收集。&lt;/p>
+&lt;p>从新增（编辑）一条评价到 诚信审核反馈并储存审核结果完成，定义为一个&lt;strong>送审事务。&lt;/strong>&lt;/p>
+&lt;p>每个送审事务都有一个&lt;strong>唯一标识&lt;/strong>（transId），在整个事务的各环节包括 :**评价信息存储-&amp;gt;评价送审-&amp;gt;****诚信审核-&amp;gt;审核反馈-&amp;gt;**&lt;strong>审核结果存储&lt;/strong>。&lt;/p>
+&lt;p>针对每个送审事务的各环节，进行日志收集。&lt;/p>
+&lt;p>查询场景1：根据评价id ，查询所有的审核日志。&lt;/p>
+&lt;p>查询场景2：根据评价id 和事务id, 查询该事务的审核日志。&lt;/p>
+&lt;p>表结构定义：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:left">参数&lt;/th>
+&lt;th style="text-align:left">&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:left">表名&lt;/td>
+&lt;td style="text-align:left">〜〜〜〜&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">TTL&lt;/td>
+&lt;td style="text-align:left">永久&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">Row Key&lt;/td>
+&lt;td style="text-align:left">hash(BizType_BizID)_BizType_BizID_AuditTransID&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">版本数&lt;/td>
+&lt;td style="text-align:left">3（针对同一个审核事务，诚信会有多次反馈结果，可保留多个版本的反馈结果）&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">列族&lt;/td>
+&lt;td style="text-align:left">b:基础信息族&lt;br>e:扩展信息族&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>Columns&lt;/strong>&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:left">列族&lt;/th>
+&lt;th style="text-align:left">字段名&lt;/th>
+&lt;th style="text-align:left">字段名缩写&lt;/th>
+&lt;th style="text-align:left">&lt;strong>类型&lt;/strong>&lt;/th>
+&lt;th style="text-align:left">&lt;strong>含义&lt;/strong>&lt;/th>
+&lt;th style="text-align:left">&lt;strong>备注&lt;/strong>&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:left">基础信息族（b）&lt;/td>
+&lt;td style="text-align:left">TransType&lt;/td>
+&lt;td style="text-align:left">ty&lt;/td>
+&lt;td style="text-align:left">tinyint(4)&lt;/td>
+&lt;td style="text-align:left">事务类型&lt;/td>
+&lt;td style="text-align:left">0：用户发起 1：诚信回扫 2：用户申诉 3：用户举报 4:ugc 发起&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">Version&lt;/td>
+&lt;td style="text-align:left">vs&lt;/td>
+&lt;td style="text-align:left">bigint(20)&lt;/td>
+&lt;td style="text-align:left">送审版本&lt;/td>
+&lt;td style="text-align:left">内容生成时间戳&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">EventType0&lt;/td>
+&lt;td style="text-align:left">et0&lt;/td>
+&lt;td style="text-align:left">bigint(20)&lt;/td>
+&lt;td style="text-align:left">事件0发生时间&lt;/td>
+&lt;td style="text-align:left">新增完成事件&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">EventType1&lt;/td>
+&lt;td style="text-align:left">et1&lt;/td>
+&lt;td style="text-align:left">bigint(20)&lt;/td>
+&lt;td style="text-align:left">事件1发生时间&lt;/td>
+&lt;td style="text-align:left">诚信送审完成事件&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">EventType2&lt;/td>
+&lt;td style="text-align:left">et2&lt;/td>
+&lt;td style="text-align:left">bigint(20)&lt;/td>
+&lt;td style="text-align:left">事件2发生时间&lt;/td>
+&lt;td style="text-align:left">诚信审核反馈事件&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">....&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;strong>AuditResult&lt;/strong>&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;strong>tinyint(4)&lt;/strong>&lt;/td>
+&lt;td style="text-align:left">诚信审核结果&lt;/td>
+&lt;td style="text-align:left">&lt;strong>0:无 1:通过 2: 违规&lt;/strong>&lt;br>&lt;strong>AuditResultEnum&lt;/strong>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;strong>AuditDetail&lt;/strong>&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">string&lt;/td>
+&lt;td style="text-align:left">诚信审核标签明细&lt;/td>
+&lt;td style="text-align:left">{处理建议，多标签...}&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;strong>AuditTime&lt;/strong>&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">bigint(20)&lt;/td>
+&lt;td style="text-align:left">诚信审核时间&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">....&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h1 id="hbase系统架构">&lt;strong>HBase系统架构&lt;/strong>&lt;/h1>
+&lt;p>&lt;img src="../imgs/hbase_basic_211212_4.png" alt="hbase_basic_211212_4.png">&lt;/p>
+&lt;p>&lt;strong>Client&lt;/strong>&lt;/p>
+&lt;p>包含访问HBase的接口，并维护cache来加快对HBase的访问。&lt;/p>
+&lt;p>对于管理类操作，Client与HMaster进行RPC。&lt;/p>
+&lt;p>对于数据读写操作，Client与HRegionServer进行RPC。&lt;/p>
+&lt;p>&lt;strong>Zookeeper&lt;/strong>&lt;/p>
+&lt;p>保证任何时候，集群中只有一个master。&lt;/p>
+&lt;p>实时监控Region server的上线和下线信息。并实时通知给master。&lt;/p>
+&lt;p>存储HBase的schema和table元数据。&lt;/p>
+&lt;p>&lt;strong>Master&lt;/strong>&lt;/p>
+&lt;p>为Region server分配region，负责Region server的负载均衡.&lt;/p>
+&lt;p>发现失效的Region server并重新分配其上的region。&lt;/p>
+&lt;p>处理表的建立，删除等操作。&lt;/p>
+&lt;p>&lt;strong>Region Server&lt;/strong>&lt;/p>
+&lt;p>维护master分配给他的region，处理对这些region的io请求。&lt;/p>
+&lt;p>负责切分正在运行过程中变的过大的region。&lt;/p>
+&lt;p>当用户需要对数据进行读写操作时，需要访问HRegionServer。&lt;/p>
+&lt;p>&lt;strong>Region&lt;/strong>&lt;/p>
+&lt;p>table在行的方向上分隔为多个Region。&lt;/p>
+&lt;p>随着数据不断插入表，当region的某个列族达到一个阈值时就会拆分新的region。&lt;/p>
+&lt;p>&lt;strong>Store&lt;/strong>&lt;/p>
+&lt;p>每一个region由一个或多个store组成，hbase会为每个列族建一个store。&lt;/p>
+&lt;p>HStore存储由两部分组成：MemStore和StoreFiles。 写入数据首先会放在MemStore,当MemStore满了以后会Flush成一个 StoreFile（实际存储在HDHS上的是HFile）。&lt;/p>
+&lt;p>写操作只要进入内存中就可以立即返回，保证了HBase I/O的高性能。&lt;/p>
+&lt;p>&lt;strong>HFile&lt;/strong>&lt;/p>
+&lt;p>HFile就是实际的存储文件。HFile由多个Data Block组成，Data Block是HBase的最小存储单元。&lt;/p>
+&lt;p>HBase 会基于Data Block的做缓存——BlockCache。&lt;/p>
+&lt;p>客户的读请求会先到memstore中查数据，若查不到就到blockcache中查，再查不到就会从磁盘上读，并把读入的数据同时放入blockcahce。&lt;/p>
+&lt;p>HBase的blockcache使用的是LRU（最近最少使用）淘汰策略，当BlockCache的大小达到上限后，会触发缓存淘汰机制，将最老的一批数据淘汰掉。&lt;/p>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://km.sankuai.com/page/164927192">https://km.sankuai.com/page/164927192&lt;/a>&lt;/p></description></item><item><title>Docs: 大数据框架</title><link>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%A1%86%E6%9E%B6/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%A1%86%E6%9E%B6/</guid><description>
+&lt;h1 id="大数据架构概述">大数据架构概述&lt;/h1>
+&lt;p>&lt;img src="../imgs/bigdata_frame_211212_1.png" alt="bigdata_frame_211212_1.png">&lt;/p>
+&lt;p>实时流计算（Spark/Storm/Flink）&lt;/p>
+&lt;p>大数据（Hadoop/HBase/Hive）&lt;/p>
+&lt;h1 id="hadoop">&lt;strong>Hadoop&lt;/strong>&lt;/h1>
+&lt;h2 id="hadoop生态圈组件">&lt;strong>Hadoop生态圈组件&lt;/strong>&lt;/h2>
+&lt;p>1）Zookeeper：是一个开源的分布式应用程序协调服务,基于zookeeper可以实现同步服务，配置维护，命名服务。&lt;/p>
+&lt;p>2）Flume：一个高可用的，高可靠的，分布式的海量日志采集、聚合和传输的系统。&lt;/p>
+&lt;p>3）Hbase：是一个分布式的、面向列的开源数据库, 利用Hadoop HDFS作为其存储系统。&lt;/p>
+&lt;p>4）Hive：基于Hadoop的一个数据仓库工具，可以将结构化的数据档映射为一张数据库表，并提供简单的sql 查询功能，可以将sql语句转换为MapReduce任务进行运行。&lt;/p>
+&lt;p>5）Sqoop：将一个关系型数据库中的数据导进到Hadoop的 HDFS中，也可以将HDFS的数据导进到关系型数据库中。&lt;/p>
+&lt;h2 id="基本概念">&lt;strong>基本概念&lt;/strong>&lt;/h2>
+&lt;h3 id="block块-物理划分">&lt;strong>block块（物理划分）&lt;/strong>&lt;/h3>
+&lt;p>block是HDFS中的基本存储单位，hadoop1.x默认大小为64M而hadoop2.x默认块大小为128M。&lt;/p>
+&lt;h3 id="split分片-逻辑划分">&lt;strong>split分片（逻辑划分）&lt;/strong>&lt;/h3>
+&lt;p>Hadoop中split划分属于逻辑上的划分，目的只是为了让map task更好地获取数据。split是通过hadoop中的InputFormat接口中的getSplit()方法得到的。&lt;/p>
+&lt;h2 id="mapreduce运行过程概括5步">&lt;strong>mapreduce运行过程概括5步&lt;/strong>&lt;/h2>
+&lt;p>1. [input阶段]获取输入数据进行分片作为map的输入&lt;/p>
+&lt;p>2. [map阶段]过程对某种输入格式的一条记录解析成一条或多条记录&lt;/p>
+&lt;p>3. [shffle阶段]对中间数据的控制，作为reduce的输入&lt;/p>
+&lt;p>4. [reduce阶段]对相同key的数据进行合并&lt;/p>
+&lt;p>5. [output阶段]按照格式输出到指定目录&lt;/p>
+&lt;h2 id="map端shuffle">&lt;strong>Map端shuffle&lt;/strong>&lt;/h2>
+&lt;p>①分区partition&lt;/p>
+&lt;p>②写入环形内存缓冲区&lt;/p>
+&lt;p>③spill：执行溢出写&lt;/p>
+&lt;p>        排序sort---&amp;gt;合并combiner---&amp;gt;生成溢出写文件&lt;/p>
+&lt;pre>&lt;code>如果客户端自定义了Combiner（相当于map阶段的reduce），则会在分区排序后到溢写出前自动调用combiner，将相同的key的value相加，这样的好处就是减少溢写到磁盘的数据量。这个过程叫“合并”
+&lt;/code>&lt;/pre>
+&lt;p>④归并merge&lt;/p>
+&lt;h2 id="reduce端shuffle">&lt;strong>Reduce端shuffle&lt;/strong>&lt;/h2>
+&lt;p>①复制copy&lt;/p>
+&lt;p>②归并merge&lt;/p>
+&lt;p>③reduce&lt;/p>
+&lt;p>&lt;strong>MapTask工作机制&lt;/strong>&lt;/p>
+&lt;p>（1）Read阶段：Map Task通过用户编写的RecordReader，从输入InputSplit中解析出一个个key/value。&lt;/p>
+&lt;p>（2）Map阶段：该节点主要是将解析出的key/value交给用户编写map()函数处理，并产生一系列新的key/value。&lt;/p>
+&lt;p>（3）Collect收集阶段：在用户编写map()函数中，当数据处理完成后，一般会调用OutputCollector.collect()输出结果。在该函数内部，它会将生成的key/value分区（调用Partitioner），并写入一个环形内存缓冲区中。&lt;/p>
+&lt;p>（4）Spill阶段：即“溢写”，当环形缓冲区满后，MapReduce会将数据写到本地磁盘上，生成一个临时文件。需要注意的是，将数据写入本地磁盘之前，先要对数据进行一次本地排序，并在必要时对数据进行合并、压缩等操作。&lt;/p>
+&lt;p>（5）Combine阶段：当所有数据处理完成后，MapTask对所有临时文件进行一次合并，以确保最终只会生成一个数据文件。&lt;/p>
+&lt;h2 id="reducetask工作机制">&lt;strong>ReduceTask工作机制&lt;/strong>&lt;/h2>
+&lt;p>（1）Copy阶段：ReduceTask从各个MapTask上远程拷贝一片数据，并针对某一片数据，如果其大小超过一定阈值，则写到磁盘上，否则直接放到内存中。&lt;/p>
+&lt;p>（2）Merge阶段：在远程拷贝数据的同时，ReduceTask启动了两个后台线程对内存和磁盘上的文件进行合并，以防止内存使用过多或磁盘上文件过多。&lt;/p>
+&lt;p>（3）Sort阶段：按照MapReduce语义，用户编写reduce()函数输入数据是按key进行聚集的一组数据。为了将key相同的数据聚在一起，Hadoop采用了基于排序的策略。 由于各个MapTask已经实现对自己的处理结果进行了局部排序，因此，ReduceTask只需对所有数据进行一次归并排序即可。&lt;/p>
+&lt;p>（4）Reduce阶段：reduce()函数将计算结果写到HDFS上。&lt;/p>
+&lt;h1 id="hive">&lt;strong>Hive&lt;/strong>&lt;/h1>
+&lt;h2 id="hive表关联查询-如何解决数据倾斜的问题">&lt;strong>Hive表关联查询，如何解决数据倾斜的问题&lt;/strong>&lt;/h2>
+&lt;p>1）倾斜原因： map输出数据按key Hash的分配到reduce中，由于key分布不均匀、业务数据本身的特、建表时考虑不周、等原因造成的reduce 上的数据量差异过大。&lt;/p>
+&lt;p>（1）key分布不均匀;&lt;/p>
+&lt;p>（2）业务数据本身的特性;&lt;/p>
+&lt;p>（3）建表时考虑不周;&lt;/p>
+&lt;p>（4）某些SQL语句本身就有数据倾斜;&lt;/p>
+&lt;p>如何避免：对于key为空产生的数据倾斜，可以对其赋予一个随机值。&lt;/p>
+&lt;p>2）解决方案&lt;/p>
+&lt;p>（1）参数调节：&lt;/p>
+&lt;p>hive.map.aggr = true&lt;/p>
+&lt;p>hive.groupby.skewindata=true&lt;/p>
+&lt;p>生成的查询计划会有两个MR Job。第一个MR Job中，Map的输出结果集合会随机分布到Reduce中，每个Reduce做部分聚合操作，并输出结果，这样处理的结果是相同的Group By Key有可能被分发到不同的Reduce中，从而达到负载均衡的目的；第二个MR Job再根据预处理的数据结果按照Group By Key 分布到 Reduce 中（这个过程可以保证相同的 Group By Key 被分布到同一个Reduce中），最后完成最终的聚合操作。&lt;/p>
+&lt;p>（2）SQL 语句调节：&lt;/p>
+&lt;p>① 选用join key分布最均匀的表作为驱动表。做好列裁剪和filter操作，以达到两表做join 的时候，数据量相对变小的效果。&lt;/p>
+&lt;p>② 大小表Join：&lt;/p>
+&lt;p>使用map join让小的维度表（1000 条以下的记录条数）先进内存。在map端完成reduce.&lt;/p>
+&lt;p>③ 大表Join大表：&lt;/p>
+&lt;p>把空值的key变成一个字符串加上随机数，把倾斜的数据分到不同的reduce上，由于null 值关联不上，处理后并不影响最终结果。&lt;/p>
+&lt;p>④ count distinct大量相同特殊值:&lt;/p>
+&lt;p>count distinct 时，将值为空的情况单独处理，如果是计算count distinct，可以不用处理，直接过滤，在最后结果中加1。如果还有其他计算，需要进行group by，可以先将值为空的记录单独处理，再和其他计算结果进行union。&lt;/p>
+&lt;h2 id="hive的hsql转换为mapreduce的过程">&lt;strong>Hive的HSQL转换为MapReduce的过程&lt;/strong>&lt;/h2>
+&lt;p>HiveSQL -&amp;gt;AST(抽象语法树) -&amp;gt; QB(查询块) -&amp;gt;OperatorTree（操作树）-&amp;gt;优化后的操作树-&amp;gt;mapreduce任务树-&amp;gt;优化后的mapreduce任务树&lt;/p>
+&lt;h2 id="hive底层与数据库交互原理">&lt;strong>Hive底层与数据库交互原理&lt;/strong>&lt;/h2>
+&lt;p>由于Hive的元数据可能要面临不断地更新、修改和读取操作，所以它显然不适合使用Hadoop文件系统进行存储。目前Hive将元数据存储在RDBMS中，比如存储在MySQL、Derby中。元数据信息包括：存在的表、表的列、权限和更多的其他信息。&lt;/p>
+&lt;h2 id="hive的两张表关联-使用mapreduce怎么实现">&lt;strong>Hive的两张表关联，使用MapReduce怎么实现&lt;/strong>&lt;/h2>
+&lt;p>1、如果其中有一张表为小表，直接使用map端join的方式（map端加载小表）进行聚合。&lt;/p>
+&lt;p>2、如果两张都是大表，那么采用联合key，联合key的第一个组成部分是join on中的公共字段，第二部分是一个flag，0代表表A，1代表表B，由此让Reduce区分客户信息和订单信息；在Mapper中同时处理两张表的信息，将join on公共字段相同的数据划分到同一个分区中，进而传递到一个Reduce中，然后在Reduce中实现聚合。&lt;/p>
+&lt;h2 id="hive中sort-by-order-by-cluster-by-distrbute-by">&lt;strong>hive中Sort By，Order By，Cluster By，Distrbute By&lt;/strong>&lt;/h2>
+&lt;p>order by：会对输入做全局排序，因此只有一个reducer（多个reducer无法保证全局有序）。只有一个reducer，会导致当输入规模较大时，需要较长的计算时间。&lt;/p>
+&lt;p>sort by：不是全局排序，其在数据进入reducer前完成排序。&lt;/p>
+&lt;p>distribute by：按照指定的字段对数据进行划分输出到不同的reduce中。&lt;/p>
+&lt;p>cluster by：除了具有 distribute by 的功能外还兼具 sort by 的功能。&lt;/p>
+&lt;h2 id="split-coalesce及collect-list函数">&lt;strong>split、coalesce及collect_list函数&lt;/strong>&lt;/h2>
+&lt;p>split将字符串转化为数组，即：split('a,b,c,d' , ',') ==&amp;gt; [&amp;quot;a&amp;quot;,&amp;quot;b&amp;quot;,&amp;quot;c&amp;quot;,&amp;quot;d&amp;quot;]。&lt;/p>
+&lt;p>coalesce(T v1, T v2, …) 返回参数中的第一个非空值；如果所有值都为 NULL，那么返回NULL。&lt;/p>
+&lt;p>collect_list列出该字段所有的值，不去重 =&amp;gt; select collect_list(id) from table&lt;/p>
+&lt;h2 id="hive保存元数据方式">&lt;strong>Hive保存元数据方式&lt;/strong>&lt;/h2>
+&lt;p>Hive支持三种不同的元存储服务器，分别为：内嵌式元存储服务器、本地元存储服务器、远程元存储服务器，每种存储方式使用不同的配置参数。&lt;/p>
+&lt;p>内嵌式元存储主要用于单元测试，在该模式下每次只有一个进程可以连接到元存储，Derby是内嵌式元存储的默认数据库。&lt;/p>
+&lt;p>在本地模式下，每个Hive客户端都会打开到数据存储的连接并在该连接上请求SQL查询。&lt;/p>
+&lt;p>在远程模式下，所有的Hive客户端都将打开一个到元数据服务器的连接，该服务器依次查询元数据，元数据服务器和客户端之间使用Thrift协议通信。&lt;/p>
+&lt;h2 id="hive内部表和外部表区别">&lt;strong>Hive内部表和外部表区别&lt;/strong>&lt;/h2>
+&lt;p>创建表时：创建内部表时，会&lt;strong>将数据移动到数据仓库指向的路径&lt;/strong>；若创建外部表，仅记录数据所在的路径，不对数据的位置做任何改变。&lt;/p>
+&lt;p>删除表时：在删除表的时候，内部表的元数据和数据会被一起删除， 而外部表只删除元数据，不删除数据。这样外部表相对来说更加安全些，数据组织也更加灵活，方便共享源数据。&lt;/p>
+&lt;h1 id="hbase">&lt;strong>Hbase&lt;/strong>&lt;/h1>
+&lt;h2 id="hbase特点">Hbase特点&lt;/h2>
+&lt;ul>
+&lt;li>每个值只出现在一个REGION&lt;/li>
+&lt;li>同一时间一个Region只分配给一个Region服务器&lt;/li>
+&lt;li>行内的mutation操作都是原子的&lt;/li>
+&lt;li>put操作要么成功，要么完全失败&lt;/li>
+&lt;/ul>
+&lt;p>当某台region server fail的时候，它管理的region failover到其他region server时，需要根据WAL log（Write-Ahead Logging）来redo(redolog，有一种日志文件叫做重做日志文件)，这时候进行redo的region应该是unavailable的，所以hbase降低了可用性，提高了一致性。设想一下，如果redo的region能够响应请求，那么可用性提高了，则必然返回不一致的数据(因为redo可能还没完成)，那么hbase就降低一致性来提高可用性了。&lt;/p>
+&lt;h1 id="yarn">&lt;strong>Yarn&lt;/strong>&lt;/h1>
+&lt;p>参考：&lt;a href="https://www.jianshu.com/p/3f406cf438be">通俗理解YARN运行原理&lt;/a>&lt;/p>
+&lt;h1 id="流计算对比">&lt;strong>流计算对比&lt;/strong>&lt;/h1>
+&lt;h2 id="第一代计算引擎-mapreduce">第一代计算引擎 mapreduce  &lt;/h2>
+&lt;p>mapreduce  作为第一个计算引擎，用于批处理，是计算引擎的先驱，内部支持机器学习但是现在机器学习库不在更新，并且mapreduce  编写十分的耗时，开发效率低，开发时间成本太大，所以很少有企业写mapreduce 来跑程序。&lt;/p>
+&lt;h2 id="第二代计算引擎-pig-hive">第二代计算引擎 pig/hive&lt;/h2>
+&lt;ul>
+&lt;li>作为第二代引擎pig/hive 对hadoop进行了嵌套，其存储基于hdfs，计算基于mr，hive/pig在处理任务时首先会把本身的代码解析为一个个m/r任务，这样就大大的降低了mr的编写编写成本。&lt;/li>
+&lt;li>pig 有自己的脚本语言属于，比hive更加的灵活&lt;/li>
+&lt;li>hive  属于类sql语法，虽然没有pig灵活，但是对于现在程序员都会sql的世界来说大家更喜欢使用hive&lt;/li>
+&lt;li>pig/hive 只支持批处理，且支持机器学习 （hivemall）&lt;/li>
+&lt;/ul>
+&lt;h2 id="第三代计算引擎-spark-storm">第三代计算引擎 spark/storm&lt;/h2>
+&lt;p>随着时代的发展，企业对数据实时处理的需求愈来愈大，所以就出现了storm/spark&lt;/p>
+&lt;ul>
+&lt;li>这两者有着自己的计算模式&lt;/li>
+&lt;li>storm属于真正的流式处理，低延迟（ms级延迟），高吞吐，且每条数据都会触发计算。&lt;/li>
+&lt;li>spark属于批处理转化为流处理即将流式数据根据时间切分成小批次进行计算，对比与storm而言延迟会高于0.5s（s级延迟），但是性能上的消耗低于storm。“流式计算是批次计算的特例（流式计算是拆分计算的结果）”&lt;/li>
+&lt;/ul>
+&lt;h2 id="第四代计算引擎-flink">第四代计算引擎 flink&lt;/h2>
+&lt;ul>
+&lt;li>flink2015年出现在apache，后来又被阿里巴巴技术团队进行优化（这里我身为国人为之自豪）为blink，flink支持流式计算也支持的批次处理。&lt;/li>
+&lt;li>flink为流式计算而生属于每一条数据触发计算，在性能的消耗低于storm，吞吐量高于storm，延时低于storm，并且比storm更加易于编写。因为storm如果要实现窗口需要自己编写逻辑，但是flink中有窗口方法。&lt;/li>
+&lt;li>flink内部支持多种函数，其中包括窗口函数和各种算子（这一点和spark很像，但是在性能和实时上spark是没有办法比较的）&lt;/li>
+&lt;li>flink支持仅一次语义保证数据不丢失&lt;/li>
+&lt;li>flink支持通过envent time来控制窗口时间，支持乱序时间和时间处理（这点我觉得很厉害）&lt;/li>
+&lt;li>对于批次处理flink的批处理可以理解为 “批次处理是流式处理的特例”（批次计算是流式计算的合并结果）&lt;/li>
+&lt;/ul>
+&lt;h1 id="spark">&lt;strong>Spark&lt;/strong>&lt;/h1>
+&lt;h2 id="rdd">&lt;strong>RDD&lt;/strong>&lt;/h2>
+&lt;pre>&lt;code>分布式对象集合（有容错机制），本质上是一个只读的分区记录集合。每个 RDD 可以分成多个分区，每个分区就是一个数据集片段。
+&lt;/code>&lt;/pre>
+&lt;ul>
+&lt;li>只读：不能修改，只能通过转换操作生成新的 RDD。&lt;/li>
+&lt;li>分布式：可以分布在多台机器上进行并行处理。&lt;/li>
+&lt;li>弹性：计算过程中内存不够时它会和磁盘进行数据交换。&lt;/li>
+&lt;li>基于内存：可以全部或部分缓存在内存中，在多次计算间重用。&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="../imgs/bigdata_frame_211212_2.png" alt="bigdata_frame_211212_2.png">&lt;/p>
+&lt;p>Spark Job 默认的调度模式 - FIFO&lt;/p>
+&lt;p>RDD 特点 - 可分区/可序列化/可持久化&lt;/p>
+&lt;p>Broadcast - 任何函数调用/是只读的/存储在各个节点&lt;/p>
+&lt;p>Accumulator - 支持加法/支持数值类型/可并行&lt;/p>
+&lt;p>Task 数量由 Partition 决定&lt;/p>
+&lt;p>Task 运行在 Workder node 中 Executor 上的工作单元&lt;/p>
+&lt;p>master 和 worker 通过 Akka 方式进行通信的&lt;/p>
+&lt;p>默认的存储级别 - MEMORY_ONLY&lt;/p>
+&lt;p>hive 的元数据存储在 derby 和 MySQL 中有什么区别 - 多会话&lt;/p>
+&lt;p>DataFrame 和 RDD 最大的区别 - 多了 schema&lt;/p>
+&lt;h2 id="rdd机制">&lt;strong>RDD机制&lt;/strong>&lt;/h2>
+&lt;ul>
+&lt;li>分布式弹性数据集，简单的理解成一种数据结构，是spark框架上的通用货币&lt;/li>
+&lt;li>所有算子都是基于rdd来执行的&lt;/li>
+&lt;li>rdd执行过程中会形成dag图，然后形成lineage保证容错性等&lt;/li>
+&lt;li>从物理的角度来看rdd存储的是block和node之间的映射&lt;/li>
+&lt;/ul>
+&lt;h2 id="shufflemanager-shuffle管理器">&lt;strong>ShuffleManager(shuffle管理器)&lt;/strong>&lt;/h2>
+&lt;p>ShuffleManager随着Spark的发展有两种实现的方式，分别为HashShuffleManager和SortShuffleManager，因此spark的Shuffle有Hash Shuffle和Sort Shuffle两种&lt;/p>
+&lt;h2 id="spark中的hashshufle的有哪些不足">&lt;strong>Spark中的HashShufle的有哪些不足？&lt;/strong>&lt;/h2>
+&lt;ul>
+&lt;li>shuffle产生海量的小文件在磁盘上，此时会产生大量耗时的、低效的IO操作；&lt;/li>
+&lt;li>容易导致内存不够用，由于内存需要保存海量的文件操作句柄和临时缓存信息&lt;/li>
+&lt;li>容易出现数据倾斜，导致OOM&lt;/li>
+&lt;/ul>
+&lt;h2 id="spark-hashparitioner的弊端">&lt;strong>spark hashParitioner的弊端&lt;/strong>&lt;/h2>
+&lt;ul>
+&lt;li>分区原理：对于给定的key，计算其hashCode&lt;/li>
+&lt;li>弊端是数据不均匀，容易导致数据倾斜&lt;/li>
+&lt;/ul>
+&lt;h2 id="map与flatmap的区别">&lt;strong>map与flatMap的区别&lt;/strong>&lt;/h2>
+&lt;ul>
+&lt;li>map：对RDD每个元素转换，文件中的每一行数据返回一个数组对象&lt;/li>
+&lt;li>flatMap：对RDD每个元素转换，然后再扁平化，将所有的对象合并为一个对象，会抛弃值为null的值&lt;/li>
+&lt;/ul>
+&lt;h2 id="union操作是产生宽依赖还是窄依赖">&lt;strong>union操作是产生宽依赖还是窄依赖？&lt;/strong>&lt;/h2>
+&lt;ul>
+&lt;li>窄依赖&lt;/li>
+&lt;/ul>
+&lt;h2 id="常用的action">&lt;strong>常用的action&lt;/strong>&lt;/h2>
+&lt;p>collect，reduce,take,count,saveAsTextFile等&lt;/p>
+&lt;h2 id="rdd有几种操作类型">&lt;strong>rdd有几种操作类型&lt;/strong>&lt;/h2>
+&lt;p>三种：&lt;/p>
+&lt;p>1、transformation，rdd由一种转为另一种rdd&lt;/p>
+&lt;p>2、action&lt;/p>
+&lt;p>3、cronroller，控制算子(cache/persist) 对性能和效率的有很好的支持&lt;/p>
+&lt;h2 id="什么场景下要进行persist操作">&lt;strong>什么场景下要进行persist操作？&lt;/strong>&lt;/h2>
+&lt;p>以下场景会使用persist&lt;/p>
+&lt;ul>
+&lt;li>某个步骤计算非常耗时或计算链条非常长，需要进行persist持久化&lt;/li>
+&lt;li>shuffle之后为什么要persist，shuffle要进性网络传输，风险很大，数据丢失重来，恢复代价很大&lt;/li>
+&lt;li>shuffle之前进行persist，框架默认将数据持久化到磁盘，这个是框架自动做的。&lt;/li>
+&lt;/ul>
+&lt;h2 id="spark容错机制-血统-lineage-容错">&lt;strong>Spark容错机制-血统(Lineage)容错&lt;/strong>&lt;/h2>
+&lt;p>一般来说，分布式数据集的容错性有两种方式：数据检查点和记录数据的更新。&lt;/p>
+&lt;pre>&lt;code>Lineage本质上很类似于数据库中的重做日志（Redo Log），只不过这个重做日志粒度很大，是对全局数据做同样的重做进而恢复数据。
+相比其他系统的细颗粒度的内存数据更新级别的备份或者LOG机制，RDD的Lineage记录的是粗颗粒度的特定数据Transformation操作（如filter、map、join等）行为。
+&lt;/code>&lt;/pre>
+&lt;h2 id="groupby和groupbykey">&lt;strong>groupBy和groupByKey&lt;/strong>&lt;/h2>
+&lt;p>比如（A，1），（A，2）；使用groupBy之后结果是（A，（（A，1），（A，2）））；&lt;/p>
+&lt;p>使用groupByKey之后结果是：（A，（1,2））；关键区别就是合并之后是否会自动去掉key信息；&lt;/p>
+&lt;h1 id="storm">&lt;strong>Storm&lt;/strong>&lt;/h1>
+&lt;h1 id="flink">&lt;strong>Flink&lt;/strong>&lt;/h1>
+&lt;h1 id="常见问题">&lt;strong>常见问题&lt;/strong>&lt;/h1>
+&lt;h2 id="spark快的原因">spark快的原因&lt;/h2>
+&lt;ul>
+&lt;li>Spark基于内存，尽可能的减少了中间结果写入磁盘和不必要的sort、shuffleSpark&lt;/li>
+&lt;li>对于反复用到的数据进行了缓存&lt;/li>
+&lt;li>Spark对于DAG进行了高度的优化，具体在于Spark划分了不同的stage和使用了延迟计算技术&lt;/li>
+&lt;/ul>
+&lt;h2 id="spark为什么比mapreduce快">&lt;strong>Spark为什么比mapreduce快&lt;/strong>&lt;/h2>
+&lt;p>1、内存（性能高）、磁盘（可靠）&lt;/p>
+&lt;p>2、DAG有向无环图在此过程中减少了shuffle以及落地磁盘的次数（一般而言）&lt;/p>
+&lt;pre>&lt;code>Spark 支持将需要反复用到的数据给 Cache 到内存中，减少数据加载耗时，所以 Spark 跑机器学习算法比较在行（需要对数据进行反复迭代）
+Spark的DAG实质上就是把计算和计算之间的编排变得更为细致紧密，使得很多MR任务中需要落盘的非Shuffle操作得以在内存中直接参与后续的运算，并且由于算子粒度和算子之间的逻辑关系使得其易于由框架自动地优化
+&lt;/code>&lt;/pre>
+&lt;p>3、Spark是粗粒度资源调度（多线程模型），MapReduce是细粒度资源调度（多进程模型）&lt;/p>
+&lt;p>粗粒度资源调度的优点是执行速度快，缺点是不能使集群得到充分的利用；反之亦然。&lt;/p>
+&lt;h2 id="mapreduce操作的mapper和reducer阶段相当于spark中的哪几个算子">&lt;strong>Mapreduce操作的mapper和reducer阶段相当于spark中的哪几个算子&lt;/strong>&lt;/h2>
+&lt;p>相当于spark中的map算子和reduceByKey算子，区别：MR会自动进行排序的，spark要看具体partitioner&lt;/p>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://www.cnblogs.com/captainlucky/p/4720986.html">HBase强一致性详解&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://www.jianshu.com/p/7a8fca3838a4">https://www.jianshu.com/p/7a8fca3838a4&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://github.com/Dr11ft/BigDataGuide/blob/master/%E9%9D%A2%E8%AF%95/Hadoop%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/Hadoop%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93%EF%BC%88%E4%B8%80%EF%BC%89.md">hadoop&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://github.com/Dr11ft/BigDataGuide/blob/master/%E9%9D%A2%E8%AF%95/Hadoop%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93/Hadoop%E9%9D%A2%E8%AF%95%E9%A2%98%E6%80%BB%E7%BB%93%EF%BC%88%E4%B8%89%EF%BC%89%E2%80%94%E2%80%94MapReduce.md">hadoop-MapReduce&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://zhuanlan.zhihu.com/p/100258454">https://zhuanlan.zhihu.com/p/100258454&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://blog.csdn.net/JENREY/article/details/84873874">spark为什么比mapreduce快&lt;/a>&lt;/p></description></item><item><title>Docs: HDFS-01基本介绍</title><link>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/HDFS-01%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/HDFS-01%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D/</guid><description>
+&lt;h1 id="简介">简介&lt;/h1>
+&lt;h2 id="介绍">介绍&lt;/h2>
+&lt;p>Hadoop Distributed File System（简称 HDFS）是一个分布式文件系统。HDFS 有着高容错性（fault-tolerent）的特点，并且设计用来部署在低廉的（low-cost）硬件上。而且它提供高吞吐量（high throughput）来访问应用程序的数据，适合那些有着超大数据集（large data set）的应用程序。HDFS 放宽了（relax）POSIX 的要求（requirements）这样可以实现流的形式访问（streaming access）文件系统中的数据。HDFS 开始是为开源的 apache 项目 nutch 的基础结构而创建，HDFS 是 hadoop 项目的一部分，而 hadoop 又是 lucene 的一部分。&lt;/p>
+&lt;h2 id="发展历史">发展历史&lt;/h2>
+&lt;p>Lucene其实是一个提供全文文本搜索的函数库，它不是一个应用软件。它提供很多API函数，是一个开放源代码的全文检索引擎工具包，让你可以运用到各种实际应用程序中。它提供了完整的查询引擎和索引引擎以及部分的文本分析功能。Lucene的目的是为软件开发人员提供一个简单易用的工具包，以方便的在目标系统中实现全文检索的功能，或者是以此为基础建立起完整的全文检索引擎。&lt;/p>
+&lt;p>Nutch是一个建立在Lucene核心之上的Web搜索的实现，它是一个真正的应用程序。可以直接下载使用。它在Lucene的基础上加了网络爬虫和一些和Web相关的内容。其目的就是想从一个简单的站内索引和搜索推广到全球网络的搜索上，就像Google和Yahoo一样。Nutch 中还包含了一个分布式文件系统用于存储数据。从 Nutch 0.8.0 版本之后，Doug Cutting 把 Nutch 中的分布式文件系统以及实现 MapReduce 算法的代码独立出来形成了一个新的开源项 Hadoop。Nutch 也演化为基于 Lucene 全文检索以及 Hadoop 分布式计算平台的一个开源搜索引擎。&lt;/p>
+&lt;h2 id="应用场景">应用场景&lt;/h2>
+&lt;h1 id="名词解释">名词解释&lt;/h1>
+&lt;p>&lt;strong>Hadoop&lt;/strong>：一个分布式系统基础架构，由Apache基金会开发。用户可以在不了解分布式底层细节的情况下，开发分布式程序。充分利用集群的威力高速运算和存储。&lt;/p>
+&lt;p>&lt;strong>Distributed&lt;/strong>：分布式计算是利用互联网上的计算机的 CPU 的共同处理能力来解决大型计算问题的一种计算科学。&lt;/p>
+&lt;p>&lt;strong>File system&lt;/strong>：文件系统是操作系统用于明确磁盘或分区上的文件的方法和数据结构；即在磁盘上组织文件的方法。也指用于存储文件的磁盘或分区，或文件系统种类。&lt;/p>
+&lt;h1 id="架构">架构&lt;/h1>
+&lt;p>&lt;img src="../imgs/20230104_hdfs01_1.png" alt="20230104_hdfs01_1.png">&lt;/p>
+&lt;p>架构主要由四个部分组成，分别为HDFS Client、NameNode、DataNode和Secondary NameNode。下面分别介绍这四个组成部分。&lt;/p>
+&lt;h2 id="hdfs-client">HDFS Client&lt;/h2>
+&lt;p>和 HDFS 打交道是通过客户端，无论读取一个文件或者写一个文件，都是把数据交给 HDFS client，它负责和 Name nodes 以及 Data nodes 联系并传输数据。&lt;/p>
+&lt;p>主要功能如下：&lt;/p>
+&lt;ul>
+&lt;li>文件切分。文件上传 HDFS 时，将文件切分成一个一个的 Block，然后进行存储；&lt;/li>
+&lt;li>与 NameNode 交互，获取文件的位置信息；&lt;/li>
+&lt;li>与 DataNode 交互，读取或者写入数据；&lt;/li>
+&lt;li>Client 提供一些命令来管理 HDFS，比如启动或者关闭HDFS；&lt;/li>
+&lt;li>Client 可以通过一些命令来访问 HDFS；&lt;/li>
+&lt;/ul>
+&lt;h2 id="namenode">NameNode&lt;/h2>
+&lt;p>也就是Master，它是一个管理者。&lt;/p>
+&lt;p>主要功能如下：&lt;/p>
+&lt;ul>
+&lt;li>管理 HDFS 的名称空间；&lt;/li>
+&lt;li>处理客户端读写请求&lt;/li>
+&lt;li>管理 DataNode 回报的数据块（Block）映射信息；&lt;/li>
+&lt;li>配置副本策略。&lt;/li>
+&lt;/ul>
+&lt;h2 id="datanode">DataNode&lt;/h2>
+&lt;p>可以理解为 Slave。DataNode 是 Block 真正存储的地方。DataNode的本地磁盘以文件形式存储着Block信息。同时还存储着Block的元数据信息文件。元数据主要存储MD5值用来进行验证&lt;/p>
+&lt;p>HDFS在启动时，DataNode 会向 NameNode汇报 block的信息。&lt;/p>
+&lt;p>DataNode通过向NameNode发送心跳保持与其联系（3秒一次），如果 NameNode 10 分钟没有收到 DataNode 的心跳，则认为其已经 lost，并复制其上的 block 到其它 DataNode。&lt;/p>
+&lt;p>主要功能如下：&lt;/p>
+&lt;ul>
+&lt;li>存储实际的数据块；&lt;/li>
+&lt;li>执行数据块的读/写操作。&lt;/li>
+&lt;/ul>
+&lt;h2 id="secondarynamenode">SecondaryNameNode&lt;/h2>
+&lt;p>并非NameNode的热备。当 NameNode 挂掉时，并不能马上替换NameNode并提供服务。备用NameNode 通常在与 主NameNode 不同的计算机上运行，它的内存要求与 主NameNode 的相同。&lt;/p>
+&lt;p>主要功能如下：&lt;/p>
+&lt;ul>
+&lt;li>辅助NameNode，分担其工作量；&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>启动备用 NameNode 时，会从映像文件 fsimage 中读取 HDFS 状态，然后启用“编辑日志文件”对它进行编辑。然后将新的HDFS状态写入fsimage，并使用“空编辑文件”启动正常操作。&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>定期合并 Fsimage 和 Edits，并推送给 NameNode；&lt;/li>
+&lt;/ul>
+&lt;blockquote>
+&lt;p>由于 NameNode 只在启动时合并 fsimage 和编辑文件，随着时间推移，“编辑日志文件”会变得非常大。导致在下次重新启动 NameNode 时需要花费更长的时间。备用NameNode 定期合并 fsimage 和“编辑日志文件”，并将“编辑日志文件”的大小保持在限定范围内。减少 NameNode 启动时间&lt;/p>
+&lt;/blockquote>
+&lt;ul>
+&lt;li>紧急情况下，可辅助恢复NameNode。&lt;/li>
+&lt;/ul>
+&lt;h2 id="物理拓扑">物理拓扑&lt;/h2>
+&lt;p>至少分为三层：&lt;/p>
+&lt;ul>
+&lt;li>顶层交换机&lt;/li>
+&lt;li>机架&lt;/li>
+&lt;li>服务器
+hdfs具备机架感知，可以感知集群的物理拓扑，因此在数据副本放置的时候可以根据物理拓扑进行分配，同时能够为用户就近选择读写的datanode节点。&lt;/li>
+&lt;/ul>
+&lt;h1 id="数据分布">数据分布&lt;/h1>
+&lt;h2 id="副本分布">副本分布&lt;/h2>
+&lt;p>hdfs拓扑模块具备机架感知功能，这个功能好处在于能够让client从最近的存储节点读数据，也能够在数据副本复制的时候按照从近到远的方式复制，提升总体带宽，同时也能够使副本放置尽可能合理，从而提高数据可靠性。 数据副本放置策略对于数据的可靠性、读写性能、可用性影响较大。&lt;/p>
+&lt;p>hdfs数据副本在client请求新的Block时由NameNode确定其存放在哪些DataNode节点，hdfs默认的副本分配方式是将第一个副本放置在离client最近的DataNode节点，其他两个副本放在不同的机架上。在充分保证读写性能的同时尽可能的保证最大的可靠性和可用性。 hdfs的副本放置可以总结为两点:&lt;/p>
+&lt;ol>
+&lt;li>一个DataNode上不会出现一个Block的两个副本；&lt;/li>
+&lt;li>一个机架上不会存储一个Block的三个及以上的副本（前提：机架数量充足）。&lt;/li>
+&lt;/ol>
+&lt;h2 id="副本管理">副本管理&lt;/h2>
+&lt;p>hdfs的副本管理粒度是以Block为单位的，Block大小为128MB（hadoop 1.x都是64MB，hadoop 2.x都是128MB），如果副本数量为3，那么一个Block就至少需要BlockID + 3*DataNodeID这样大小的元数据，这与当前很多流行的分布式系统设计是不一样的，比如tikv，其副本管理单位是一个raft group，这个raft group管理多个block，通常一个raft group管理的数据量大小在数十G规模。这也是目前很多分布式系统常用的副本管理方式。 hdfs的Block是动态创建的，client向NameNode申请新的block，NameNode会分配一个新的BlockID并为这个Block分配三个DataNode节点，用作副本存放。&lt;/p>
+&lt;h1 id="数据一致性">数据一致性&lt;/h1>
+&lt;p>hdfs只支持一写多读模式，这种模式简化了数据一致性的设计，因为不需要在client之间同步写入状态了，cephfs支持多写多读，其多个client之间的状态同步比较复杂。 另外hdfs的文件只支持追加写入，这同样有利于数据一致性的设计实现，当然这种只支持追加写的模式也是与其应用场景相结合的。同时仅支持追加写对于带宽也是友好的。&lt;/p>
+&lt;h2 id="数据复制">数据复制&lt;/h2>
+&lt;p>hdfs的数据复制以pipeline方式进行，数据从client发到与其最近的DataNode节点，然后由第一个DataNode节点复制给第二个DataNode节点，这样以此类推，每个package的ack按照复制方向的反方向流动，最终返回给client。&lt;/p>
+&lt;h2 id="写数据一致性">写数据一致性&lt;/h2>
+&lt;p>hdfs保证同一时间只有一个client可以写文件，同时可见性只是在文件close和用户显示调用flush的时候。如果只是正常的写入返回并不保证写入的数据对用户可见，这个与文件创建时其配置有一定关系，具体可参考&lt;a href="https://zhuanlan.zhihu.com/p/102474646/edit#https://stackoverflow.com/questions/37533600/whats-the-hdfs-writing-consistency">what's the HDFS writing consistency&lt;/a>。&lt;/p>
+&lt;h2 id="读数据一致性">读数据一致性&lt;/h2>
+&lt;p>对于同一个client，hdfs保证“read your write”一致性语义，实现方式主要是通过记录client的写状态ID，在执行读请求时会携带这个ID，这个ID会发给NamaNode，由NameNode保证在允许其读请求执行之前其写请求已经被执行。 对于多个client，hdfs提供msync调用，在读取非自身写的时候，先执行msync，msync会刷新NameNode上其自身的状态ID，使其ID保持最新状态，能够读到其他client写入的最新数据。&lt;/p>
+&lt;h1 id="工作流程">工作流程&lt;/h1>
+&lt;h2 id="写数据过程">写数据过程&lt;/h2>
+&lt;p>&lt;img src="../imgs/20230104_hdfs01_2.png" alt="20230104_hdfs01_2.png">&lt;/p>
+&lt;ol>
+&lt;li>客户端通过 Distributed FileSystem 模块向 NameNode 请求上传文件，NameNode 检查目标文件是否已存在，父目录是否存在。&lt;/li>
+&lt;li>NameNode 返回是否可以上传。&lt;/li>
+&lt;li>客户端请求第一个 block 上传到哪几个 datanode 服务器上。&lt;/li>
+&lt;li>NameNode 返回 3 个 datanode 节点，分别为 dn1、dn2、dn3。&lt;/li>
+&lt;li>客户端通过 FSDataOutputStream 模块请求 dn1 上传数据，dn1 收到请求会继续调用 dn2，然后 dn2 调用 dn3，通信管道建立完成。&lt;/li>
+&lt;li>dn1、dn2、dn3 逐级应答客户端。&lt;/li>
+&lt;li>客户端开始往 dn1 上传第一个block（先从磁盘读取数据放到一个本地内存缓存），以 packet 为单位，dn1 收到一个 packet 就会传给 dn2，dn2 传给 dn3；dn1 每传一个packet 会放入一个应答队列等待应答。&lt;/li>
+&lt;li>当一个block传输完成之后，客户端再次请求NameNode上传第二个block的服务器。（重复执行3-7步）。&lt;/li>
+&lt;/ol>
+&lt;h2 id="读数据过程">读数据过程&lt;/h2>
+&lt;p>&lt;img src="../imgs/20230104_hdfs01_3.png" alt="20230104_hdfs01_3.png">&lt;/p>
+&lt;ol>
+&lt;li>客户端通过 Distributed FileSystem 向 NameNode 请求下载文件，NameNode 通过查询元数据，找到文件块所在的DataNode地址。&lt;/li>
+&lt;li>挑选一台 DataNode（就近原则，然后随机）服务器，请求读取数据。&lt;/li>
+&lt;li>DataNode 开始传输数据给客户端（从磁盘里面读取数据输入流，以 packet 为单位来做校验）。&lt;/li>
+&lt;li>客户端以 packet 为单位接收，先在本地缓存，然后写入目标文件。&lt;/li>
+&lt;/ol>
+&lt;h2 id="second-namenode工作机制">Second NameNode工作机制&lt;/h2>
+&lt;p>&lt;img src="../imgs/20230104_hdfs01_4.png" alt="20230104_hdfs01_4.png">&lt;/p>
+&lt;p>第一阶段：NameNode启动&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>第一次启动NameNode格式化后，创建fsimage和edits文件。如果不是第一次启动，直接加载编辑日志和镜像文件到内存。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>客户端对元数据进行增删改的请求。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>NameNode记录操作日志，更新滚动日志。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>NameNode在内存中对数据进行增删改查。
+第二阶段：Secondary NameNode工作&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Secondary NameNode询问NameNode是否需要checkpoint。直接带回NameNode是否检查结果。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Secondary NameNode请求执行checkpoint。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>NameNode滚动正在写的edits日志。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>将滚动前的编辑日志和镜像文件拷贝到Secondary NameNode。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Secondary NameNode加载编辑日志和镜像文件到内存，并合并。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>生成新的镜像文件fsimage.chkpoint。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>拷贝fsimage.chkpoint到NameNode。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>NameNode将fsimage.chkpoint重新命名成fsimage。&lt;/p>
+&lt;/li>
+&lt;/ol></description></item><item><title>Docs: HDFS-02基本命令</title><link>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/HDFS-02%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/HDFS-02%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4/</guid><description>
+&lt;h1 id="hdfs-dfs与hadoop-fs">hdfs dfs与hadoop fs&lt;/h1>
+&lt;p>HDFS的命令实际上和Linux命令相似，基本就是在 &lt;code>hdfs dfs -&lt;/code> 加上Linux命令即可（ &lt;code>hdfs dfs -ls /&lt;/code> 和 &lt;code>hadoop fs -ls /&lt;/code> 效果一样）&lt;/p>
+&lt;h1 id="hadoop命令">hadoop命令&lt;/h1>
+&lt;h2 id="打印配置路径">打印配置路径&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hadoop classpath &lt;span style="color:#177500"># 打印当前环境的配置路径&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h1 id="hdfs命令">HDFS命令&lt;/h1>
+&lt;h2 id="查看帮助">查看帮助&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -help
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="查看当前目录信息">查看当前目录信息&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -ls /
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="上传文件">上传文件&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -put /local_path /hdfs_path
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="剪切文件">剪切文件&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -moveFromLocal test.txt /test1.txt
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="合并下载">合并下载&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -getmerge /hdfs_dir /merged_file
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="创建文件夹">创建文件夹&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -mkdir /test
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="移动文件">移动文件&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -mv /hdfs_dir1 /hdfs_dir2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="复制文件">复制文件&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -cp /hdfs_dir1 /hdfs_dir2
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="删除文件">删除文件&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -rm /test.txt
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="查看文件">查看文件&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -cat /test.txt
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>hdfs dfs -tail -f /test.txt
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="查看文件数量">查看文件数量&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -count /test
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="查看空间">查看空间&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>hdfs dfs -df /
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>hdfs dfs -df -h /
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div></description></item><item><title>Docs: Spark</title><link>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/Spark/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/52.%E5%A4%A7%E6%95%B0%E6%8D%AE/Spark/</guid><description>
+&lt;h1 id="introduction">Introduction&lt;/h1>
+&lt;p>Spark intro&lt;/p></description></item></channel></rss>

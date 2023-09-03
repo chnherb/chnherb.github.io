@@ -1,0 +1,105 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – daemon</title><link>/tags/daemon/</link><description>Recent content in daemon on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/daemon/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 守护进程</title><link>/docs/10.OS/%E8%BF%9B%E7%A8%8B/%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/10.OS/%E8%BF%9B%E7%A8%8B/%E5%AE%88%E6%8A%A4%E8%BF%9B%E7%A8%8B/</guid><description>
+&lt;h1 id="简述">简述&lt;/h1>
+&lt;p>守护进程（daemon）是生存期长的一种进程，没有控制终端。它们常常在系统引导装入时启动，仅在系统关闭时才终止。UNIX系统有很多守护进程，守护进程程序的名称通常以字母“d”结尾：例如，&lt;a href="https://zh.wikipedia.org/wiki/Syslog">syslogd&lt;/a> 就是指管理系统日志的守护进程。通过ps进程查看器 &lt;code>ps -efj&lt;/code> 的输出实例，内核守护进程的名字出现在方括号中，大致输出如下：&lt;/p>
+&lt;h1 id="基本概念">基本概念&lt;/h1>
+&lt;p>进程组&lt;/p>
+&lt;ul>
+&lt;li>每个进程除了有一个进程ID之外，还属于一个进程组&lt;/li>
+&lt;li>进程组是一个或多个进程的集合，同一进程组中的各进程接收来自同一终端的各种信号&lt;/li>
+&lt;li>每个进程组有一个组长进程。组长进程的进程组ID等于其进程ID&lt;/li>
+&lt;/ul>
+&lt;p>会话（session）是一个或多个进程组的集合，进程调用 setsid 函数（原型：&lt;code>pid_t setsid(void)&lt;/code> ）建立一个会话。&lt;/p>
+&lt;p>进程调用 setsid 函数建立一个新会话，如果调用此函数的进程不是一个进程组的组长，则此函数创建一个新会话。具体会发生以下3件事：&lt;/p>
+&lt;ul>
+&lt;li>该进程变成新会话的会话首进程（session leader，会话首进程是创建该会话的进程）。此时，该进程是新会话的唯一进程。&lt;/li>
+&lt;li>该进程成为一个新进程组的组长进程。新进程组ID是该调用进程的进程ID&lt;/li>
+&lt;li>该进程没有控制终端。如果调用setsid之前该进程有一个控制终端，那么这种联系也被切断&lt;/li>
+&lt;/ul>
+&lt;p>控制终端（Controlling Terminal）&lt;/p>
+&lt;p>每个会话可以有一个单独的控制终端，与控制终端连接的 Leader 就是控制进程（Controlling Process）。&lt;/p>
+&lt;h2 id="进程分类">进程分类&lt;/h2>
+&lt;p>&lt;strong>子进程&lt;/strong>&lt;code>child thread&lt;/code>：&lt;/p>
+&lt;p>相对父进程而言， 父进程创建的进程， 子进程只能对应一个父进程。如果没有标记为daemon ， 则杀死父进程不会对子进程的运行状态有丝毫影响。&lt;/p>
+&lt;p>&lt;strong>守护进程&lt;/strong>&lt;code>daemon thread&lt;/code>：&lt;/p>
+&lt;p>即daemon thread，是子进程的一种状态，标记子进程与父进程一起结束。&lt;/p>
+&lt;p>&lt;strong>僵尸进程&lt;/strong>：&lt;/p>
+&lt;p>本该结束，但仍在后台运行的子进程。因为某些子进程没有设置daemon 属性，如果杀死父进程，其子进程将会变成“僵尸进程”。僵尸进程的父进程将成为init 进程的子进程。&lt;/p>
+&lt;h2 id="基本操作">基本操作&lt;/h2>
+&lt;p>查看守护进程&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>ps -axj
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-a表示显示由其他用户所拥有的进程的状态
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-x显示没有控制终端的进程状态
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-j显示与作业有关的信息：会话ID、进程组ID等 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>如何编写守护进程&lt;/p>
+&lt;p>可参考《unix环境高级编程》第13章 守护进程&lt;/p>
+&lt;p>如何使普通进程达到守护进程的部分效果&lt;/p>
+&lt;p>参考 Linux后台进程 专栏&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>nohup ./a.out &amp;amp;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>nohup忽略SIGHUP信号，&amp;amp;忽略SIGINT信号。&lt;/p>
+&lt;h1 id="守护进程的创建">守护进程的创建&lt;/h1>
+&lt;h2 id="fork">fork&lt;/h2>
+&lt;p>守护进程的父进程是 init 进程，在创建时先从父进程 fork 出来一个子进程，退出父进程，这时子进程变成孤儿，就成了 init 的子进程。&lt;/p>
+&lt;p>子进程会继承父进程的会话，进程组，控制终端，文件描述符等。&lt;/p>
+&lt;h2 id="setid">setid&lt;/h2>
+&lt;p>通过&lt;code>setid()&lt;/code>来创建新会话，同时也脱离了原来的进程组，会话以及控制终端，成为新的会话的组长。此时它可能会再申请一个控制终端，所以我们再 fork 一下，并只保留新的子进程，这样就不是会话组长了，就不能申请控制终端了。&lt;/p>
+&lt;h3 id="close-fd">close(fd)&lt;/h3>
+&lt;p>之后再关闭从父进程继承的文件描述符。至少要关闭 0,1,2 这三个文件描述符，分别对应了 stdin, stdout, 和 stderr。不过通常用 &lt;code>sysconf(_SC_OPEN_MAX)&lt;/code> 获取系统允许的最大文件描述符个数，然后全部 close 掉。&lt;/p>
+&lt;p>关闭之后我们要将文件描述符 0，1，2 重新定向到 &amp;quot;/dev/null&amp;quot;，防止新打开的文件的文件描述符为 0，1，2。&lt;/p>
+&lt;h3 id="umask-0">umask(0)&lt;/h3>
+&lt;p>设置文件掩码是为了不受父进程的 umask 的影响，能自由创建读写文件和目录。&lt;/p>
+&lt;h3 id="chdir">chdir(&amp;quot;/&amp;quot;)&lt;/h3>
+&lt;p>守护进程一般是一直执行到系统关机，在它运行过程中，它所在的目录就不能卸载（unmounted）。通过将它的工作目录转移到根目录，用来的目录就允许卸载了。也不一定要根目录（这种情况，运行需要超级权限），可以选择一个不需要卸载的路径。&lt;/p>
+&lt;h1 id="对比">对比&lt;/h1>
+&lt;h2 id="守护进程与后台进程的区别">守护进程与后台进程的区别&lt;/h2>
+&lt;p>1、守护进程已经完全脱离终端控制台了，而后台程序并未完全脱离终端(在终端未关闭前还是会往终端输出结果);&lt;/p>
+&lt;p>2、守护进程在关闭终端控制台时不会受影响，而后台程序会随用户退出而停止，需要在启动命令后加上“&amp;amp;”格式运行才能避免影响;&lt;/p>
+&lt;p>3、守护进程的会话组和当前目录、文件描述符都是独立的。后台进程运行只是终端进行了一次fork，仅仅让程序在后台执行而已。&lt;/p>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://cloud.tencent.com/developer/article/1635805">守护进程（Daemon）&lt;/a>&lt;/p></description></item></channel></rss>

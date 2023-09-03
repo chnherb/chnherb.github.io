@@ -1,0 +1,239 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – 快捷键</title><link>/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/</link><description>Recent content in 快捷键 on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/%E5%BF%AB%E6%8D%B7%E9%94%AE/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 快捷键</title><link>/docs/00.util/%E5%BF%AB%E6%8D%B7%E9%94%AE/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/00.util/%E5%BF%AB%E6%8D%B7%E9%94%AE/</guid><description>
+&lt;h1 id="ide快捷键">&lt;strong>IDE快捷键&lt;/strong>&lt;/h1>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:left">功能&lt;/th>
+&lt;th style="text-align:left">Intellij Mac&lt;/th>
+&lt;th style="text-align:left">VSCode Mac&lt;/th>
+&lt;th style="text-align:left">Eclipse Windows&lt;/th>
+&lt;th style="text-align:left">Intellij Windows&lt;/th>
+&lt;th style="text-align:left">Eclipse Mac&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:left">格式化代码&lt;/td>
+&lt;td style="text-align:left">cmd+opt+L&lt;/td>
+&lt;td style="text-align:left">Shift+Opt+F&lt;/td>
+&lt;td style="text-align:left">ctrl+shift+F&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">注释代码&lt;/td>
+&lt;td style="text-align:left">cmd+/&lt;/td>
+&lt;td style="text-align:left">cmd+/&lt;/td>
+&lt;td style="text-align:left">ctrl+/&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">删除行&lt;/td>
+&lt;td style="text-align:left">cmd+X&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">ctrl+D&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">复制行&lt;/td>
+&lt;td style="text-align:left">cmd+D&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">接口或定义&lt;/td>
+&lt;td style="text-align:left">cmd+B&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">具体实现&lt;/td>
+&lt;td style="text-align:left">cmd+opt+B&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">super方法&lt;/td>
+&lt;td style="text-align:left">cmd + U&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">上/下一个操作位置&lt;/td>
+&lt;td style="text-align:left">cmd+opt+←/→&lt;/td>
+&lt;td style="text-align:left">ctrl -&lt;br>shift ctrl -&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">类的层次结构&lt;/td>
+&lt;td style="text-align:left">ctrl+H&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">方法层次结构&lt;/td>
+&lt;td style="text-align:left">ctrl+shift+H&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">调用层次结构&lt;/td>
+&lt;td style="text-align:left">ctrl+opt+H&lt;br>opt + F7&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">全局查找&lt;/td>
+&lt;td style="text-align:left">cmd+shift+F&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">搜索方法(包括父类)&lt;/td>
+&lt;td style="text-align:left">cmd+F12&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">Ctrl+O&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">查看方法被引用&lt;/td>
+&lt;td style="text-align:left">alt+F7&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">ctrl+alt+H&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">查看变量被引用&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">ctrl+G&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">补全赋值&lt;/td>
+&lt;td style="text-align:left">cmd+opt+v&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">覆盖方法（重写父类方法）&lt;/td>
+&lt;td style="text-align:left">ctrl + O&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">实现方法（实现接口中的方法）&lt;/td>
+&lt;td style="text-align:left">ctrl + I&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">优化import&lt;/td>
+&lt;td style="text-align:left">ctrl + opt + O&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">最近打开的文件&lt;/td>
+&lt;td style="text-align:left">cmd + E&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">系统设置&lt;/td>
+&lt;td style="text-align:left">cmd + ,&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">项目结构&lt;/td>
+&lt;td style="text-align:left">cmd + ;&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">重命名文件&lt;/td>
+&lt;td style="text-align:left">shift + F6&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;td style="text-align:left">&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;h1 id="vscode">VSCode&lt;/h1>
+&lt;p>VSCode 格式化代码：shift+alt+F，可使用插件：IntelliJ IDEA Key Bindings&lt;/p>
+&lt;p>cmd+p 跳转 （如文件路径+行数)&lt;/p>
+&lt;p>cmd+shift+p 执行命令&lt;/p>
+&lt;h1 id="mac">Mac&lt;/h1>
+&lt;p>复制文件： Cmd + C 、Cmd + V&lt;/p>
+&lt;p>剪切文件: Cmd + C、Cmd + opt + V&lt;/p>
+&lt;p>隐藏当前程序： cmd + H&lt;/p>
+&lt;p>全屏： Ctrl+Cmd + F&lt;/p>
+&lt;p>chrome恢复关闭tab： shift+command+T&lt;/p>
+&lt;p>finder:显示所有文件夹 shift+cmd+. 前往任何文件夹 shift+cmd+G&lt;/p>
+&lt;p>alfred 剪切板&lt;/p>
+&lt;p>Command Alt(option) + B&lt;/p>
+&lt;p>截图：^ + command + A&lt;/p>
+&lt;h2 id="qq">QQ&lt;/h2>
+&lt;p>多个QQ： command + N&lt;/p>
+&lt;h2 id="eclipse-mac">eclipse mac&lt;/h2>
+&lt;p>command + d 删除行&lt;/p>
+&lt;p>command + / 注释 反注释&lt;/p>
+&lt;p>command + shift + F 格式化代码&lt;/p>
+&lt;p>command + option + down 复制到下一行&lt;/p>
+&lt;p>F3 查看定义&lt;/p>
+&lt;p>command + [/] 定位前/后一个访问的位置&lt;/p>
+&lt;h2 id="finder-shell">Finder&amp;amp;shell&lt;/h2>
+&lt;p>open . #从终端打开当前finder路径&lt;/p>
+&lt;p>Photoshop shortcuts:&lt;/p>
+&lt;p>cmd + D 取消选中块&lt;/p>
+&lt;h2 id="scala">scala&lt;/h2>
+&lt;p>/usr/local/Cellar/scala/2.12.8&lt;/p>
+&lt;p>:q&lt;/p>
+&lt;h1 id="sublime">sublime&lt;/h1>
+&lt;h2 id="json格式化">json格式化&lt;/h2>
+&lt;p>pretty json 格式化： cmd+ctrl+j&lt;/p>
+&lt;h2 id="sublime列操作">sublime列操作：&lt;/h2>
+&lt;p>cmd+A&lt;/p>
+&lt;p>cmd+shift+L 列编辑&lt;/p>
+&lt;p>-&amp;gt;&lt;/p>
+&lt;p>(编辑)&lt;/p>
+&lt;p>替换成回车 cmd+shift+enter&lt;/p></description></item></channel></rss>

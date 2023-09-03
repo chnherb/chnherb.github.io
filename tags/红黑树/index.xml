@@ -1,0 +1,29 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – 红黑树</title><link>/tags/%E7%BA%A2%E9%BB%91%E6%A0%91/</link><description>Recent content in 红黑树 on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/%E7%BA%A2%E9%BB%91%E6%A0%91/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 红黑树</title><link>/docs/60.%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BA%A2%E9%BB%91%E6%A0%91/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/60.%E7%AE%97%E6%B3%95%E4%B8%8E%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E7%BA%A2%E9%BB%91%E6%A0%91/</guid><description>
+&lt;h1 id="简介">简介&lt;/h1>
+&lt;p>红黑树（Red-Black Tree），简称 R-B Tree。它是一种不严格的平衡二叉查找树。&lt;/p>
+&lt;h1 id="性质">性质&lt;/h1>
+&lt;p>红黑树的性质（重点）：&lt;/p>
+&lt;p>1、每个节点不是红色就是黑色&lt;/p>
+&lt;p>2、不可能有连在一起的红色节点&lt;/p>
+&lt;p>3、根节点都是黑色 root&lt;/p>
+&lt;p>4、每个红色节点节点的两个子节点都是黑色，叶子节点（NIL节点）都是黑色：出度为0满足了性质就可以近似的平衡了&lt;/p>
+&lt;p>5、从任意节点到其每个叶子的所有路径都包含相同数据的黑色节点&lt;/p>
+&lt;p>正式因为规则限制，才保证了红黑树的自平衡。红黑树从根到叶子的最长路径不会超过最短路径的2倍。&lt;/p>
+&lt;h1 id="变换规则">变换规则&lt;/h1>
+&lt;p>为了满足红黑树的性质，有3种变换规则：所有插入的点默认为红色&lt;/p>
+&lt;p>1、改变颜色：当前节点的父节点是红色，且叔叔节点（祖父节点的另一个子节点）也是红色&lt;/p>
+&lt;p>（1）把父节点设为黑色&lt;/p>
+&lt;p>（2）把叔叔节点也设为黑色&lt;/p>
+&lt;p>（3）把爷爷节点（父节点的父节点）设为红色&lt;/p>
+&lt;p>（4）把指针定义到爷爷节点设为当前要操作的节点&lt;/p>
+&lt;p>2、左旋：当前父节点是红色、叔叔节点是黑色，且当前的节点是右子树。&lt;/p>
+&lt;p>（1）以父节点作为左旋&lt;/p>
+&lt;p>3、右旋：当前父节点是红色，叔叔节点时黑色，且当前的节点是左子树。&lt;/p>
+&lt;p>（1）把父节点变为黑色&lt;/p>
+&lt;p>（2）把爷爷节点变为红色&lt;/p>
+&lt;p>（3）以爷爷节点旋转&lt;/p>
+&lt;p>示例：插入6&lt;/p>
+&lt;p>&lt;img src="../imgs/20221228_redblacktree_1.jpeg" alt="20221228_redblacktree_1.jpeg">&lt;/p>
+&lt;p>&lt;img src="../imgs/20221228_redblacktree_2.jpeg" alt="20221228_redblacktree_2.jpeg">&lt;/p>
+&lt;h1 id="应用">应用&lt;/h1>
+&lt;p>JDK的集合类TreeMap和TreeSet底层就是红黑树来实现的，在JDK8中，连HashMap也用到了红黑树。&lt;/p></description></item></channel></rss>

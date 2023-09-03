@@ -1,0 +1,500 @@
+<!doctype html><html lang=zh-cn class=no-js><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=generator content="Hugo 0.101.0"><link rel=canonical type=text/html href=/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/PostgreSQL/><link rel=alternate type=application/rss+xml href=/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/PostgreSQL/index.xml><meta name=robots content="noindex, nofollow"><link rel="shortcut icon" href=/favicons/favicon.ico><link rel=apple-touch-icon href=/favicons/apple-touch-icon-180x180.png sizes=180x180><link rel=icon type=image/png href=/favicons/favicon-16x16.png sizes=16x16><link rel=icon type=image/png href=/favicons/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/favicons/android-36x36.png sizes=36x36><link rel=icon type=image/png href=/favicons/android-48x48.png sizes=48x48><link rel=icon type=image/png href=/favicons/android-72x72.png sizes=72x72><link rel=icon type=image/png href=/favicons/android-96x96.png sizes=96x96><link rel=icon type=image/png href=/favicons/android-144x144.png sizes=144x144><link rel=icon type=image/png href=/favicons/android-192x192.png sizes=192x192><title>PostgreSQL | Herbdocs</title><meta name=description content="Introduction
+PostgreSQL
+"><meta property="og:title" content="PostgreSQL"><meta property="og:description" content="Herb's blog"><meta property="og:type" content="website"><meta property="og:url" content="/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/PostgreSQL/"><meta property="og:site_name" content="Herbdocs"><meta itemprop=name content="PostgreSQL"><meta itemprop=description content="Herb's blog"><meta name=twitter:card content="summary"><meta name=twitter:title content="PostgreSQL"><meta name=twitter:description content="Herb's blog"><link rel=preload href=/scss/main.min.dcab2c3dae6e6fefb7672f19e4b612cc4e75ca208740f642aa2f1fe378478a8f.css as=style><link href=/scss/main.min.dcab2c3dae6e6fefb7672f19e4b612cc4e75ca208740f642aa2f1fe378478a8f.css rel=stylesheet integrity><script src=https://code.jquery.com/jquery-3.6.0.min.js integrity=sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK crossorigin=anonymous></script>
+<script src=https://unpkg.com/lunr@2.3.9/lunr.min.js integrity=sha384-203J0SNzyqHby3iU6hzvzltrWi/M41wOP5Gu+BiJMz5nwKykbkUx8Kp7iti0Lpli crossorigin=anonymous></script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-00000000-0","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body class=td-section><header><nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar"><a class=navbar-brand href=/><span class=navbar-logo><img width=6% style=margin-bottom:1% src=/favicons/favicon.ico></span><span class=font-weight-bold>&nbsp;Herbdocs</span></a><div class="td-navbar-nav-scroll ml-md-auto" id=main_navbar><ul class="navbar-nav mt-2 mt-lg-0"><li class="nav-item mr-4 mb-2 mb-lg-0"><a class=nav-link href=/about/><span>About</span></a></li><li class="nav-item mr-4 mb-2 mb-lg-0"><a class="nav-link active" href=/docs/><span class=active>Documentation</span></a></li><li class="nav-item dropdown mr-4 d-none d-lg-block"><a class="nav-link dropdown-toggle" href=# id=navbarDropdown role=button data-toggle=dropdown aria-haspopup=true aria-expanded=false>Chinese</a><div class=dropdown-menu aria-labelledby=navbarDropdownMenuLink><a class=dropdown-item href=/en/>English</a></div></li></ul></div><div class="navbar-nav d-none d-lg-block"><input type=search class="form-control td-search-input" placeholder="&#xf002; 站内搜索…" aria-label=站内搜索… autocomplete=off></div></nav></header><div class="container-fluid td-outer"><div class=td-main><div class="row flex-xl-nowrap"><main class="col-12 col-md-9 col-xl-8 pl-md-5" role=main><div class=td-content><div class="pageinfo pageinfo-primary d-print-none"><p>这是本节的多页打印视图。
+<a href=# onclick="return print(),!1">点击此处打印</a>.</p><p><a href=/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/PostgreSQL/>返回本页常规视图</a>.</p></div><h1 class=title>PostgreSQL</h1><ul><li>1: <a href=#pg-0d82a348ae5eecde6b38ed1859d66c02>PostgreSQL基础使用入门</a></li></ul><div class=content><h1 id=introduction>Introduction</h1><p>PostgreSQL</p></div></div><div class=td-content><h1 id=pg-0d82a348ae5eecde6b38ed1859d66c02>1 - PostgreSQL基础使用入门</h1><h1 id=简介>简介</h1><p>PostgreSQL是一个功能非常强大的、源代码开放的客户/服务器关系型数据库管理系统（RDBMS），在BSD许可证下发型。PostgreSQL简称PG。</p><p>Slogan 是“世界上最先进的开源关系型数据库”。“开源界的Oracle”。</p><p>PostgreSQL 官网：<a href=https://www.postgresql.org/>https://www.postgresql.org/</a></p><p>PostgreSQL 中文社区：<a href=http://www.postgres.cn/v2/home>http://www.postgres.cn/v2/home</a></p><p>另外再数据库排行榜中也可以看到 PG 的受欢迎程度。</p><p>全球数据库排行：<a href=https://db-engines.com/en/ranking>https://db-engines.com/en/ranking</a></p><p>国产数据库排行：<a href=https://www.modb.pro/dbrank>https://www.modb.pro/dbrank</a></p><h2 id=历史>历史</h2><p>PostgreSQL 最初设想于1986年，当时被叫做Berkley Postgres Project。该项目一直到1994年都处于演进和修改中，直到开发人员Andrew Yu和Jolly Chen在Postgres中添加了一个SQL（Structured Query Language，结构化查询语言）翻译程序，该版本叫做Postgres95，在开放源代码社区发放。</p><p>1996年，再次对Postgres95做了较大的改动，并将其作为PostgresSQL6.0版发布。该版本的Postgres提高了后端的速度，包括增强型SQL92标准以及重要的后端特性（包括子选择、默认值、约束和触发器）。</p><p>2005年，发布8.0版本，开始支持Windows系统环境。</p><p>2010年9月20日发布了PostgreSQL 9.0，大大增强了复制的功能(replication)，比如增加了流复制功能(stream replicaction)和HOT standby功能。</p><p>PostgreSQL 9.0：支持64位Windows系统，异步流数据复制、Hot Standby。</p><p>PostgreSQL 9.1：支持数据同步复制，unlogged tables、serializable snapshot isolation、FDW外部表等。此版本后，开始得到中国多个行业用户的关注，开始应用于电信、保险、制造业等边缘系统。</p><p>2019年，PostgreSQL 12 版本发布，这也是目前生产环境主流的版本。2021年，PostgreSQL 14 版本发布。</p><h2 id=社区>社区</h2><h3 id=纯社区>纯社区</h3><p>纯社区，没有被商业公司控制</p><p><img src=../imgs/20230109_postgresql_1.png alt=20230109_postgresql_1.png></p><p>最终用户都希望社区长久，期望可以享受免费的、可持续发展、开源的、不被任何商业公司或国家控制的企业级数据库，不靠数据库赚钱。</p><p>云厂商基于PG的好处：</p><ul><li>免去自己培养生态</li><li>避免重复造轮子</li><li>PG代码基础非常不错</li><li>防止其他厂商控制PG失去市场主导能力（赞助商：AWS/google/IBM/微软）</li></ul><h3 id=开源许可独特性>开源许可独特性</h3><p>PostgreSQL遵守BSD许可证发型，使得开发者们得以获取源代码进一步开发系统。</p><p>BSD许可协议（Berkeley Software Distribution license）是自由软件中使用最广泛的许可协议之一。BSD遵照该许可证来发布，BSD许可证比较宽松，甚至跟共有领域更为接近。BSD的后续版本可以选择要继续是BSD或其他自由软件条款或封闭软件等。</p><p>众所周知，MySQL倍Oracle所控制，MySQL同时使用了GPL和一种商业许可（称为双重许可）。</p><p>GPL(General Public License)是公共许可，遵循了GPL的软件是公共的。如果某软件使用GPL软件，那么该软件也需要开源，如果不开源就不能使用GPL软件，这和是否把该软件商用与否没有关系。</p><p>如果无法满足GPL，就需要获得商业许可，通过与Oracle公司联系，指定解决方案，受Oracle公司约束。</p><p>同为开源软件，PostgreSQL源码使用自由友好，商业应用不受任何公司实体所控制，而MySQL在一定程度上有所限制。</p><h2 id=与mysql比较>与MySQL比较</h2><p>PostgreSQL的优势：</p><ul><li><p>在SQL的标准实现上要比MySQL完善，而且功能实现比较严谨</p></li><li><p>对表链接支持较完整，优化器功能较完整，支持的索引类很多，复杂查询能力较强</p></li><li><p>PG主表采用堆表存放，MySQL采用索引组织表，能够支持MySQL更大的数据量</p></li><li><p>PG主备复制属于物理复制，相对MySQL基于binlog的逻辑复制，数据的一致性更加可靠，复制性能更高，对主机性能影响更小</p></li><li><p>PostgreSQL支持JSON和其他NoSQL功能，如本机XML支持和使用HSTORE的键值对。还支持索引JSON数据以加快访问速度，特别是10版本JSONB更强大</p></li><li><p>PostgreSQL基于BSD协议完全免费，在其基础上修改然后商用也是可以的，使得PG不会被其它公司控制。而MySQL主要被Oracle公司控制
+PostgreSQL的劣势：</p></li><li><p>innodb 基于回滚段实现的 MVCC 机制，相对 PG 新老数据一起存放的基于 XID 的 MVCC 机制是更好的。新老数据一起存放需要定时触发 VACUUM，会带来多余的IO和数据库对象加锁开销，引起整体并发能力下降。且 VACUUM 清理不及时回引发数据膨胀。</p></li><li><p>MySQL采用索引组织表，这种存储方式适合基于主键匹配的查询、删改操作，但对表结构设计存在约束。</p></li><li><p>MySQL优化器较简单，系统表、运算符、数据类型的实现都很精简，非常适合简单的查询操作。</p></li><li><p>MySQL相比PG在国内的流行度更高。</p></li><li><p>MySQL存储引擎插件化机制，使得应用场景更加广泛，如innodb适合事务处理场景外，myisam适合静态数据的查询场景。
+从应用场景来说，PG更加适合严格的企业应用场景（比如金融、电信、ERP、CRM），且其 json、jsonb、hstore 等数据格式，特别适用于一些大数据格式的分析。而 MySQL 更加适合业务逻辑相对简单、数据可靠性要求较低的互联网场景（如google、alibaba等），当然MySQL在innodb引擎的大力发展下功能表现良好。</p></li></ul><h2 id=特性>特性</h2><p>PG拥有众多开放特性：</p><ul><li>开放的数据类型接口：除了传统数据库支持的类型，还支持GIS，JSON，RANGE，IP，ISBN，图像特征值，化学，DNA等等扩展的类型，还可以根据实际业务扩展更多的类型。</li><li>开放的操作符接口：不仅支持常见的类型操作符，还支持扩展的操作符，例如距离符，逻辑并、交、差符号，图像相似符号，几何计算符号等等扩展的符号，用户还可以根据实际业务扩展更多的操作符。</li><li>开放的外部数据源接口：PG支持丰富的外部数据源，例如可以通过FDW读写mysql, redis, mongo, oracle, sqlserver, hive, www, hbase, ldap等等，只要你能想到的数据源都可以通过FDW接口读写。</li><li>开放的语言接口：使得PG支持几乎地球上所有的编程语言作为数据库的函数、存储过程语言，例如plpython , plperl , pljava , plR , plCUDA , plshell等等。用户可以通过language handler扩展PG的语言支持。</li><li>开放的索引接口：使得PG支持非常丰富的索引方法，例如btree , hash , gin , gist , sp-gist , brin , bloom , rum , zombodb , bitmap (greenplum extend)，用户可以根据不同的数据类型，以及查询的场景，选择不同的索引。</li><li>PG内部还支持BitmapAnd, BitmapOr的优化方法，可以合并多个索引的扫描操作，从而提升多个索引数据访问的效率。</li></ul><h1 id=安装>安装</h1><h2 id=下载>下载</h2><p>官网下载地址：<a href=https://www.postgresql.org/download/>https://www.postgresql.org/download/</a></p><h2 id=安装-1>安装</h2><h3 id=windows>Windows</h3><p>直接下载安装，安装过程中设置密码，用户名默认为 postgres。</p><h3 id=linux>Linux</h3><p>参考官方文档安装，添加源、执行脚本等等，不同发型版本有些许差别。</p><p>如 Debian 系统安装：<a href=https://www.postgresql.org/download/linux/debian/>https://www.postgresql.org/download/linux/debian/</a></p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span>sudo sh -c <span style=color:#c41a16>&#39;echo &#34;deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main&#34; &gt; /etc/apt/sources.list.d/pgdg.list&#39;</span>
+</span></span><span style=display:flex><span>wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+</span></span><span style=display:flex><span>sudo apt-get update
+</span></span><span style=display:flex><span>sudo apt-get -y install postgresql
+</span></span><span style=display:flex><span><span style=color:#177500># sudo apt-get -y install postgresql-14  # 指定版本</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>如 CentOS 系统安装：<a href=https://www.postgresql.org/download/linux/redhat/>https://www.postgresql.org/download/linux/redhat/</a><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span>sudo yum install -y https://download.postgresql.org/pub/repos/yum/reporpms/EL-6-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+</span></span><span style=display:flex><span>sudo yum install -y postgresql14-server
+</span></span><span style=display:flex><span>sudo service postgresql-14 initdb
+</span></span><span style=display:flex><span>sudo chkconfig postgresql-14 on
+</span></span><span style=display:flex><span>sudo service postgresql-14 start
+</span></span></code></pre></td></tr></table></div></div></div></p><h2 id=使用>使用</h2><h3 id=windows-1>Windows</h3><p>界面工具：</p><p>官方自带的 pgAdmin 工具。</p><p>命令行工具：</p><p>官方自带的 SQL Shell (psql) 终端工具。</p><p>三方界面工具：</p><p>如Navicat，PG默认端口为 5432。</p><p>注意：PG默认不允许远程连接，需要修改安装目录下 data/pg_hba 文件配置：</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plain data-lang=plain><span style=display:flex><span># IPv4 local connections:
+</span></span><span style=display:flex><span>host all  all 127.0.0.1/32  scram-sha-256
+</span></span><span style=display:flex><span>host all  all 0.0.0.0/32  scram-sha-256 # 增加一行
+</span></span></code></pre></td></tr></table></div></div></div><p>然后重启服务。</p><blockquote><p>windows打开服务管理界面（可通过services.msc），重启 postgresql-x64-xx。
+注意防火墙也需要关闭。</p></blockquote><h3 id=linux-1>Linux</h3><p>初始化数据库：</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span>sudo yum install -y postgresql14-server
+</span></span></code></pre></td></tr></table></div></div></div><p>启动服务：<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500># 设置开机启动</span>
+</span></span><span style=display:flex><span>sudo systemctl <span style=color:#a90d91>enable</span> postgresql-14
+</span></span><span style=display:flex><span><span style=color:#177500># 启动服务</span>
+</span></span><span style=display:flex><span>sudo systemctl start postgresql-14
+</span></span></code></pre></td></tr></table></div></div></div></p><p>修改密码：</p><p>安装成功后会默认创建一个名为 postgres 的 Linux 用户，初始化数据库后会有名为 postgres 的数据库（相当于MySQL中的名为mysql的数据库）。</p><p>进入PG命令行：</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span>su postgres
+</span></span><span style=display:flex><span><span style=color:#177500># 启动 SQL Shell</span>
+</span></span><span style=display:flex><span>psql
+</span></span><span style=display:flex><span><span style=color:#177500># 修改密码</span>
+</span></span><span style=display:flex><span>ALTER USER postgres WITH PASSWORD <span style=color:#c41a16>&#39;NewPassword&#39;</span>
+</span></span><span style=display:flex><span><span style=color:#c41a16>\q</span> <span style=color:#177500># 退出</span>
+</span></span><span style=display:flex><span><span style=color:#177500># 重新进入 SQL Shell</span>
+</span></span><span style=display:flex><span>psql
+</span></span></code></pre></td></tr></table></div></div></div><p>配置远程访问：</p><p>1、开放端口</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span>sudo firewall-cmd --add-port<span style=color:#000>=</span>5432/tcp --permanent
+</span></span><span style=display:flex><span>sudo firewall-cmd --reload
+</span></span></code></pre></td></tr></table></div></div></div><p>2、修改IP绑定<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500># 修改配置文件</span>
+</span></span><span style=display:flex><span>vi /var/lib/pgsql/14/data/postgresql.conf
+</span></span><span style=display:flex><span><span style=color:#177500># 修改监听地址</span>
+</span></span><span style=display:flex><span><span style=color:#177500># 默认 listen_addresses 配置是注释掉的，可以直接在配置文件开头加入该行</span>
+</span></span><span style=display:flex><span><span style=color:#000>listen_addresses</span><span style=color:#000>=</span><span style=color:#c41a16>&#39;*&#39;</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><p>3、允许所有IP访问<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500># 修改配置文件</span>
+</span></span><span style=display:flex><span>vi /var/lib/pgsql/14/data/pg_hba.conf
+</span></span><span style=display:flex><span><span style=color:#177500># 在文件尾部加入</span>
+</span></span><span style=display:flex><span>host  all  all 0.0.0.0/0 md5
+</span></span></code></pre></td></tr></table></div></div></div></p><p>4、重启服务<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span>sudo systemctl restart postgresql-14
+</span></span></code></pre></td></tr></table></div></div></div></p><h1 id=数据类型>数据类型</h1><p>创建表时必须使用数据类型，PG主要有以下几类数据类型：</p><ul><li>数值数据类型<ul><li>smallint：2字节</li><li>integer：4字节</li><li>bigint：8字节</li><li>decimal：可变长</li><li>numeric：可变长</li><li>real：4字节</li><li>double：8字节</li></ul></li><li>字符串数据类型<ul><li>char</li><li>varchar</li><li>text</li></ul></li><li>日期/时间数据类型<ul><li>timestamp：日期和时间</li><li>date：日期</li><li>time：时间</li></ul></li><li>数组类型<ul><li>int[]</li><li>text[]</li><li>int[][]</li></ul></li><li>json/jsonb类型<ul><li>json</li><li>jsonb</li></ul></li><li>xml类型</li><li>货币类型<ul><li>money</li></ul></li><li>布尔<ul><li>boolean</li></ul></li><li>空间几何类型<ul><li>point</li><li>line</li><li>box</li><li>path</li><li>circle</li></ul></li><li>网络地址类型<ul><li>inet</li><li>macaddr</li></ul></li><li>位串<ul><li>bit</li></ul></li><li>uuid类型</li><li>复合类型<ul><li>CREATE TYPE complex AS(a int, b int)</li></ul></li><li>范围类型<ul><li>int4range</li><li>numrange</li><li>daterange</li></ul></li></ul><h1 id=基本使用>基本使用</h1><h2 id=控制台常用命令>控制台常用命令</h2><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">9
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#c41a16>\p</span>assword命令（设置密码）
+</span></span><span style=display:flex><span><span style=color:#c41a16>\q</span>命令（退出）
+</span></span><span style=display:flex><span><span style=color:#c41a16>\h</span>：查看SQL命令的解释，比如<span style=color:#c41a16>\h</span> <span style=color:#a90d91>select</span>
+</span></span><span style=display:flex><span><span style=color:#c41a16>\?</span>：查看psql命令列表
+</span></span><span style=display:flex><span><span style=color:#c41a16>\l</span>：列出所有数据库
+</span></span><span style=display:flex><span><span style=color:#c41a16>\c</span> <span style=color:#000>[</span>database_name<span style=color:#000>]</span>：连接其他数据库
+</span></span><span style=display:flex><span><span style=color:#c41a16>\d</span>：列出当前数据库的所有表格
+</span></span><span style=display:flex><span><span style=color:#c41a16>\d</span> <span style=color:#000>[</span>table_name<span style=color:#000>]</span>：列出某一张表格的结构
+</span></span><span style=display:flex><span><span style=color:#c41a16>\d</span>u：列出所有用户
+</span></span></code></pre></td></tr></table></div></div></div><h2 id=登录>登录</h2><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-sql data-lang=sql><span style=display:flex><span><span style=color:#000>#</span> <span style=color:#000>psql</span> <span style=color:#000>-</span><span style=color:#000>h</span> <span style=color:#000>服务器</span> <span style=color:#000>-</span><span style=color:#000>U</span> <span style=color:#000>用户名</span> <span style=color:#000>-</span><span style=color:#000>d</span> <span style=color:#000>数据库</span> <span style=color:#000>-</span><span style=color:#000>p</span> <span style=color:#000>端口地址</span> <span style=color:#000>#</span> <span style=color:#000>-</span><span style=color:#000>U</span> <span style=color:#000>大写</span>
+</span></span><span style=display:flex><span><span style=color:#000>$</span> <span style=color:#000>psql</span> <span style=color:#000>-</span><span style=color:#000>U</span> <span style=color:#000>dbuser</span> <span style=color:#000>-</span><span style=color:#000>d</span> <span style=color:#000>example</span> <span style=color:#000>-</span><span style=color:#000>h</span> <span style=color:#1c01ce>127</span>.<span style=color:#1c01ce>0</span>.<span style=color:#1c01ce>01</span> <span style=color:#000>-</span><span style=color:#000>p</span> <span style=color:#1c01ce>5432</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000>#</span> (<span style=color:#000>连接数据库，默认用户名和数据库都是</span> <span style=color:#000>postgres</span>)
+</span></span><span style=display:flex><span><span style=color:#000>#</span> <span style=color:#000>相当于系统用户</span><span style=color:#000>postgres以同名数据库用户的身份登录数据库</span><span style=color:#000>，不用输入密码，</span>
+</span></span><span style=display:flex><span><span style=color:#000>#</span> <span style=color:#000>提示符变为</span> <span style=color:#000>postgres</span><span style=color:#000>=#</span> <span style=color:#000>表示成功进入</span>
+</span></span><span style=display:flex><span><span style=color:#000>$</span> <span style=color:#000>psql</span> 
+</span></span></code></pre></td></tr></table></div></div></div><h2 id=数据库操作>数据库操作</h2><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500># 创建数据库</span>
+</span></span><span style=display:flex><span>CREATE DATABASE mydb;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500># 查看所有数据库</span>
+</span></span><span style=display:flex><span><span style=color:#c41a16>\l</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500># 切换当前数据库</span>
+</span></span><span style=display:flex><span><span style=color:#c41a16>\c</span> mydb
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500># 删除数据库</span>
+</span></span><span style=display:flex><span>drop database &lt;dbname&gt;
+</span></span></code></pre></td></tr></table></div></div></div><h2 id=数据库表操作>数据库表操作</h2><p>初级用法：</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500>#创建表</span>
+</span></span><span style=display:flex><span>CREATE TABLE test<span style=color:#000>(</span>id int,body varchar<span style=color:#000>(</span>100<span style=color:#000>))</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#在表中插入数据</span>
+</span></span><span style=display:flex><span>insert into test<span style=color:#000>(</span>id,body<span style=color:#000>)</span> values<span style=color:#000>(</span>1,<span style=color:#c41a16>&#39;hello,postgresql&#39;</span><span style=color:#000>)</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#查看当前数据库下所有表</span>
+</span></span><span style=display:flex><span><span style=color:#c41a16>\d</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#查看表结构，相当于desc</span>
+</span></span><span style=display:flex><span><span style=color:#c41a16>\d</span> <span style=color:#a90d91>test</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>增加属性：<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500>#创建表</span>
+</span></span><span style=display:flex><span>CREATE TABLE COMPANY<span style=color:#000>(</span>
+</span></span><span style=display:flex><span>   ID  SERIAL PRIMARY KEY,
+</span></span><span style=display:flex><span>   NAME           TEXT      NOT NULL,
+</span></span><span style=display:flex><span>   AGE            INT       NOT NULL,
+</span></span><span style=display:flex><span>   ADDRESS        CHAR<span style=color:#000>(</span>50<span style=color:#000>)</span>,
+</span></span><span style=display:flex><span>   SALARY         REAL
+</span></span><span style=display:flex><span><span style=color:#000>)</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#插入数据</span>
+</span></span><span style=display:flex><span>INSERT INTO COMPANY <span style=color:#000>(</span>NAME,AGE,ADDRESS,SALARY<span style=color:#000>)</span>
+</span></span><span style=display:flex><span>VALUES <span style=color:#000>(</span> <span style=color:#c41a16>&#39;Paul&#39;</span>, 32, <span style=color:#c41a16>&#39;California&#39;</span>, 20000.00 <span style=color:#000>)</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>INSERT INTO COMPANY <span style=color:#000>(</span>NAME,AGE,ADDRESS,SALARY<span style=color:#000>)</span>
+</span></span><span style=display:flex><span>VALUES <span style=color:#000>(</span><span style=color:#c41a16>&#39;Allen&#39;</span>, 25, <span style=color:#c41a16>&#39;Texas&#39;</span>, 15000.00 <span style=color:#000>)</span>;
+</span></span></code></pre></td></tr></table></div></div></div></p><h2 id=schema>Schema</h2><p>PG模式（SCHEMA）可以看着是一个表的集合。</p><p>一个模式可以包含视图、索引、数据类型、函数和操作符等。</p><p>相同的对象名称可以被用于不同的模式中不会出现冲突，例如 schema1 和 schema2 都可以包含名为 table1 的表。</p><p>使用模式的优势：</p><ul><li>允许多个用户使用一个数据库且互相不干扰</li><li>将数据库对象组织成逻辑组以便更容易管理</li><li>第三方应用的对象可以放在独立的模式中，不会与其他对象的名称发生冲突
+模式类似于操作系统层的目录，但是模式不能嵌套。</li></ul><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500>#创建schema： </span>
+</span></span><span style=display:flex><span>create schema schema1;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>create table schema1.company<span style=color:#000>(</span>
+</span></span><span style=display:flex><span>   ID   INT              NOT NULL,
+</span></span><span style=display:flex><span>   NAME VARCHAR <span style=color:#000>(</span>20<span style=color:#000>)</span>     NOT NULL,
+</span></span><span style=display:flex><span>   AGE  INT              NOT NULL,
+</span></span><span style=display:flex><span>   ADDRESS  CHAR <span style=color:#000>(</span>25<span style=color:#000>)</span>,
+</span></span><span style=display:flex><span>   SALARY   DECIMAL <span style=color:#000>(</span>18, 2<span style=color:#000>)</span>,
+</span></span><span style=display:flex><span>   PRIMARY KEY <span style=color:#000>(</span>ID<span style=color:#000>)</span>
+</span></span><span style=display:flex><span><span style=color:#000>)</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#删除schema： </span>
+</span></span><span style=display:flex><span>drop schema schema1；
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#删除一个模式以及其中包含的所有对象：</span>
+</span></span><span style=display:flex><span>DROP SCHEMA schema1 CASCADE;
+</span></span></code></pre></td></tr></table></div></div></div><h2 id=备份数据库>备份数据库</h2><h3 id=单数据库>单数据库</h3><p>PG提供了 pg_dump 来简化备份单个数据库的过程。前提：用户必须有数据库的读取权限：</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500># 以 postgres 用户登录</span>
+</span></span><span style=display:flex><span>sudo su - postgres
+</span></span><span style=display:flex><span><span style=color:#177500># 备份到文件</span>
+</span></span><span style=display:flex><span>pg_dump mydbname &gt; mydbname.bak
+</span></span><span style=display:flex><span><span style=color:#177500># 可以使用 scp 等命令将文件拷贝到其它机器，</span>
+</span></span><span style=display:flex><span>然后使用 psql 恢复数据库
+</span></span><span style=display:flex><span>psql <span style=color:#a90d91>test</span> &lt; mydbname.bak
+</span></span></code></pre></td></tr></table></div></div></div><p>备份格式：</p><ul><li>.bak：压缩二进制格式</li><li>.sql：明文转储</li><li>.tar：</li></ul><h3 id=多数据库>多数据库</h3><p>pg_dump 一次只创建一个数据库的备份，不会存储有关数据库角色或其他群集范围配置的信息。 要存储此信息并同时备份所有数据库，可以使用 pg_dumpall。</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span>pg_dumpall &gt; pg_backup.bak
+</span></span><span style=display:flex><span><span style=color:#177500># 从备份还原数据库</span>
+</span></span><span style=display:flex><span>psql -f pg_backup.bak postgres
+</span></span></code></pre></td></tr></table></div></div></div><p>Demo：<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">9
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500>#备份数据库</span>
+</span></span><span style=display:flex><span>$ pg_dump -U postgres -f /tmp/postgres.sql postgres <span style=color:#000>(</span>导出postgres数据库保存为postgres.sql<span style=color:#000>)</span>
+</span></span><span style=display:flex><span>$ pg_dump -U postgres -f /tmp/postgres.sql -t <span style=color:#a90d91>test</span> postgres <span style=color:#000>(</span>导出postgres数据库中表test的数据<span style=color:#000>)</span>
+</span></span><span style=display:flex><span>$ pg_dump -U postgres -F t -f /tmp/postgres.tar postgres <span style=color:#000>(</span>导出postgres数据库以tar形式压缩保存为postgres.tar<span style=color:#000>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#恢复数据库</span>
+</span></span><span style=display:flex><span>$ psql -U postgres -f /tmp/postgres.sql bk01 <span style=color:#000>(</span>恢复postgres.sql数据到bk01数据库<span style=color:#000>)</span>
+</span></span><span style=display:flex><span><span style=color:#177500>#pg_restore --  从pg_dump创建的备份文件中恢复PostgreSQL数据库,用于恢复由pg_dump 转储的任何非纯文本格式中的PostgreSQL数据库。</span>
+</span></span><span style=display:flex><span>$ pg_restore -U postgres -d bk01 /tmp/postgres.tar  <span style=color:#000>(</span>恢复postgres.tar数据到bk01数据库<span style=color:#000>)</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><h2 id=用户操作>用户操作</h2><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500>#创建用户并设置密码</span>
+</span></span><span style=display:flex><span>CREATE USER <span style=color:#c41a16>&#39;username&#39;</span> WITH PASSWORD <span style=color:#c41a16>&#39;password&#39;</span>;
+</span></span><span style=display:flex><span>CREATE USER <span style=color:#a90d91>test</span> WITH PASSWORD <span style=color:#c41a16>&#39;test&#39;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#修改用户密码</span>
+</span></span><span style=display:flex><span>$ ALTER USER <span style=color:#c41a16>&#39;username&#39;</span> WITH PASSWORD <span style=color:#c41a16>&#39;password&#39;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#数据库授权,赋予指定账户指定数据库所有权限</span>
+</span></span><span style=display:flex><span>$ GRANT ALL PRIVILEGES ON DATABASE <span style=color:#c41a16>&#39;dbname&#39;</span> TO <span style=color:#c41a16>&#39;username&#39;</span>;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#将数据库 mydb 权限授权于 test</span>
+</span></span><span style=display:flex><span>GRANT ALL PRIVILEGES ON DATABASE mydb TO test;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#但此时用户还是没有读写权限，需要继续授权表</span>
+</span></span><span style=display:flex><span>GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO xxx;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#注意，该sql语句必须在所要操作的数据库里执行</span>
+</span></span><span style=display:flex><span><span style=color:#177500>#移除指定账户指定数据库所有权限</span>
+</span></span><span style=display:flex><span>REVOKE ALL PRIVILEGES ON DATABASE mydb from <span style=color:#a90d91>test</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#177500>#删除用户</span>
+</span></span><span style=display:flex><span>drop user <span style=color:#a90d91>test</span>
+</span></span><span style=display:flex><span><span style=color:#177500># 查看用户</span>
+</span></span><span style=display:flex><span><span style=color:#c41a16>\d</span>u
+</span></span></code></pre></td></tr></table></div></div></details><br><p>pg_hba.conf配置中的第一项设置表示：本地用户通过unix socket登陆时，使用peer方式认证。<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plain data-lang=plain><span style=display:flex><span># &#34;local&#34; is for Unix domain socket connections only
+</span></span><span style=display:flex><span>local   all             all                                     peer
+</span></span></code></pre></td></tr></table></div></div></div></p><p>在peer方式中，client必须和PG在同一台机器上。peer使用PostgreSQL所在的操作系统上的用户登陆，只要当前系统用户和登录PG的用户名相同就可以正常登录。</p><blockquote><p>部署PG后，切换到系统的postgres用户，直接执行psql就能进入PG就是这个原因。</p></blockquote><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500># 创建没有密码的用户</span>
+</span></span><span style=display:flex><span>create user user1;
+</span></span><span style=display:flex><span><span style=color:#177500># 创建同名用户</span>
+</span></span><span style=display:flex><span>useradd user1;
+</span></span><span style=display:flex><span><span style=color:#177500># 切换用户</span>
+</span></span><span style=display:flex><span>su - user1
+</span></span><span style=display:flex><span><span style=color:#177500># 登录</span>
+</span></span><span style=display:flex><span>psql postgres <span style=color:#177500># 指定用户名，否则默认使用与用户同名的数据库</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>注意：peer不是常用的方式，最常用的方式是通过密码远程登陆。</p><h2 id=角色管理>角色管理</h2><p>PG中没有区分用户和角色， <code>CREATE USER</code> 为 <code>CREATE ROLE</code> 的别名，两个命令几乎相同。唯一的区别是前者创建的用户默认带有 login 属性，而后者创建的默认不带。</p><h3 id=创建用户-角色>创建用户/角色</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># CREATE ROLE zhangsan;　　//默认不带LOGIN属性</span>
+</span></span><span style=display:flex><span>CREATE ROLE
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># CREATE USER lisi;　　//默认具有LOGIN属性</span>
+</span></span><span style=display:flex><span>CREATE ROLE
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># \du</span>
+</span></span><span style=display:flex><span>                             List of roles
+</span></span><span style=display:flex><span> Role name |                   Attributes                   | Member of 
+</span></span><span style=display:flex><span>-----------+------------------------------------------------+-----------
+</span></span><span style=display:flex><span> zhangsan  | Cannot login                                   | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> postgres  | Superuser, Create role, Create DB, Replication | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> lisi      |                                                | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># </span>
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># SELECT rolname from pg_roles ;</span>
+</span></span><span style=display:flex><span> rolname  
+</span></span><span style=display:flex><span>----------
+</span></span><span style=display:flex><span> postgres
+</span></span><span style=display:flex><span> zhangsan
+</span></span><span style=display:flex><span> lisi
+</span></span><span style=display:flex><span><span style=color:#000>(</span><span style=color:#1c01ce>3</span> rows<span style=color:#000>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># SELECT usename from pg_user;         //角色 zhangsan 创建时没有分配login权限，所以没有创建用户</span>
+</span></span><span style=display:flex><span> usename  
+</span></span><span style=display:flex><span>----------
+</span></span><span style=display:flex><span> postgres
+</span></span><span style=display:flex><span> lisi
+</span></span><span style=display:flex><span><span style=color:#000>(</span><span style=color:#1c01ce>2</span> rows<span style=color:#000>)</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500>#</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h3 id=角色属性>角色属性</h3><table><thead><tr><th style=text-align:left>属性</th><th style=text-align:left> 说明</th></tr></thead><tbody><tr><td style=text-align:left>login</td><td style=text-align:left>只有具有 LOGIN 属性的角色可以用做数据库连接的初始角色名。</td></tr><tr><td style=text-align:left>superuser</td><td style=text-align:left>数据库超级用户</td></tr><tr><td style=text-align:left>createdb</td><td style=text-align:left>创建数据库权限</td></tr><tr><td style=text-align:left>createrole</td><td style=text-align:left>允许其创建或删除其他普通的用户角色(超级用户除外)</td></tr><tr><td style=text-align:left>replication</td><td style=text-align:left>做流复制的时候用到的一个用户属性，一般单独设定。</td></tr><tr><td style=text-align:left>password</td><td style=text-align:left>在登录时要求指定密码时才会起作用，比如md5或者password模式，跟客户端的连接认证方式有关</td></tr><tr><td style=text-align:left>inherit</td><td style=text-align:left>用户组对组员的一个继承标志，成员可以继承用户组的权限特性</td></tr></tbody></table><h3 id=创建用户赋予角色属性>创建用户赋予角色属性</h3><p>创建角色 wangwu 并赋予其 CREATEDB 的权限：</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#177500># 首先切到postgres</span>
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># CREATE ROLE wangwu CREATEDB ;</span>
+</span></span><span style=display:flex><span>CREATE ROLE
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># \du</span>
+</span></span><span style=display:flex><span>                             List of roles
+</span></span><span style=display:flex><span> Role name |                   Attributes                   | Member of 
+</span></span><span style=display:flex><span>-----------+------------------------------------------------+-----------
+</span></span><span style=display:flex><span> wangwu    | Create DB, Cannot login                        | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> zhangsan  |                                                | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> postgres  | Superuser, Create role, Create DB, Replication | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> lisi      |                                                | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500>#</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>创建角色 zhaoliu 并赋予其创建数据库及带有密码登录的属性：<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># CREATE ROLE zhaoliu CREATEDB PASSWORD &#39;zhaoliu123&#39; LOGIN;</span>
+</span></span><span style=display:flex><span>CREATE ROLE
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># \du</span>
+</span></span><span style=display:flex><span>                             List of roles
+</span></span><span style=display:flex><span> Role name |                   Attributes                   | Member of 
+</span></span><span style=display:flex><span>-----------+------------------------------------------------+-----------
+</span></span><span style=display:flex><span> wangwu    | Create DB, Cannot login                        | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> zhangsan  |                                                | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> postgres  | Superuser, Create role, Create DB, Replication | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> zhaoliu   | Create DB                                      | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> lisi      |                                                | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500>#</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><p>测试 zhaoliu 角色：<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span>psql -U zhaoliu -d postgres
+</span></span></code></pre></td></tr></table></div></div></div></p><h3 id=为用户赋予权限>为用户赋予权限</h3><p>给存在的用户赋予各种权限。</p><p>赋予 wangwu 登录权限：</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># ALTER ROLE wangwu WITH LOGIN;</span>
+</span></span><span style=display:flex><span>ALTER ROLE
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># \du</span>
+</span></span><span style=display:flex><span>                             List of roles
+</span></span><span style=display:flex><span> Role name |                   Attributes                   | Member of 
+</span></span><span style=display:flex><span>-----------+------------------------------------------------+-----------
+</span></span><span style=display:flex><span> wangwu    | Create DB                                      | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> zhangsan  |                                                | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> postgres  | Superuser, Create role, Create DB, Replication | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> zhaoliu   | Create DB                                      | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> lisi      |                                                | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500>#</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>赋予 zhaoliu 创建角色的权限：<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-shell data-lang=shell><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># ALTER ROLE zhaoliu WITH CREATEROLE;</span>
+</span></span><span style=display:flex><span>ALTER ROLE
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500># \du</span>
+</span></span><span style=display:flex><span>                             List of roles
+</span></span><span style=display:flex><span> Role name |                   Attributes                   | Member of 
+</span></span><span style=display:flex><span>-----------+------------------------------------------------+-----------
+</span></span><span style=display:flex><span> wangwu    | Create DB                                      | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> zhangsan  |                                                | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> postgres  | Superuser, Create role, Create DB, Replication | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> zhaoliu   | Create role, Create DB                         | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span> lisi      |                                                | <span style=color:#000>{}</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000>postgres</span><span style=color:#000>=</span><span style=color:#177500>#</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><h1 id=reference>Reference</h1><p><a href=https://cloud.tencent.com/developer/article/1847734>PostgreSQL 是中国第一的开源数据库？</a></p></div></main></div></div><footer class="bg-dark py-5 row d-print-none"><div class="container-fluid mx-sm-5"><div class=row><div class="col-6 col-sm-4 text-xs-center order-sm-2"></div><div class="col-6 col-sm-4 text-right text-xs-center order-sm-3"></div><div class="col-12 col-sm-4 text-center py-2 order-sm-2"><small class=text-white>&copy; 2023 The Herb 保留所有权利</small>
+<small class=ml-1><a href=# target=_blank rel=noopener>隐私政策</a></small><p class=mt-2><a href=/about/>Herbdocs</a></p></div></div></div></footer></div><script src=https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js integrity=sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin=anonymous></script>
+<script src=/js/tabpane-persist.js></script>
+<script src=/js/main.min.91798a335c881f1b6b805085ba4aa22d1dbd2b0b18d105d05189fa104ddae350.js integrity="sha256-kXmKM1yIHxtrgFCFukqiLR29KwsY0QXQUYn6EE3a41A=" crossorigin=anonymous></script></body></html>

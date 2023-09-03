@@ -1,0 +1,815 @@
+<!doctype html><html lang=zh-cn class=no-js><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=generator content="Hugo 0.101.0"><link rel=canonical type=text/html href=/docs/42.RPC/><link rel=alternate type=application/rss+xml href=/docs/42.RPC/index.xml><meta name=robots content="noindex, nofollow"><link rel="shortcut icon" href=/favicons/favicon.ico><link rel=apple-touch-icon href=/favicons/apple-touch-icon-180x180.png sizes=180x180><link rel=icon type=image/png href=/favicons/favicon-16x16.png sizes=16x16><link rel=icon type=image/png href=/favicons/favicon-32x32.png sizes=32x32><link rel=icon type=image/png href=/favicons/android-36x36.png sizes=36x36><link rel=icon type=image/png href=/favicons/android-48x48.png sizes=48x48><link rel=icon type=image/png href=/favicons/android-72x72.png sizes=72x72><link rel=icon type=image/png href=/favicons/android-96x96.png sizes=96x96><link rel=icon type=image/png href=/favicons/android-144x144.png sizes=144x144><link rel=icon type=image/png href=/favicons/android-192x192.png sizes=192x192><title>RPC | Herbdocs</title><meta name=description content="Introduction
+RPC
+"><meta property="og:title" content="RPC"><meta property="og:description" content="Herb's blog"><meta property="og:type" content="website"><meta property="og:url" content="/docs/42.RPC/"><meta property="og:site_name" content="Herbdocs"><meta itemprop=name content="RPC"><meta itemprop=description content="Herb's blog"><meta name=twitter:card content="summary"><meta name=twitter:title content="RPC"><meta name=twitter:description content="Herb's blog"><link rel=preload href=/scss/main.min.dcab2c3dae6e6fefb7672f19e4b612cc4e75ca208740f642aa2f1fe378478a8f.css as=style><link href=/scss/main.min.dcab2c3dae6e6fefb7672f19e4b612cc4e75ca208740f642aa2f1fe378478a8f.css rel=stylesheet integrity><script src=https://code.jquery.com/jquery-3.6.0.min.js integrity=sha384-vtXRMe3mGCbOeY7l30aIg8H9p3GdeSe4IFlP6G8JMa7o7lXvnz3GFKzPxzJdPfGK crossorigin=anonymous></script>
+<script src=https://unpkg.com/lunr@2.3.9/lunr.min.js integrity=sha384-203J0SNzyqHby3iU6hzvzltrWi/M41wOP5Gu+BiJMz5nwKykbkUx8Kp7iti0Lpli crossorigin=anonymous></script>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-00000000-0","auto"),ga("send","pageview"))</script><script async src=https://www.google-analytics.com/analytics.js></script></head><body class=td-section><header><nav class="js-navbar-scroll navbar navbar-expand navbar-dark flex-column flex-md-row td-navbar"><a class=navbar-brand href=/><span class=navbar-logo><img width=6% style=margin-bottom:1% src=/favicons/favicon.ico></span><span class=font-weight-bold>&nbsp;Herbdocs</span></a><div class="td-navbar-nav-scroll ml-md-auto" id=main_navbar><ul class="navbar-nav mt-2 mt-lg-0"><li class="nav-item mr-4 mb-2 mb-lg-0"><a class=nav-link href=/about/><span>About</span></a></li><li class="nav-item mr-4 mb-2 mb-lg-0"><a class="nav-link active" href=/docs/><span class=active>Documentation</span></a></li><li class="nav-item dropdown mr-4 d-none d-lg-block"><a class="nav-link dropdown-toggle" href=# id=navbarDropdown role=button data-toggle=dropdown aria-haspopup=true aria-expanded=false>Chinese</a><div class=dropdown-menu aria-labelledby=navbarDropdownMenuLink><a class=dropdown-item href=/en/>English</a></div></li></ul></div><div class="navbar-nav d-none d-lg-block"><input type=search class="form-control td-search-input" placeholder="&#xf002; 站内搜索…" aria-label=站内搜索… autocomplete=off></div></nav></header><div class="container-fluid td-outer"><div class=td-main><div class="row flex-xl-nowrap"><main class="col-12 col-md-9 col-xl-8 pl-md-5" role=main><div class=td-content><div class="pageinfo pageinfo-primary d-print-none"><p>这是本节的多页打印视图。
+<a href=# onclick="return print(),!1">点击此处打印</a>.</p><p><a href=/docs/42.RPC/>返回本页常规视图</a>.</p></div><h1 class=title>RPC</h1><ul><li>1: <a href=#pg-7fc4e251508b27833321d27e53a02ec1>RPC不同实现方式</a></li></ul><div class=content><h1 id=introduction>Introduction</h1><p>RPC</p></div></div><div class=td-content><h1 id=pg-7fc4e251508b27833321d27e53a02ec1>1 - RPC不同实现方式</h1><h1 id=rmi>RMI</h1><h2 id=简介>简介</h2><p>RMI(remotemethodinvocation) 是java原生支持的远程调用, RMI采用RMP(JavaRemoteMessageing Protocol) 作为通信协议, 可以认为是纯java版本的分布式远程调用解决方案。</p><p><strong>RMI的核心概念</strong></p><p><img src=../imgs/rpc_impl_211219_1.png alt=rpc_impl_211219_1.png></p><h2 id=rmi使用步骤>RMI使用步骤</h2><p>1、创建远程接口, 并且继承java.rmi.Remote接口</p><p>2、实现远程接口, 并一继承; UnicastRemoteObject</p><p>3、创建服务器程序: createRegistry() 方法注册远程对象</p><p>4、创建客户端程序(获取注册信息, 调用接口方法} </p><p>1、创建服务接口</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>interface</span> <span style=color:#3f6e75>UserService</span> <span style=color:#a90d91>extends</span> <span style=color:#000>Remote</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>String</span> <span style=color:#000>sayHello</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>name</span><span style=color:#000>)</span> <span style=color:#a90d91>throws</span> <span style=color:#000>RemoteException</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>2、实现远程接口
+略</p><p>3、创建服务器程序</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#177500>// 1、启动RMI注册服务，指定端口号
+</span></span></span><span style=display:flex><span><span style=color:#177500></span><span style=color:#000>LocateRegistry</span><span style=color:#000>.</span><span style=color:#836c28>createRegistry</span><span style=color:#000>(</span><span style=color:#000>9000</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span><span style=color:#177500>// 2、创建要被访问的远程对象的实例
+</span></span></span><span style=display:flex><span><span style=color:#177500></span><span style=color:#000>UserService</span> <span style=color:#000>userService</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>UserServiceImpl</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span><span style=color:#177500>// 3、把远程对象实例注册到RMI注册服务器上
+</span></span></span><span style=display:flex><span><span style=color:#177500></span><span style=color:#000>Naming</span><span style=color:#000>.</span><span style=color:#836c28>bind</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;rmi://localhost:9000/UserService&#34;</span><span style=color:#000>,</span> <span style=color:#000>userService</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span><span style=color:#000>System</span><span style=color:#000>.</span><span style=color:#836c28>out</span><span style=color:#000>.</span><span style=color:#836c28>println</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;server start ...&#34;</span><span style=color:#000>)</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>4、客户端<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#000>UserService</span> <span style=color:#000>userService</span> <span style=color:#000>=</span> <span style=color:#000>(</span><span style=color:#000>UserService</span><span style=color:#000>)</span> <span style=color:#000>Naming</span><span style=color:#000>.</span><span style=color:#836c28>lookup</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;rmi://localhost:9000/UserService&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span><span style=color:#000>String</span> <span style=color:#000>s</span> <span style=color:#000>=</span> <span style=color:#000>userService</span><span style=color:#000>.</span><span style=color:#836c28>sayHello</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;this is client&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span><span style=color:#000>System</span><span style=color:#000>.</span><span style=color:#836c28>out</span><span style=color:#000>.</span><span style=color:#836c28>println</span><span style=color:#000>(</span><span style=color:#000>s</span><span style=color:#000>);</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><p>注意：客户端的包路径需要和服务端一致</p><h1 id=hessian>hessian</h1><h2 id=简介-1>简介</h2><p>Hessian使用C/S方式，基于HTTP协议传输，使用Hessian二进制序列化。</p><h2 id=使用>使用</h2><h3 id=service端>Service端</h3><p>1、添加maven依赖</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>com.caucho<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>hessian<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>3.1.5<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div><p>2、创建接口UserService<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>interface</span> <span style=color:#3f6e75>UserService</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>String</span> <span style=color:#000>sayHello</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>name</span><span style=color:#000>);</span>  
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><p>3、实现类<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>UserServiceImpl</span> <span style=color:#a90d91>implements</span> <span style=color:#000>UserService</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>@Override</span>
+</span></span><span style=display:flex><span>  <span style=color:#a90d91>public</span> <span style=color:#000>String</span> <span style=color:#000>sayHello</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>name</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>return</span> <span style=color:#c41a16>&#34;hello&#34;</span> <span style=color:#000>+</span> <span style=color:#000>name</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><p>4、web.xm中配置HessianServlet<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;servlet&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;servlet-name&gt;</span>HessianServlet<span style=color:#000>&lt;/servlet-name&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;servlet-class&gt;</span>com.caucho.hessian.server.HessianServlet<span style=color:#000>&lt;/servlet-class&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;init-param&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;param-name&gt;</span>service-class<span style=color:#000>&lt;/param-name&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;param-value&gt;</span>com.huangbo.impl.UserServiceImpl<span style=color:#000>&lt;/param-value&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/init-param&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/servlet&gt;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;servlet-mapping&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;servlet-name&gt;</span>HessianServlet<span style=color:#000>&lt;/servlet-name&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;url-pattern&gt;</span>/hessianServlet<span style=color:#000>&lt;/url-pattern&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/servlet-mapping&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><p>5、添加tomcat7插件启动服务<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;build&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;plugins&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;plugin&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;groupId&gt;</span>org.apache.tomcat.maven<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;artifactId&gt;</span>tomcat7-maven-plugin<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;version&gt;</span>2.2<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;configuration&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;port&gt;</span>9000<span style=color:#000>&lt;/port&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;path&gt;</span>/<span style=color:#000>&lt;/path&gt;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>&lt;uriEncoding&gt;</span>UTF-8<span style=color:#000>&lt;/uriEncoding&gt;</span>
+</span></span><span style=display:flex><span>      <span style=color:#000>&lt;/configuration&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;/plugin&gt;</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>&lt;/plugins&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/build&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><p>6、在maven插件栏中找到tomcat，run启动</p><h3 id=客户端>客户端</h3><p>1、添加hessian的maven依赖（同上）</p><p>2、创建跟servlet端相同的端口UserService（同上）</p><p>3、创建测试类测试</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">8
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>ClientTest</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>  <span style=color:#a90d91>public</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>void</span> <span style=color:#000>main</span><span style=color:#000>(</span><span style=color:#000>String</span><span style=color:#000>[]</span> <span style=color:#000>args</span><span style=color:#000>)</span> <span style=color:#a90d91>throws</span> <span style=color:#000>MalformedURLException</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>String</span> <span style=color:#000>url</span> <span style=color:#000>=</span> <span style=color:#000>:</span><span style=color:#c41a16>&#34;http://localhost:9000/hessianServlet&#34;</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>HessianProxyFactory</span> <span style=color:#000>factory</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>HessianProxyFactory</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>UserService</span> <span style=color:#000>api</span> <span style=color:#000>=</span> <span style=color:#000>(</span><span style=color:#000>UserService</span><span style=color:#000>)</span> <span style=color:#000>factory</span><span style=color:#000>.</span><span style=color:#836c28>create</span><span style=color:#000>(</span><span style=color:#000>UserService</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>,</span> <span style=color:#000>url</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>System</span><span style=color:#000>.</span><span style=color:#836c28>out</span><span style=color:#000>.</span><span style=color:#836c28>println</span><span style=color:#000>(</span><span style=color:#000>api</span><span style=color:#000>.</span><span style=color:#836c28>sayHello</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;ripple&#34;</span><span style=color:#000>));</span>
+</span></span><span style=display:flex><span>  <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h1 id=thirft>thirft</h1><p>使用IDL</p><h1 id=grpc>gRpc</h1><h1 id=dubbo>Dubbo</h1><h1 id=自己实现rpc>自己实现RPC</h1><p>基本实现思路：</p><p><img src=../imgs/rpc_impl_211219_2.png alt=rpc_impl_211219_2.png></p><ul><li>provider服务提供</li><li>consumer服务消费</li><li>registry注册</li><li>protocol协议</li></ul><h2 id=服务提供者>服务提供者</h2><h3 id=1-定义服务接口>1、定义服务接口</h3><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.service</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>interface</span> <span style=color:#3f6e75>HelloService</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>String</span> <span style=color:#000>sayHello</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>msg</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h3 id=2-实现类helloserviceimpl>2、实现类HelloServiceImpl</h3><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">7
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.service.impl</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.service.HelloService</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>HelloServiceImpl</span> <span style=color:#a90d91>implements</span> <span style=color:#000>HelloService</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#000>String</span> <span style=color:#000>sayHello</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>msg</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>return</span> <span style=color:#c41a16>&#34;service say hello: &#34;</span> <span style=color:#000>+</span> <span style=color:#000>msg</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h3 id=3-服务注册-注册中心>3、服务注册：注册中心</h3><p>此处注册中心我们将服务注册在map集合中, 结构: Map&lt;String. Map<urlcass>> 外边map的key存储服务接口的全类名, URL封装了调用服务的ip和port里边value指定指定关体实现类注册中心类提供注册服务平暴露服务和发现服务功能: </p><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.pojo</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>lombok.Data</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#000>@Data</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>URL</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>private</span> <span style=color:#000>String</span> <span style=color:#000>hostName</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>private</span> <span style=color:#000>Integer</span> <span style=color:#000>port</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#000>URL</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>hostName</span><span style=color:#000>,</span> <span style=color:#000>Integer</span> <span style=color:#000>port</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>this</span><span style=color:#000>.</span><span style=color:#836c28>hostName</span> <span style=color:#000>=</span> <span style=color:#000>hostName</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>this</span><span style=color:#000>.</span><span style=color:#836c28>port</span> <span style=color:#000>=</span> <span style=color:#000>port</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>boolean</span> <span style=color:#000>equals</span><span style=color:#000>(</span><span style=color:#000>Object</span> <span style=color:#000>obj</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>if</span> <span style=color:#000>(</span><span style=color:#000>obj</span> <span style=color:#000>==</span> <span style=color:#a90d91>null</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#a90d91>return</span> <span style=color:#a90d91>false</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>if</span> <span style=color:#000>(!(</span><span style=color:#000>obj</span> <span style=color:#a90d91>instanceof</span> <span style=color:#000>URL</span><span style=color:#000>))</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#a90d91>return</span> <span style=color:#a90d91>false</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>URL</span> <span style=color:#000>url</span> <span style=color:#000>=</span> <span style=color:#000>(</span><span style=color:#000>URL</span><span style=color:#000>)</span> <span style=color:#000>obj</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>if</span> <span style=color:#000>(</span><span style=color:#000>hostName</span><span style=color:#000>.</span><span style=color:#836c28>equals</span><span style=color:#000>(((</span><span style=color:#000>URL</span><span style=color:#000>)</span> <span style=color:#000>obj</span><span style=color:#000>).</span><span style=color:#836c28>getHostName</span><span style=color:#000>())</span> <span style=color:#000>&amp;&amp;</span> <span style=color:#000>port</span><span style=color:#000>.</span><span style=color:#836c28>intValue</span><span style=color:#000>()</span> <span style=color:#000>==</span> <span style=color:#000>url</span><span style=color:#000>.</span><span style=color:#836c28>port</span><span style=color:#000>.</span><span style=color:#836c28>intValue</span><span style=color:#000>())</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#a90d91>return</span> <span style=color:#a90d91>true</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>return</span> <span style=color:#a90d91>false</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>int</span> <span style=color:#000>hashCode</span><span style=color:#000>()</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>return</span> <span style=color:#000>hostName</span><span style=color:#000>.</span><span style=color:#836c28>hashCode</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><p>注意重写equals和hashCode方法，为了比较URL时不是比较地址值，而是比较其中的hostName和port值。否则将拿不到注册URL的信息</p><h4 id=注册中心nativeregistry>注册中心NativeRegistry</h4><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.registry</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.pojo.URL</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.util.HashMap</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.util.Map</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>NativeRegistry</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>// 注册中心 map
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>    <span style=color:#a90d91>private</span> <span style=color:#a90d91>static</span> <span style=color:#000>Map</span><span style=color:#000>&lt;</span><span style=color:#000>String</span><span style=color:#000>,</span> <span style=color:#000>Map</span><span style=color:#000>&lt;</span><span style=color:#000>URL</span><span style=color:#000>,</span> <span style=color:#000>Class</span><span style=color:#000>&gt;&gt;</span> <span style=color:#000>registCenter</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>HashMap</span><span style=color:#000>&lt;</span><span style=color:#000>String</span><span style=color:#000>,</span> <span style=color:#000>Map</span><span style=color:#000>&lt;</span><span style=color:#000>URL</span><span style=color:#000>,</span> <span style=color:#000>Class</span><span style=color:#000>&gt;&gt;();</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>// 注册服务
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>void</span> <span style=color:#000>regist</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>interfaceName</span><span style=color:#000>,</span> <span style=color:#000>URL</span> <span style=color:#000>url</span><span style=color:#000>,</span> <span style=color:#000>Class</span> <span style=color:#000>implClass</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>Map</span><span style=color:#000>&lt;</span><span style=color:#000>URL</span><span style=color:#000>,</span> <span style=color:#000>Class</span><span style=color:#000>&gt;</span> <span style=color:#000>map</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>HashMap</span><span style=color:#000>&lt;</span><span style=color:#000>URL</span><span style=color:#000>,</span> <span style=color:#000>Class</span><span style=color:#000>&gt;();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>map</span><span style=color:#000>.</span><span style=color:#836c28>put</span><span style=color:#000>(</span><span style=color:#000>url</span><span style=color:#000>,</span> <span style=color:#000>implClass</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>registCenter</span><span style=color:#000>.</span><span style=color:#836c28>put</span><span style=color:#000>(</span><span style=color:#000>interfaceName</span><span style=color:#000>,</span> <span style=color:#000>map</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>// 获取服务信息
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>static</span> <span style=color:#000>Class</span> <span style=color:#000>get</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>interfaceName</span><span style=color:#000>,</span> <span style=color:#000>URL</span> <span style=color:#000>url</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>Map</span><span style=color:#000>&lt;</span><span style=color:#000>URL</span><span style=color:#000>,</span> <span style=color:#000>Class</span><span style=color:#000>&gt;</span> <span style=color:#000>urlClassMap</span> <span style=color:#000>=</span> <span style=color:#000>registCenter</span><span style=color:#000>.</span><span style=color:#836c28>get</span><span style=color:#000>(</span><span style=color:#000>interfaceName</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>Class</span> <span style=color:#000>cls</span> <span style=color:#000>=</span> <span style=color:#000>urlClassMap</span><span style=color:#000>.</span><span style=color:#836c28>get</span><span style=color:#000>(</span><span style=color:#000>url</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>return</span> <span style=color:#000>cls</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h4 id=注册服务-serverstart><strong>注册服务</strong>ServerStart</h4><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.pojo.URL</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.registry.NativeRegistry</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.service.HelloService</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.service.impl.HelloServiceImpl</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.tomcat.HttpServer</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>ServerStart</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>void</span> <span style=color:#000>main</span><span style=color:#000>(</span><span style=color:#000>String</span><span style=color:#000>[]</span> <span style=color:#000>args</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 真正的注册服务
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>URL</span> <span style=color:#000>url</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>URL</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;localhost&#34;</span><span style=color:#000>,</span> <span style=color:#000>8080</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>NativeRegistry</span><span style=color:#000>.</span><span style=color:#836c28>regist</span><span style=color:#000>(</span><span style=color:#000>HelloService</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>.</span><span style=color:#836c28>getName</span><span style=color:#000>(),</span> <span style=color:#000>url</span><span style=color:#000>,</span> <span style=color:#000>HelloServiceImpl</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>//启动服务
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>HttpServer</span> <span style=color:#000>httpServer</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>HttpServer</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>httpServer</span><span style=color:#000>.</span><span style=color:#836c28>start</span><span style=color:#000>(</span><span style=color:#000>url</span><span style=color:#000>.</span><span style=color:#836c28>getHostName</span><span style=color:#000>(),</span> <span style=color:#000>url</span><span style=color:#000>.</span><span style=color:#836c28>getPort</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h3 id=4-暴露服务>4、暴露服务</h3><p>服务之间调用的通信协议采用http协议，所以在服务provider中启动tomcat暴露服务</p><p>添加内嵌tomcat的依赖</p><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-xml data-lang=xml><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.projectlombok<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>lombok<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>1.18.0<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#177500>&lt;!-- 内嵌tomcat --&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>org.apache.tomcat.embed<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>tomcat-embed-core<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>9.0.12<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;dependency&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;groupId&gt;</span>commons-io<span style=color:#000>&lt;/groupId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;artifactId&gt;</span>commons-io<span style=color:#000>&lt;/artifactId&gt;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>&lt;version&gt;</span>2.6<span style=color:#000>&lt;/version&gt;</span>
+</span></span><span style=display:flex><span><span style=color:#000>&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table></div></div></div><h4 id=创建httpserver>创建HttpServer</h4><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">44
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">45
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">46
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">47
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">48
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">49
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">50
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">51
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">52
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">53
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">54
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">55
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">56
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">57
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">58
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">59
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">60
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">61
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">62
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">63
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">64
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">65
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.tomcat</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.catalina.*</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.catalina.connector.Connector</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.catalina.core.StandardContext</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.catalina.core.StandardEngine</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.catalina.core.StandardHost</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.catalina.startup.Tomcat</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>HttpServer</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>/** tomcat服务启动
+</span></span></span><span style=display:flex><span><span style=color:#177500>     // 参考tomcat配置
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;Server port=&#34;8005&#34; shutdown=&#34;SHUTDOWN&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;Service name=&#34;Catalina&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;Connect port=&#34;8080&#34; protocol=&#34;HTTP/1.1&#34;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     connectionTimeout=&#34;2000&#34; redirectPort=&#34;8443&#34;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     URIEncoding=&#34;UTF-8&#34;/&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;Engine name=&#34;Catalina&#34; defaultHost=&#34;localhost&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;Host name=&#34;localhost&#34; appBase=&#34;webapps&#34;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     unpackWARs=&#34;true&#34; autoDeploy=&#34;true&#34;&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;Context path=&#34;&#34; doBase=&#34;WORKDIR&#34; reloadable=&#34;true&#34;/&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;/Host&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;/Engine&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;Service&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     &lt;/Server&gt;
+</span></span></span><span style=display:flex><span><span style=color:#177500>     */</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>// 启动服务
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>void</span> <span style=color:#000>start</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>hostName</span><span style=color:#000>,</span> <span style=color:#a90d91>int</span> <span style=color:#000>port</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 实例一个tomcat
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>Tomcat</span> <span style=color:#000>tomcat</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>Tomcat</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 构建server
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>Server</span> <span style=color:#000>server</span> <span style=color:#000>=</span> <span style=color:#000>tomcat</span><span style=color:#000>.</span><span style=color:#836c28>getServer</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 获取server
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>Service</span> <span style=color:#000>service</span> <span style=color:#000>=</span> <span style=color:#000>server</span><span style=color:#000>.</span><span style=color:#836c28>findService</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;Tomcat&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 构建Connector
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>Connector</span> <span style=color:#000>connector</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>Connector</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>connector</span><span style=color:#000>.</span><span style=color:#836c28>setPort</span><span style=color:#000>(</span><span style=color:#000>port</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>connector</span><span style=color:#000>.</span><span style=color:#836c28>setURIEncoding</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;UTF-8&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 构建Engine
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>Engine</span> <span style=color:#000>engine</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>StandardEngine</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>engine</span><span style=color:#000>.</span><span style=color:#836c28>setDefaultHost</span><span style=color:#000>(</span><span style=color:#000>hostName</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 构建Host
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>Host</span> <span style=color:#000>host</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>StandardHost</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>host</span><span style=color:#000>.</span><span style=color:#836c28>setName</span><span style=color:#000>(</span><span style=color:#000>hostName</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 构建Context
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>String</span> <span style=color:#000>contextPath</span> <span style=color:#000>=</span> <span style=color:#c41a16>&#34;&#34;</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>Context</span> <span style=color:#000>context</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>StandardContext</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>context</span><span style=color:#000>.</span><span style=color:#836c28>setPath</span><span style=color:#000>(</span><span style=color:#000>contextPath</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 声明周期监听器
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>context</span><span style=color:#000>.</span><span style=color:#836c28>addLifecycleListener</span><span style=color:#000>(</span><span style=color:#a90d91>new</span> <span style=color:#000>Tomcat</span><span style=color:#000>.</span><span style=color:#836c28>FixContextListener</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 然后按照server.xml，一层层把子节点添加到父节点
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>host</span><span style=color:#000>.</span><span style=color:#836c28>addChild</span><span style=color:#000>(</span><span style=color:#000>context</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>engine</span><span style=color:#000>.</span><span style=color:#836c28>addChild</span><span style=color:#000>(</span><span style=color:#000>host</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>service</span><span style=color:#000>.</span><span style=color:#836c28>setContainer</span><span style=color:#000>(</span><span style=color:#000>engine</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>service</span><span style=color:#000>.</span><span style=color:#836c28>addConnector</span><span style=color:#000>(</span><span style=color:#000>connector</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// service在getServer时就被添加到server节点了
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#177500>// tomcat是一个servlet，设置路径与映射
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>tomcat</span><span style=color:#000>.</span><span style=color:#836c28>addServlet</span><span style=color:#000>(</span><span style=color:#000>contextPath</span><span style=color:#000>,</span> <span style=color:#c41a16>&#34;dispatcher&#34;</span><span style=color:#000>,</span> <span style=color:#a90d91>new</span> <span style=color:#000>DispatcherServlet</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>context</span><span style=color:#000>.</span><span style=color:#836c28>addServletMappingDecoded</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;/*&#34;</span><span style=color:#000>,</span> <span style=color:#c41a16>&#34;dispatcher&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>try</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>tomcat</span><span style=color:#000>.</span><span style=color:#836c28>start</span><span style=color:#000>();</span> <span style=color:#177500>// 启动tomcat
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>            <span style=color:#000>tomcat</span><span style=color:#000>.</span><span style=color:#836c28>getServer</span><span style=color:#000>().</span><span style=color:#836c28>await</span><span style=color:#000>();</span> <span style=color:#177500>//接受请求
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>}</span> <span style=color:#a90d91>catch</span> <span style=color:#000>(</span><span style=color:#000>LifecycleException</span> <span style=color:#000>e</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>e</span><span style=color:#000>.</span><span style=color:#836c28>printStackTrace</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h4 id=dispatcherservlet>DispatcherServlet</h4><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.tomcat</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>javax.servlet.ServletException</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>javax.servlet.http.HttpServlet</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>javax.servlet.http.HttpServletRequest</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>javax.servlet.http.HttpServletResponse</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.IOException</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>DispatcherServlet</span> <span style=color:#a90d91>extends</span> <span style=color:#000>HttpServlet</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>@Override</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>protected</span> <span style=color:#a90d91>void</span> <span style=color:#000>service</span><span style=color:#000>(</span><span style=color:#000>HttpServletRequest</span> <span style=color:#000>req</span><span style=color:#000>,</span> <span style=color:#000>HttpServletResponse</span> <span style=color:#000>resp</span><span style=color:#000>)</span> <span style=color:#a90d91>throws</span> <span style=color:#000>ServletException</span><span style=color:#000>,</span> <span style=color:#000>IOException</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// httpServerHandler真正处理远程调用请求
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#a90d91>new</span> <span style=color:#000>HttpServerHandler</span><span style=color:#000>().</span><span style=color:#836c28>handle</span><span style=color:#000>(</span><span style=color:#000>req</span><span style=color:#000>,</span> <span style=color:#000>resp</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h4 id=httpserverhandler>HttpServerHandler</h4><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">40
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">41
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">42
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">43
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.tomcat</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.pojo.Invocation</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.pojo.URL</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.registry.NativeRegistry</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.commons.io.IOUtils</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>javax.servlet.http.HttpServletRequest</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>javax.servlet.http.HttpServletResponse</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.IOException</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.InputStream</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.ObjectInputStream</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.lang.reflect.InvocationTargetException</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.lang.reflect.Method</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>HttpServerHandler</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>void</span> <span style=color:#000>handle</span><span style=color:#000>(</span><span style=color:#000>HttpServletRequest</span> <span style=color:#000>req</span><span style=color:#000>,</span> <span style=color:#000>HttpServletResponse</span> <span style=color:#000>resp</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>try</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>// 服务请求的处理逻辑
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>            <span style=color:#177500>// 1、通过请求流获取请求服务调用的参数
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>            <span style=color:#000>InputStream</span> <span style=color:#000>inputStream</span> <span style=color:#000>=</span> <span style=color:#000>req</span><span style=color:#000>.</span><span style=color:#836c28>getInputStream</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>ObjectInputStream</span> <span style=color:#000>objectInputStream</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>ObjectInputStream</span><span style=color:#000>(</span><span style=color:#000>inputStream</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>Invocation</span> <span style=color:#000>invocation</span> <span style=color:#000>=</span> <span style=color:#000>(</span><span style=color:#000>Invocation</span><span style=color:#000>)</span> <span style=color:#000>objectInputStream</span><span style=color:#000>.</span><span style=color:#836c28>readObject</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>// 2、从注册中心获取服务的列表
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>            <span style=color:#000>Class</span> <span style=color:#000>implClass</span> <span style=color:#000>=</span> <span style=color:#000>NativeRegistry</span><span style=color:#000>.</span><span style=color:#836c28>get</span><span style=color:#000>(</span><span style=color:#000>invocation</span><span style=color:#000>.</span><span style=color:#836c28>getInterfaceName</span><span style=color:#000>(),</span> <span style=color:#a90d91>new</span> <span style=color:#000>URL</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;localhost&#34;</span><span style=color:#000>,</span> <span style=color:#000>8080</span><span style=color:#000>));</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>// 3、调用服务 反射
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>            <span style=color:#000>Method</span> <span style=color:#000>method</span> <span style=color:#000>=</span> <span style=color:#000>implClass</span><span style=color:#000>.</span><span style=color:#836c28>getMethod</span><span style=color:#000>(</span><span style=color:#000>invocation</span><span style=color:#000>.</span><span style=color:#836c28>getMethodName</span><span style=color:#000>(),</span> <span style=color:#000>invocation</span><span style=color:#000>.</span><span style=color:#836c28>getParamTypes</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>String</span> <span style=color:#000>result</span> <span style=color:#000>=</span> <span style=color:#000>(</span><span style=color:#000>String</span><span style=color:#000>)</span> <span style=color:#000>method</span><span style=color:#000>.</span><span style=color:#836c28>invoke</span><span style=color:#000>(</span><span style=color:#000>implClass</span><span style=color:#000>.</span><span style=color:#836c28>newInstance</span><span style=color:#000>(),</span> <span style=color:#000>invocation</span><span style=color:#000>.</span><span style=color:#836c28>getParams</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>            <span style=color:#177500>// 4、结果返回
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>            <span style=color:#177500>// IOUtils在commons-io包中
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>            <span style=color:#000>IOUtils</span><span style=color:#000>.</span><span style=color:#836c28>write</span><span style=color:#000>(</span><span style=color:#000>result</span><span style=color:#000>,</span> <span style=color:#000>resp</span><span style=color:#000>.</span><span style=color:#836c28>getOutputStream</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span> <span style=color:#a90d91>catch</span> <span style=color:#000>(</span><span style=color:#000>IOException</span> <span style=color:#000>e</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>e</span><span style=color:#000>.</span><span style=color:#836c28>printStackTrace</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span> <span style=color:#a90d91>catch</span> <span style=color:#000>(</span><span style=color:#000>ClassNotFoundException</span> <span style=color:#000>e</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>e</span><span style=color:#000>.</span><span style=color:#836c28>printStackTrace</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span> <span style=color:#a90d91>catch</span> <span style=color:#000>(</span><span style=color:#000>NoSuchMethodException</span> <span style=color:#000>e</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>e</span><span style=color:#000>.</span><span style=color:#836c28>printStackTrace</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span> <span style=color:#a90d91>catch</span> <span style=color:#000>(</span><span style=color:#000>IllegalAccessException</span> <span style=color:#000>e</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>e</span><span style=color:#000>.</span><span style=color:#836c28>printStackTrace</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span> <span style=color:#a90d91>catch</span> <span style=color:#000>(</span><span style=color:#000>InstantiationException</span> <span style=color:#000>e</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>e</span><span style=color:#000>.</span><span style=color:#836c28>printStackTrace</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span> <span style=color:#a90d91>catch</span> <span style=color:#000>(</span><span style=color:#000>InvocationTargetException</span> <span style=color:#000>e</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>            <span style=color:#000>e</span><span style=color:#000>.</span><span style=color:#836c28>printStackTrace</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><p>Invocation<style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.pojo</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>lombok.Data</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.Serializable</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#000>@Data</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>Invocation</span> <span style=color:#a90d91>implements</span> <span style=color:#000>Serializable</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>private</span> <span style=color:#000>String</span> <span style=color:#000>interfaceName</span><span style=color:#000>;</span> <span style=color:#177500>//接口名
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>    <span style=color:#a90d91>private</span> <span style=color:#000>String</span> <span style=color:#000>methodName</span><span style=color:#000>;</span> <span style=color:#177500>// 方法名
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>    <span style=color:#a90d91>private</span> <span style=color:#000>Object</span><span style=color:#000>[]</span> <span style=color:#000>params</span><span style=color:#000>;</span>  <span style=color:#177500>// 参数值列表
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>    <span style=color:#a90d91>private</span> <span style=color:#000>Class</span><span style=color:#000>[]</span> <span style=color:#000>paramTypes</span><span style=color:#000>;</span> <span style=color:#177500>// 参数类型定列表
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>    <span style=color:#a90d91>public</span> <span style=color:#000>Invocation</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>interfaceName</span><span style=color:#000>,</span> <span style=color:#000>String</span> <span style=color:#000>methodName</span><span style=color:#000>,</span> <span style=color:#000>Object</span><span style=color:#000>[]</span> <span style=color:#000>params</span><span style=color:#000>,</span> <span style=color:#000>Class</span><span style=color:#000>[]</span> <span style=color:#000>paramTypes</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>this</span><span style=color:#000>.</span><span style=color:#836c28>interfaceName</span> <span style=color:#000>=</span> <span style=color:#000>interfaceName</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>this</span><span style=color:#000>.</span><span style=color:#836c28>methodName</span> <span style=color:#000>=</span> <span style=color:#000>methodName</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>this</span><span style=color:#000>.</span><span style=color:#836c28>params</span> <span style=color:#000>=</span> <span style=color:#000>params</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>this</span><span style=color:#000>.</span><span style=color:#836c28>paramTypes</span> <span style=color:#000>=</span> <span style=color:#000>paramTypes</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div></p><h2 id=客户端-1>客户端</h2><h3 id=httpclient>HttpClient</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.client</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.pojo.Invocation</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.commons.io.IOUtils</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.IOException</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.InputStream</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.ObjectOutputStream</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.OutputStream</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.net.HttpURLConnection</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.net.URL</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>HttpClient</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#000>String</span> <span style=color:#000>post</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>hostName</span><span style=color:#000>,</span> <span style=color:#a90d91>int</span> <span style=color:#000>port</span><span style=color:#000>,</span> <span style=color:#000>Invocation</span> <span style=color:#000>invocation</span><span style=color:#000>)</span> <span style=color:#a90d91>throws</span> <span style=color:#000>IOException</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 1. 进行连接
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>URL</span> <span style=color:#000>url</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>URL</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;http&#34;</span><span style=color:#000>,</span> <span style=color:#000>hostName</span><span style=color:#000>,</span> <span style=color:#000>port</span><span style=color:#000>,</span> <span style=color:#c41a16>&#34;/client&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>HttpURLConnection</span> <span style=color:#000>urlConnection</span> <span style=color:#000>=</span> <span style=color:#000>(</span><span style=color:#000>HttpURLConnection</span><span style=color:#000>)</span> <span style=color:#000>url</span><span style=color:#000>.</span><span style=color:#836c28>openConnection</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>urlConnection</span><span style=color:#000>.</span><span style=color:#836c28>setRequestMethod</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;POST&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>urlConnection</span><span style=color:#000>.</span><span style=color:#836c28>setDoOutput</span><span style=color:#000>(</span><span style=color:#a90d91>true</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 2. 发送调用信息
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>OutputStream</span> <span style=color:#000>outputStream</span> <span style=color:#000>=</span> <span style=color:#000>urlConnection</span><span style=color:#000>.</span><span style=color:#836c28>getOutputStream</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>ObjectOutputStream</span> <span style=color:#000>objectOutputStream</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>ObjectOutputStream</span><span style=color:#000>(</span><span style=color:#000>outputStream</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>objectOutputStream</span><span style=color:#000>.</span><span style=color:#836c28>writeObject</span><span style=color:#000>(</span><span style=color:#000>invocation</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>objectOutputStream</span><span style=color:#000>.</span><span style=color:#836c28>flush</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>objectOutputStream</span><span style=color:#000>.</span><span style=color:#836c28>close</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 3. 将输入流转换成字符串，获取远程调用的结果
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>InputStream</span> <span style=color:#000>inputStream</span> <span style=color:#000>=</span> <span style=color:#000>urlConnection</span><span style=color:#000>.</span><span style=color:#836c28>getInputStream</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>return</span> <span style=color:#000>IOUtils</span><span style=color:#000>.</span><span style=color:#836c28>toString</span><span style=color:#000>(</span><span style=color:#000>inputStream</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><p>Invocation和HelloService同服务端</p><h3 id=clientstart>ClientStart</h3><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.client.HttpClient</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.pojo.Invocation</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.service.HelloService</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>ClientStart</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>static</span> <span style=color:#a90d91>void</span> <span style=color:#000>main</span><span style=color:#000>(</span><span style=color:#000>String</span><span style=color:#000>[]</span> <span style=color:#000>args</span><span style=color:#000>)</span> <span style=color:#a90d91>throws</span> <span style=color:#000>Exception</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>Invocation</span> <span style=color:#000>invocation</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>Invocation</span><span style=color:#000>(</span><span style=color:#000>HelloService</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>.</span><span style=color:#836c28>getName</span><span style=color:#000>(),</span> <span style=color:#c41a16>&#34;sayHello&#34;</span><span style=color:#000>,</span>
+</span></span><span style=display:flex><span>                <span style=color:#a90d91>new</span> <span style=color:#000>Object</span><span style=color:#000>[]{</span><span style=color:#c41a16>&#34;this is RPC client&#34;</span><span style=color:#000>},</span> <span style=color:#a90d91>new</span> <span style=color:#000>Class</span><span style=color:#000>[]{</span><span style=color:#000>String</span><span style=color:#000>.</span><span style=color:#836c28>class</span><span style=color:#000>});</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>HttpClient</span> <span style=color:#000>httpClient</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>HttpClient</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>String</span> <span style=color:#000>result</span> <span style=color:#000>=</span> <span style=color:#000>httpClient</span><span style=color:#000>.</span><span style=color:#836c28>post</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;localhost&#34;</span><span style=color:#000>,</span> <span style=color:#000>8080</span><span style=color:#000>,</span> <span style=color:#000>invocation</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>System</span><span style=color:#000>.</span><span style=color:#836c28>out</span><span style=color:#000>.</span><span style=color:#836c28>println</span><span style=color:#000>(</span><span style=color:#000>result</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></div><h2 id=客户端改进版>客户端改进版</h2><p>客户端使用反射，模拟真实调用场景，将http请求代理一下</p><h3 id=httpclient-1>HttpClient</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.client</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.lang.reflect.Proxy</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.util.concurrent.ExecutorService</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.util.concurrent.Executors</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>HttpClient</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#177500>//创建线程池
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>    <span style=color:#a90d91>private</span> <span style=color:#a90d91>static</span> <span style=color:#000>ExecutorService</span> <span style=color:#000>executor</span> <span style=color:#000>=</span> <span style=color:#000>Executors</span><span style=color:#000>.</span><span style=color:#836c28>newFixedThreadPool</span><span style=color:#000>(</span><span style=color:#000>Runtime</span><span style=color:#000>.</span><span style=color:#836c28>getRuntime</span><span style=color:#000>().</span><span style=color:#836c28>availableProcessors</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#000>Object</span> <span style=color:#000>getBean</span><span style=color:#000>(</span><span style=color:#a90d91>final</span> <span style=color:#000>Class</span><span style=color:#000>&lt;?&gt;</span> <span style=color:#000>serivceClass</span><span style=color:#000>)</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>return</span> <span style=color:#000>Proxy</span><span style=color:#000>.</span><span style=color:#836c28>newProxyInstance</span><span style=color:#000>(</span><span style=color:#000>Thread</span><span style=color:#000>.</span><span style=color:#836c28>currentThread</span><span style=color:#000>().</span><span style=color:#836c28>getContextClassLoader</span><span style=color:#000>(),</span>
+</span></span><span style=display:flex><span>                <span style=color:#a90d91>new</span> <span style=color:#000>Class</span><span style=color:#000>&lt;?&gt;[]{</span><span style=color:#000>serivceClass</span><span style=color:#000>},</span> <span style=color:#000>(</span><span style=color:#000>proxy</span><span style=color:#000>,</span> <span style=color:#000>method</span><span style=color:#000>,</span> <span style=color:#000>args</span><span style=color:#000>)</span> <span style=color:#000>-&gt;</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>HttpHandler</span> <span style=color:#000>httpHandler</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>HttpHandler</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>httpHandler</span><span style=color:#000>.</span><span style=color:#836c28>setClassName</span><span style=color:#000>(</span><span style=color:#000>serivceClass</span><span style=color:#000>.</span><span style=color:#836c28>getName</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>httpHandler</span><span style=color:#000>.</span><span style=color:#836c28>setMethodName</span><span style=color:#000>(</span><span style=color:#000>method</span><span style=color:#000>.</span><span style=color:#836c28>getName</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>httpHandler</span><span style=color:#000>.</span><span style=color:#836c28>setParamTypes</span><span style=color:#000>(</span><span style=color:#000>method</span><span style=color:#000>.</span><span style=color:#836c28>getParameterTypes</span><span style=color:#000>());</span>
+</span></span><span style=display:flex><span>                    <span style=color:#000>httpHandler</span><span style=color:#000>.</span><span style=color:#836c28>setParamValues</span><span style=color:#000>(</span><span style=color:#000>args</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>                    <span style=color:#177500>//设置要发给服务器端的信息
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>                    <span style=color:#177500>//providerName 协议头 args[0] 就是客户端调用api sayHello(???), 参数
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>                    <span style=color:#a90d91>return</span> <span style=color:#000>executor</span><span style=color:#000>.</span><span style=color:#836c28>submit</span><span style=color:#000>(</span><span style=color:#000>httpHandler</span><span style=color:#000>).</span><span style=color:#836c28>get</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>                <span style=color:#000>});</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h3 id=httphandler>HttpHandler</h3><style>.highlight{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:130%}.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}</style><details class=code-collapse><summary>Expand/Collapse Code Block</summary><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">12
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">13
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">14
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">15
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">16
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">17
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">18
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">19
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">20
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">21
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">22
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">23
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">24
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">25
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">26
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">27
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">28
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">29
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">30
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">31
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">32
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">33
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">34
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">35
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">36
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">37
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">38
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">39
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a90d91>package</span> <span style=color:#000>com.ripple.client</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>com.ripple.pojo.Invocation</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>lombok.Data</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>org.apache.commons.io.IOUtils</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.IOException</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.InputStream</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.ObjectOutputStream</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.io.OutputStream</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.net.HttpURLConnection</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.net.URL</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>import</span> <span style=color:#000>java.util.concurrent.Callable</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span><span style=color:#000>@Data</span>
+</span></span><span style=display:flex><span><span style=color:#a90d91>public</span> <span style=color:#a90d91>class</span> <span style=color:#3f6e75>HttpHandler</span> <span style=color:#a90d91>implements</span> <span style=color:#000>Callable</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>private</span> <span style=color:#000>String</span> <span style=color:#000>className</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>private</span> <span style=color:#000>String</span> <span style=color:#000>methodName</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>private</span> <span style=color:#000>Object</span><span style=color:#000>[]</span> <span style=color:#000>paramValues</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>private</span> <span style=color:#000>Class</span><span style=color:#000>[]</span> <span style=color:#000>paramTypes</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#000>String</span> <span style=color:#000>post</span><span style=color:#000>(</span><span style=color:#000>String</span> <span style=color:#000>hostName</span><span style=color:#000>,</span> <span style=color:#a90d91>int</span> <span style=color:#000>port</span><span style=color:#000>)</span> <span style=color:#a90d91>throws</span> <span style=color:#000>IOException</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 1. 进行连接
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>URL</span> <span style=color:#000>url</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>URL</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;http&#34;</span><span style=color:#000>,</span> <span style=color:#000>hostName</span><span style=color:#000>,</span> <span style=color:#000>port</span><span style=color:#000>,</span> <span style=color:#c41a16>&#34;/client&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>HttpURLConnection</span> <span style=color:#000>urlConnection</span> <span style=color:#000>=</span> <span style=color:#000>(</span><span style=color:#000>HttpURLConnection</span><span style=color:#000>)</span> <span style=color:#000>url</span><span style=color:#000>.</span><span style=color:#836c28>openConnection</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>urlConnection</span><span style=color:#000>.</span><span style=color:#836c28>setRequestMethod</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;POST&#34;</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>urlConnection</span><span style=color:#000>.</span><span style=color:#836c28>setDoOutput</span><span style=color:#000>(</span><span style=color:#a90d91>true</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 2. 发送调用信息
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>OutputStream</span> <span style=color:#000>outputStream</span> <span style=color:#000>=</span> <span style=color:#000>urlConnection</span><span style=color:#000>.</span><span style=color:#836c28>getOutputStream</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>ObjectOutputStream</span> <span style=color:#000>objectOutputStream</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>ObjectOutputStream</span><span style=color:#000>(</span><span style=color:#000>outputStream</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>Invocation</span> <span style=color:#000>invocation</span> <span style=color:#000>=</span> <span style=color:#a90d91>new</span> <span style=color:#000>Invocation</span><span style=color:#000>(</span><span style=color:#000>className</span><span style=color:#000>,</span> <span style=color:#000>methodName</span><span style=color:#000>,</span> <span style=color:#000>paramValues</span><span style=color:#000>,</span> <span style=color:#000>paramTypes</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>objectOutputStream</span><span style=color:#000>.</span><span style=color:#836c28>writeObject</span><span style=color:#000>(</span><span style=color:#000>invocation</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>objectOutputStream</span><span style=color:#000>.</span><span style=color:#836c28>flush</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>objectOutputStream</span><span style=color:#000>.</span><span style=color:#836c28>close</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#177500>// 3. 将输入流转换成字符串，获取远程调用的结果
+</span></span></span><span style=display:flex><span><span style=color:#177500></span>        <span style=color:#000>InputStream</span> <span style=color:#000>inputStream</span> <span style=color:#000>=</span> <span style=color:#000>urlConnection</span><span style=color:#000>.</span><span style=color:#836c28>getInputStream</span><span style=color:#000>();</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>return</span> <span style=color:#000>IOUtils</span><span style=color:#000>.</span><span style=color:#836c28>toString</span><span style=color:#000>(</span><span style=color:#000>inputStream</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span>    <span style=color:#a90d91>public</span> <span style=color:#a90d91>synchronized</span> <span style=color:#000>Object</span> <span style=color:#000>call</span><span style=color:#000>()</span> <span style=color:#a90d91>throws</span> <span style=color:#000>Exception</span> <span style=color:#000>{</span>
+</span></span><span style=display:flex><span>        <span style=color:#000>String</span> <span style=color:#000>result</span> <span style=color:#000>=</span> <span style=color:#000>post</span><span style=color:#000>(</span><span style=color:#c41a16>&#34;localhost&#34;</span><span style=color:#000>,</span> <span style=color:#000>8080</span><span style=color:#000>);</span>
+</span></span><span style=display:flex><span>        <span style=color:#a90d91>return</span> <span style=color:#000>result</span><span style=color:#000>;</span>
+</span></span><span style=display:flex><span>    <span style=color:#000>}</span>
+</span></span><span style=display:flex><span><span style=color:#000>}</span>
+</span></span></code></pre></td></tr></table></div></div></details><br><h3 id=clientstart-1>ClientStart</h3><style>.td-content .highlight{margin-top:.5rem;margin-bottom:.5rem}.code-collapse1{overflow-y:auto;max-height:500px;overflow-x:auto;max-width:100%}</style><div class=code-collapse1><div class=highlight><div style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><table style=border-spacing:0;padding:0;margin:0;border:0><tr><td style=vertical-align:top;padding:0;margin:0;border:0><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 1
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 2
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 3
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 4
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 5
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 6
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 7
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 8
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f"> 9
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">10
+</span><span style="white-space:pre;user-select:none;margin-right:.4em;padding:0 .4em;color:#7f7f7f">11
+</span></code></pre></td><td style=vertical-align:top;padding:0;margin:0;border:0;width:100%><pre tabindex=0 style=background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2><code class=language-plain data-lang=plain><span style=display:flex><span>package com.ripple;
+</span></span><span style=display:flex><span>import com.ripple.client.HttpClient;
+</span></span><span style=display:flex><span>import com.ripple.service.HelloService;
+</span></span><span style=display:flex><span>public class ClientStart {
+</span></span><span style=display:flex><span>    public static void main(String[] args) throws Exception {
+</span></span><span style=display:flex><span>        HttpClient httpClient = new HttpClient();
+</span></span><span style=display:flex><span>        HelloService helloService = (HelloService) httpClient.getBean(HelloService.class);
+</span></span><span style=display:flex><span>        String result = helloService.sayHello(&#34;this is RPC~~~~~&#34;);
+</span></span><span style=display:flex><span>        System.out.println(result);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></td></tr></table></div></div></div></div></main></div></div><footer class="bg-dark py-5 row d-print-none"><div class="container-fluid mx-sm-5"><div class=row><div class="col-6 col-sm-4 text-xs-center order-sm-2"></div><div class="col-6 col-sm-4 text-right text-xs-center order-sm-3"></div><div class="col-12 col-sm-4 text-center py-2 order-sm-2"><small class=text-white>&copy; 2023 The Herb 保留所有权利</small>
+<small class=ml-1><a href=# target=_blank rel=noopener>隐私政策</a></small><p class=mt-2><a href=/about/>Herbdocs</a></p></div></div></div></footer></div><script src=https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js integrity=sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN crossorigin=anonymous></script>
+<script src=https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.min.js integrity="sha512-UR25UO94eTnCVwjbXozyeVd6ZqpaAE9naiEUBK/A+QDbfSTQFhPGj5lOR6d8tsgbBk84Ggb5A3EkjsOgPRPcKA==" crossorigin=anonymous></script>
+<script src=/js/tabpane-persist.js></script>
+<script src=/js/main.min.91798a335c881f1b6b805085ba4aa22d1dbd2b0b18d105d05189fa104ddae350.js integrity="sha256-kXmKM1yIHxtrgFCFukqiLR29KwsY0QXQUYn6EE3a41A=" crossorigin=anonymous></script></body></html>

@@ -1,0 +1,926 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – Python</title><link>/docs/23.Python/</link><description>Recent content in Python on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/docs/23.Python/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: pydemo</title><link>/docs/23.Python/pydemo/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/23.Python/pydemo/</guid><description>
+&lt;h1 id="语法">语法&lt;/h1>
+&lt;h2 id="路径">路径&lt;/h2>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">os&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">getcwd&lt;/span>())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">os&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">path&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">abspath&lt;/span>(&lt;span style="color:#000">os&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">path&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">dirname&lt;/span>(&lt;span style="color:#000">__file__&lt;/span>))) 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 版本判断&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">sys&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">if&lt;/span> ((&lt;span style="color:#1c01ce">3&lt;/span>, &lt;span style="color:#1c01ce">0&lt;/span>) &lt;span style="color:#000">&amp;lt;=&lt;/span> &lt;span style="color:#000">sys&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">version_info&lt;/span> &lt;span style="color:#000">&amp;lt;=&lt;/span> (&lt;span style="color:#1c01ce">3&lt;/span>, &lt;span style="color:#1c01ce">9&lt;/span>)):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">from&lt;/span> &lt;span style="color:#000">urllib.parse&lt;/span> &lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">urlparse&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">elif&lt;/span> ((&lt;span style="color:#1c01ce">2&lt;/span>, &lt;span style="color:#1c01ce">0&lt;/span>) &lt;span style="color:#000">&amp;lt;=&lt;/span> &lt;span style="color:#000">sys&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">version_info&lt;/span> &lt;span style="color:#000">&amp;lt;=&lt;/span> (&lt;span style="color:#1c01ce">2&lt;/span>, &lt;span style="color:#1c01ce">9&lt;/span>)):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">from&lt;/span> &lt;span style="color:#000">urlparse&lt;/span> &lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">urlparse&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 去除空邮箱&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">mail_box_list&lt;/span> &lt;span style="color:#000">=&lt;/span> [&lt;span style="color:#000">_&lt;/span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">_&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#000">mail_box_list&lt;/span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">_&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">from&lt;/span> &lt;span style="color:#000">datetime&lt;/span> &lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">date&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">today&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">date&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">today&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 判断是否为周二或周五&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">today&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">weekday&lt;/span>() &lt;span style="color:#000">in&lt;/span> [&lt;span style="color:#1c01ce">1&lt;/span>, &lt;span style="color:#1c01ce">4&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">invoice_process_dict&lt;/span> &lt;span style="color:#000">=&lt;/span> {&lt;span style="color:#000">process&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">id&lt;/span>: &lt;span style="color:#000">process&lt;/span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">process&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#000">process_list&lt;/span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">result&lt;/span> &lt;span style="color:#000">=&lt;/span> [&lt;span style="color:#000">invoice&lt;/span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">invoice&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#000">invoice_list&lt;/span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">is_switch_open&lt;/span>(&lt;span style="color:#000">inv&lt;/span>)]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">index&lt;/span>, &lt;span style="color:#000">item&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#a90d91">enumerate&lt;/span>(&lt;span style="color:#000">l&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">list_partition&lt;/span>(&lt;span style="color:#000">ls&lt;/span>, &lt;span style="color:#000">size&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#c41a16">&amp;#34;&amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#c41a16"> 列表等分
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#c41a16"> :param ls:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#c41a16"> :param size:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#c41a16"> :return:
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#c41a16"> &amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> [&lt;span style="color:#000">ls&lt;/span>[&lt;span style="color:#000">i&lt;/span>:&lt;span style="color:#000">i&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">size&lt;/span>] &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">i&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#a90d91">range&lt;/span>(&lt;span style="color:#1c01ce">0&lt;/span>, &lt;span style="color:#a90d91">len&lt;/span>(&lt;span style="color:#000">ls&lt;/span>), &lt;span style="color:#000">size&lt;/span>)]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h2 id="format">format&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">table_template&lt;/span> &lt;span style="color:#000">=&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#c41a16">&amp;#34;&amp;#34;&amp;#34;&amp;lt;td&amp;gt;&lt;/span>&lt;span style="color:#c41a16">{invoice_serial}&lt;/span>&lt;span style="color:#c41a16">&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;&lt;/span>&lt;span style="color:#c41a16">{should_pay_date}&lt;/span>&lt;span style="color:#c41a16">&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;&lt;/span>&lt;span style="color:#c41a16">{over_due_day}&lt;/span>&lt;span style="color:#c41a16">&amp;lt;/td&amp;gt;&amp;lt;/tr&amp;gt;&amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">table_content&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">table_template&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">format&lt;/span>(&lt;span style="color:#000">invoice_serial&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">invoice_serial&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">should_pay_date&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">should_pay_date&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">over_due_day&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">should_pay_date&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 打印{}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">operate_detail_info&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#c41a16">&amp;#34;account催款联系人邮箱:{{&lt;/span>&lt;span style="color:#c41a16">{}&lt;/span>&lt;span style="color:#c41a16">}} &amp;gt; {{&lt;/span>&lt;span style="color:#c41a16">{}&lt;/span>&lt;span style="color:#c41a16">}}&amp;#34;&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">format&lt;/span>(&lt;span style="color:#000">old_value&lt;/span>, &lt;span style="color:#000">new_value&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="去除英式符号">去除英式符号&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">string&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">remove_punctuation&lt;/span>(&lt;span style="color:#5b269a">self&lt;/span>, &lt;span style="color:#000">stri&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">punctuation_string&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">string&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">punctuation&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">s&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#000">punctuation_string&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">stri&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">stri&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">replace&lt;/span>(&lt;span style="color:#000">s&lt;/span>, &lt;span style="color:#c41a16">&amp;#39;&amp;#39;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">stri&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="groupby">groupby&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">from&lt;/span> &lt;span style="color:#000">itertools&lt;/span> &lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">groupby&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">group_by&lt;/span>(&lt;span style="color:#000">item_list&lt;/span>, &lt;span style="color:#000">key_func&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> {&lt;span style="color:#000">key&lt;/span>: &lt;span style="color:#a90d91">list&lt;/span>(&lt;span style="color:#000">val&lt;/span>) &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">key&lt;/span>, &lt;span style="color:#000">val&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#000">groupby&lt;/span>(&lt;span style="color:#000">item_list&lt;/span>, &lt;span style="color:#000">key&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">key_func&lt;/span>)}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">item_list2&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">None&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">item_dict2&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">group_by&lt;/span>(&lt;span style="color:#000">item_list2&lt;/span>, &lt;span style="color:#000">key_func&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#a90d91">lambda&lt;/span> &lt;span style="color:#000">key&lt;/span>: &lt;span style="color:#000">key&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">id&lt;/span>) &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">item_list2&lt;/span> &lt;span style="color:#a90d91">else&lt;/span> {} &lt;span style="color:#177500"># item_dict2={}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">item_dict2&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="split-list">split_list&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">recon_id_list&lt;/span> &lt;span style="color:#000">=&lt;/span> [&lt;span style="color:#1c01ce">1&lt;/span>, &lt;span style="color:#1c01ce">2&lt;/span>, &lt;span style="color:#1c01ce">3&lt;/span>, &lt;span style="color:#1c01ce">4&lt;/span>, &lt;span style="color:#1c01ce">5&lt;/span>, &lt;span style="color:#1c01ce">6&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">loop_num&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#1c01ce">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">split_list&lt;/span> &lt;span style="color:#000">=&lt;/span> [&lt;span style="color:#000">recon_id_list&lt;/span>[&lt;span style="color:#000">i&lt;/span>:&lt;span style="color:#000">i&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">loop_num&lt;/span>] &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">i&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#a90d91">range&lt;/span>(&lt;span style="color:#1c01ce">0&lt;/span>, &lt;span style="color:#a90d91">len&lt;/span>(&lt;span style="color:#000">recon_id_list&lt;/span>), &lt;span style="color:#000">loop_num&lt;/span>)]
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="date日期">date日期&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">from&lt;/span> &lt;span style="color:#000">datetime&lt;/span> &lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">date&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">datetime&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># date日期，2020-12-08&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">today&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">date&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">today&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">today&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">year&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">today&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">month&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">today&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">day&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">tomorrow&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">today&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">timedelta&lt;/span>(&lt;span style="color:#000">days&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#1c01ce">1&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 自定义日期&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">mydate&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">date&lt;/span>(&lt;span style="color:#1c01ce">2020&lt;/span>,&lt;span style="color:#1c01ce">12&lt;/span>,&lt;span style="color:#1c01ce">15&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 计算相隔天数&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">diff&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">str&lt;/span>((&lt;span style="color:#000">date&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">today&lt;/span>() &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">mydate&lt;/span>)&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">days&lt;/span>) &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">mydate&lt;/span> &lt;span style="color:#a90d91">else&lt;/span> &lt;span style="color:#a90d91">None&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># date转datetime&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">today_time&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">combine&lt;/span>(&lt;span style="color:#000">today&lt;/span>, &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">min&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">time&lt;/span>())
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">utc_now_date&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">utcnow&lt;/span>()&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">date&lt;/span>()
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="datetime时间">datetime时间&lt;/h2>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># datetime时间&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">now_time&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">now&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 自定义时间格式化字符串&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">time_format_str&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">now_time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">strftime&lt;/span>(&lt;span style="color:#c41a16">&amp;#34;%Y-%m-&lt;/span>&lt;span style="color:#c41a16">%d&lt;/span>&lt;span style="color:#c41a16"> %H:%M:%S&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">#自定义制定时间&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">now_time&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">datetime&lt;/span>(&lt;span style="color:#1c01ce">2020&lt;/span>, &lt;span style="color:#1c01ce">10&lt;/span>, &lt;span style="color:#1c01ce">15&lt;/span>, &lt;span style="color:#1c01ce">12&lt;/span>, &lt;span style="color:#1c01ce">32&lt;/span>, &lt;span style="color:#1c01ce">40&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">#字符串转日期&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">s&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#c41a16">&amp;#34;2020-08-05 2:30:20&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">t&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">strptime&lt;/span>(&lt;span style="color:#000">s&lt;/span>, &lt;span style="color:#c41a16">&amp;#34;%Y-%m-&lt;/span>&lt;span style="color:#c41a16">%d&lt;/span>&lt;span style="color:#c41a16"> %H:%M:%S&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">t&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">year&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">t&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">month&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">t&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">day&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">combine&lt;/span>(&lt;span style="color:#000">should_pay_date&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">timedelta&lt;/span>(&lt;span style="color:#000">days&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#1c01ce">1&lt;/span>), &lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">min&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 前一天时间&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">yesterday_time&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">now_time&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">timedelta&lt;/span>(&lt;span style="color:#000">days&lt;/span>&lt;span style="color:#000">=-&lt;/span>&lt;span style="color:#1c01ce">1&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># datetime转date&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">t_date&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">t&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">date&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># utc时间转当前时区&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">datetime_from_utc_to_local&lt;/span>(&lt;span style="color:#000">utc_datetime&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">now_timestamp&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">time&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">offset&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">fromtimestamp&lt;/span>(&lt;span style="color:#000">now_timestamp&lt;/span>) &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">utcfromtimestamp&lt;/span>(&lt;span style="color:#000">now_timestamp&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500"># print(offset)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">utc_datetime&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">offset&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># time_zone = 8&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">local_date&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">time_start&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">timedelta&lt;/span>(&lt;span style="color:#000">hours&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#a90d91">float&lt;/span>(&lt;span style="color:#000">time_zone&lt;/span>))
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># python2 datetime转时间戳&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">now_time&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">datetime&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">utcnow&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># print(time.time()) 当前时区的时间，差8小时&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">time_stramp&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">long&lt;/span>(&lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">mktime&lt;/span>(&lt;span style="color:#000">now_time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">timetuple&lt;/span>()))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h2 id="去除全角半角">去除全角半角&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">full2half&lt;/span>(&lt;span style="color:#000">s&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">n&lt;/span> &lt;span style="color:#000">=&lt;/span> []
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">char&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#000">s&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">num&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">ord&lt;/span>(&lt;span style="color:#000">char&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">num&lt;/span> &lt;span style="color:#000">==&lt;/span> &lt;span style="color:#1c01ce">0x3000&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">num&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#1c01ce">32&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">elif&lt;/span> &lt;span style="color:#1c01ce">0xFF01&lt;/span> &lt;span style="color:#000">&amp;lt;=&lt;/span> &lt;span style="color:#000">num&lt;/span> &lt;span style="color:#000">&amp;lt;=&lt;/span> &lt;span style="color:#1c01ce">0xFF5E&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">num&lt;/span> &lt;span style="color:#000">-=&lt;/span> &lt;span style="color:#1c01ce">0xfee0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">num&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">unichr&lt;/span>(&lt;span style="color:#000">num&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">n&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">append&lt;/span>(&lt;span style="color:#000">num&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#c41a16">&amp;#39;&amp;#39;&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">join&lt;/span>(&lt;span style="color:#000">n&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">clear_format&lt;/span>(&lt;span style="color:#000">input_str&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">full2half&lt;/span>(&lt;span style="color:#a90d91">str&lt;/span>(&lt;span style="color:#000">input_str&lt;/span>))&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">replace&lt;/span>(&lt;span style="color:#c41a16">u&lt;/span>&lt;span style="color:#c41a16">&amp;#39; &amp;#39;&lt;/span>, &lt;span style="color:#c41a16">u&lt;/span>&lt;span style="color:#c41a16">&amp;#39;&amp;#39;&lt;/span>)&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">lower&lt;/span>()
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="populate-obj">populate_obj&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span># o1-old o2-new
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>def populate_obj(o1, o2, ignore_attr_names=None):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> attr_list = vars(o1).keys()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> for attr in attr_list:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> if attr.startswith(&amp;#39;_&amp;#39;):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> continue
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> if ignore_attr_names and attr in ignore_attr_names:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> continue
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> if hasattr(o2, attr):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> setattr(o2, attr, getattr(o1, attr))
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h1 id="使用excel">使用excel&lt;/h1>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">python&lt;/span> &lt;span style="color:#000">xlrd读取excel&lt;/span>&lt;span style="color:#000">，&lt;/span>&lt;span style="color:#000">ctype&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">sheet1&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">cell&lt;/span>(&lt;span style="color:#000">i&lt;/span>,&lt;span style="color:#000">j&lt;/span>)&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">ctype&lt;/span>&lt;span style="color:#000">，&lt;/span>&lt;span style="color:#000">有以下几种类型&lt;/span>&lt;span style="color:#000">：&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">0&lt;/span> &lt;span style="color:#000">–&lt;/span> &lt;span style="color:#000">empty&lt;/span>&lt;span style="color:#000">：&lt;/span>&lt;span style="color:#000">空&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">1&lt;/span> &lt;span style="color:#000">–&lt;/span> &lt;span style="color:#000">string&lt;/span>&lt;span style="color:#000">：&lt;/span>&lt;span style="color:#000">字符串&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">2&lt;/span> &lt;span style="color:#000">–&lt;/span> &lt;span style="color:#000">number&lt;/span>&lt;span style="color:#000">：&lt;/span>&lt;span style="color:#000">数字&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">3&lt;/span> &lt;span style="color:#000">–&lt;/span> &lt;span style="color:#000">date&lt;/span>&lt;span style="color:#000">：&lt;/span>&lt;span style="color:#000">日期&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">4&lt;/span> &lt;span style="color:#000">–&lt;/span> &lt;span style="color:#000">boolean&lt;/span>&lt;span style="color:#000">：&lt;/span>&lt;span style="color:#000">布尔&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#1c01ce">5&lt;/span> &lt;span style="color:#000">–&lt;/span> &lt;span style="color:#000">error&lt;/span> 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h1 id="打包">打包&lt;/h1>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">pyinstaller&lt;/span> &lt;span style="color:#000">-&lt;/span>&lt;span style="color:#000">F&lt;/span> &lt;span style="color:#000">-&lt;/span>&lt;span style="color:#000">w&lt;/span> &lt;span style="color:#000">roster&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">py&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">sudo&lt;/span> &lt;span style="color:#000">chmod&lt;/span> &lt;span style="color:#1c01ce">777&lt;/span> &lt;span style="color:#000">roster&lt;/span> 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h1 id="装饰器">装饰器&lt;/h1>
+&lt;p>参考：&lt;a href="https://zhuanlan.zhihu.com/p/45458873">https://zhuanlan.zhihu.com/p/45458873&lt;/a>&lt;/p>
+&lt;p>高阶函数：接受函数为入参，或者把函数作为结果返回的函数。后者称之为嵌套函数。&lt;/p>
+&lt;p>闭包：指延伸了作用域的函数，其中包含函数定义体中引用、但是不在定义体中定义的非全局变量。概念比较晦涩，简单来说就是嵌套函数引用了外层函数的变量。&lt;/p>
+&lt;h2 id="高阶函数">高阶函数&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">add&lt;/span>(&lt;span style="color:#000">a&lt;/span>, &lt;span style="color:#000">b&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">a&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">b&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 高阶函数&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">timer&lt;/span>(&lt;span style="color:#000">func&lt;/span>,&lt;span style="color:#000">*&lt;/span>&lt;span style="color:#000">args&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">start&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">time&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">func&lt;/span>(&lt;span style="color:#000">*&lt;/span>&lt;span style="color:#000">args&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">sleep&lt;/span>(&lt;span style="color:#1c01ce">2&lt;/span>) &lt;span style="color:#177500"># 模拟耗时操作&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">long&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">time&lt;/span>() &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">start&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">long&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">timer&lt;/span>(&lt;span style="color:#000">add&lt;/span>, &lt;span style="color:#1c01ce">1&lt;/span>, &lt;span style="color:#1c01ce">2&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="装饰器-1">装饰器&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">timer&lt;/span>(&lt;span style="color:#000">func&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">wrapper&lt;/span>(&lt;span style="color:#000">*&lt;/span>&lt;span style="color:#000">args&lt;/span>, &lt;span style="color:#000">**&lt;/span>&lt;span style="color:#000">kwargs&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">start&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">time&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">func&lt;/span>(&lt;span style="color:#000">*&lt;/span>&lt;span style="color:#000">args&lt;/span>, &lt;span style="color:#000">**&lt;/span>&lt;span style="color:#000">kwargs&lt;/span>) &lt;span style="color:#177500"># 此处拿到了被装饰的函数func&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">sleep&lt;/span>(&lt;span style="color:#1c01ce">2&lt;/span>) &lt;span style="color:#177500"># 模拟耗时操作&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">long&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">time&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">time&lt;/span>() &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">start&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">long&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">wrapper&lt;/span> &lt;span style="color:#177500">#返回内层函数的引用&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">@timer&lt;/span> &lt;span style="color:#177500"># @为语法糖，相当于timer(add)，如果time有多个，顺序靠前的在里面&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">add&lt;/span>(&lt;span style="color:#000">a&lt;/span>, &lt;span style="color:#000">b&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">a&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">b&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">add&lt;/span>(&lt;span style="color:#1c01ce">1&lt;/span>, &lt;span style="color:#1c01ce">2&lt;/span>) &lt;span style="color:#177500">#正常调用add&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>装饰器的加载到执行的流程：
+模块加载 -&amp;gt;&amp;gt; 遇到@，执行timer函数，传入add函数 -&amp;gt;&amp;gt; 生成timer.&lt;locals>.wrapper函数并命名为add，其实是覆盖了原同名函数 -&amp;gt;&amp;gt; 调用add(1, 2) -&amp;gt;&amp;gt; 去执行timer.&lt;locals>.wrapper(1, 2) -&amp;gt;&amp;gt; wrapper内部持有原add函数引用(func)，调用func(1, 2) -&amp;gt;&amp;gt;继续执行完wrapper函数&lt;/p>
+&lt;h2 id="带参数的装饰器">带参数的装饰器&lt;/h2>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">auth&lt;/span>(&lt;span style="color:#000">permission&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">_auth&lt;/span>(&lt;span style="color:#000">func&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500"># 注意这个functools.wraps的作用&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@functools&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">wraps&lt;/span>(&lt;span style="color:#000">func&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">wrapper&lt;/span>(&lt;span style="color:#000">*&lt;/span>&lt;span style="color:#000">args&lt;/span>, &lt;span style="color:#000">**&lt;/span>&lt;span style="color:#000">kwargs&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#c41a16">&amp;#34;auth = &amp;#34;&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">permission&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">func&lt;/span>(&lt;span style="color:#000">*&lt;/span>&lt;span style="color:#000">args&lt;/span>, &lt;span style="color:#000">**&lt;/span>&lt;span style="color:#000">kwargs&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#c41a16">&amp;#34;DONE...&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">wrapper&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">_auth&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">@auth&lt;/span>(&lt;span style="color:#c41a16">&amp;#34;ADD&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">add&lt;/span>(&lt;span style="color:#000">a&lt;/span>, &lt;span style="color:#000">b&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#c41a16">&amp;#34;&amp;#34;&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#c41a16"> SUM
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#c41a16"> &amp;#34;&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">a&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">b&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">add&lt;/span>(&lt;span style="color:#1c01ce">1&lt;/span>, &lt;span style="color:#1c01ce">2&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">add&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">add&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">__name__&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">add&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">__doc__&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;p>functools.wraps对我们的装饰器函数进行了装饰之后，add表面上看起来还是add。
+functools.wraps内部通过partial和update_wrapper对函数进行再加工，将原始被装饰函数(add)的属性拷贝给装饰器函数(wrapper)。&lt;/p>
+&lt;h1 id="functools">functools&lt;/h1>
+&lt;p>参考：&lt;a href="https://zhuanlan.zhihu.com/p/45535784">https://zhuanlan.zhihu.com/p/45535784&lt;/a>&lt;/p>
+&lt;h2 id="wraps">wraps&lt;/h2>
+&lt;p>同带参修饰器&lt;/p>
+&lt;h2 id="partial">partial&lt;/h2>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">functools&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">def&lt;/span> &lt;span style="color:#000">add&lt;/span>(&lt;span style="color:#000">a&lt;/span>, &lt;span style="color:#000">b&lt;/span>):
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">print&lt;/span>(&lt;span style="color:#000">a&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">b&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">add&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">functools&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">partial&lt;/span>(&lt;span style="color:#000">add&lt;/span>, &lt;span style="color:#1c01ce">1&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">add&lt;/span>(&lt;span style="color:#1c01ce">2&lt;/span>)
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>add函数原本接收两个参数a和b，经过partial包装之后，a参数的值被固定为了1，新的add对象（注意此处add已经是一个可调用对象，而非函数，下文分析源码会看到）只需要接收一个参数即可。
+通俗点说：&lt;strong>就是把原函数的部分参数固定了初始值，新的调用只需要传递其它参数。&lt;/strong>&lt;/p></description></item><item><title>Docs: selenium使用</title><link>/docs/23.Python/selenium%E4%BD%BF%E7%94%A8/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/23.Python/selenium%E4%BD%BF%E7%94%A8/</guid><description>
+&lt;blockquote>
+&lt;p>使用selenium操作已经打开的浏览器页面，避免输入密码等繁杂操作&lt;/p>
+&lt;/blockquote>
+&lt;h1 id="背景">背景&lt;/h1>
+&lt;p>在使用selenium进行自动化测试会遇到，手工打开浏览器，做了一部分操作后，并打开相关页面后再执行相关的自动化脚本。如何使用selenium来接管先前已打开的浏览器呢？醍提出一个Google Chrome浏览器的解决方案。&lt;/p>
+&lt;h1 id="实战">实战&lt;/h1>
+&lt;p>我们可以利用Chrome DevTools协议。它允许客户检查和调试Chrome浏览器。&lt;/p>
+&lt;p>将执行文件加入path：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># mac中&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">cd&lt;/span> ~
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>vi .bash_profile 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>输入以下内容
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">PATH&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">$PATH&lt;/span>&lt;span style="color:#000">:/&lt;/span>&lt;span style="color:#000">Applications&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">Google&lt;/span>&lt;span style="color:#000">\&lt;/span> &lt;span style="color:#000">Chrome&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">app&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">Contents&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">MacOS&lt;/span>&lt;span style="color:#000">/&lt;/span> 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>保存并退出
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">source&lt;/span> .bash_profile 
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>打开cmd，在命令行中输入命令：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>chrome.exe --remote-debugging-port&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#1c01ce">9222&lt;/span> --user-data-dir&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#34;d: emp\selenum\AutomationProfile” 
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>mac中：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>Google&lt;span style="color:#c41a16">\ &lt;/span>Chrome --remote-debugging-port&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#1c01ce">9222&lt;/span> --user-data-dir&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#34;/Users/bo/Library/Application Support/Googlehrome/Default&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 注意命令行中需要加入\，代码中则不需要 &lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>对于-remote-debugging-port值，可以指定任何打开的端口。&lt;/p>
+&lt;p>对于-user-data-dir标记，指定创建新Chrome配置文件的目录。它是为了确保在单独的配置文件中启动chrome，不会污染你的默认配置文件。&lt;/p>
+&lt;p>此时会打开一个浏览器页面，我们输入百度网址，我们把它当成一个已存在的浏览器：&lt;/p>
+&lt;p>现在，我们需要接管上面的浏览器。新建一个python文件，运行以下代码：&lt;/p>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-python" data-lang="python">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">from&lt;/span> &lt;span style="color:#000">selenium&lt;/span> &lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">webdriver&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">from&lt;/span> &lt;span style="color:#000">selenium.webdriver.chrome.options&lt;/span> &lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">Options&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">chrome_options&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Options&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">chrome_options&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#000">add_experimental_option&lt;/span>(&lt;span style="color:#c41a16">&amp;#34;debuggerAddress&amp;#34;&lt;/span>, &lt;span style="color:#c41a16">&amp;#34;127.0.0.1:9222&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">chrome_driver&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#c41a16">&amp;#34;d:\python_tool&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div></description></item></channel></rss>

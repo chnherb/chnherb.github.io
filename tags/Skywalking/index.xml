@@ -1,0 +1,1809 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – Skywalking</title><link>/tags/Skywalking/</link><description>Recent content in Skywalking on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/Skywalking/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: Skywalking基础使用</title><link>/docs/45.APM/Skywalking%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/45.APM/Skywalking%E5%9F%BA%E7%A1%80%E4%BD%BF%E7%94%A8/</guid><description>
+&lt;h1 id="skywalking概述">Skywalking概述&lt;/h1>
+&lt;h2 id="什么是skywalking">什么是Skywalking&lt;/h2>
+&lt;h3 id="概述">概述&lt;/h3>
+&lt;p>Skywalking主要概念包括：&lt;/p>
+&lt;ul>
+&lt;li>服务（Service）&lt;/li>
+&lt;li>端点（EndPoint）&lt;/li>
+&lt;li>实例（Instance）&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="../imgs/skywalking_tutorial_211223_1.png" alt="skywalking_tutorial_211223_1.png">&lt;/p>
+&lt;p>端点就是服务暴露的端口如/usr/queryAll&lt;/p>
+&lt;h1 id="安装">安装&lt;/h1>
+&lt;h2 id="安装es">安装ES&lt;/h2>
+&lt;p>替换默认的h2存储，因为h2存储在内存中。&lt;/p>
+&lt;p>1、下载并解压ES安装包&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>tar -zxvf elasticsearch-6.x.x.tar.gz
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>2、修改Linux系统的限制配置，将文件创建数修改为65536个。
+1）修改系统中允许应用最多创建多少文件等的限制权限。Linux默认一般限制创建的文件数为65535个。但是ES至少需要65536的文件创建数的权限。&lt;/p>
+&lt;p>2）修改系统中允许用户启动的进程开启多少个线程。Linux默认root用户可以开启任意数量的线程，其他用户的进程可以开启1024个线程。必须修改限制数为4096+。因为ES至少需要4096个线程池预备。&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>vi /etc/security/limits.conf
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 在 limits.conf 文件中追加以下内容，保存完自动生效&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>es soft nofile &lt;span style="color:#1c01ce">65536&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>es hard nofile &lt;span style="color:#1c01ce">65536&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>es soft nproc &lt;span style="color:#1c01ce">4096&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>es hard nproc &lt;span style="color:#1c01ce">4096&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>3、修改系统控制权限，ES需要开辟一个65536字节以上空间的虚拟缓存。Linux不允许任何用户和应用程序直接开辟这么的虚拟内存。
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>vi /etc/sysctl.conf
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 在 sysctl.conf 文件中追加如下内容尾部，当前用户拥有的内存权限大小&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>vm.max_map_count&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#1c01ce">262144&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 退出文件编辑，并执行以下命令，让系统控制权限配置生效&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sysctl -p
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>4、创建一个用户，用于ES启动
+因为ES在5.x版本后，强制在Linux中不能使用root用户启动ES进程。&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 创建用户&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>useradd es
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 修改上述用户的密码&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>passwd es
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 修改目录拥有者&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>chown -R es elasticsearch-6.x.x
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>5、启动ES
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 切换用户&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>su es
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">cd&lt;/span> bin
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 后台启动ES&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>./elasticsearch -d
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>6、测试启动
+ES默认不支持跨域访问，在不修改配置的情况下只能在本机上访问测试是否成功&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>curl http://localhost:9200
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="安装skywalking">安装Skywalking&lt;/h2>
+&lt;p>两个步骤：&lt;/p>
+&lt;p>1、安装后端服务&lt;/p>
+&lt;p>2、安装UI&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 首先切回root用户&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>su root
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">cd&lt;/span> /usr/local/skywalking
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>tar -zxvf apache-skywalking-apm-6.4.0.tar.gz
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>修改Skywalking存储的数据源配置
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">cd&lt;/span> apache-skywalking-apm-bin
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>vi config/application.xml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 注释掉h2存储配置&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 把ES的注释打开&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>webapp配置
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>vi webapp/webapp.xml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 修改端口8080，防止冲突&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>启动程序
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>oapService.sh &lt;span style="color:#177500"># 启动backend后端服务&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>webappService.sh &lt;span style="color:#177500"># 启动UI服务&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>./startup.sh &lt;span style="color:#177500"># 启动两个部分&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>日志
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>tail -f logs/webapp.log
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>浏览器访问skywalking网页页面&lt;/p>
+&lt;h1 id="基础">基础&lt;/h1>
+&lt;h2 id="agent使用">agent使用&lt;/h2>
+&lt;p>agent探针在java中使用java agent技术实现的，不需要更改任何代码，java agent会通过虚拟机接口来在运行期更改代码&lt;/p>
+&lt;p>Agent探针支持JDK1.6-12的版本，Agent探针所有的文件在Skywalking的agent文件夹下。文件目录如下：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>agent
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> activations
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> // 配置文件
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> config
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> // 组件的所有插件
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> plugins
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> // 可选插件
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> optional-plugins
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;blockquote>
+&lt;p>部分插件在使用上会影响整体的性能或者由于版权问题放置于可选插件包中，不会直接加载，如果需要使用，将可选插件中的jar包拷贝到plugins包下&lt;/p>
+&lt;/blockquote>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">cd&lt;/span> apache-skywalking-apm-bin
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>vi agent/config/agent.config
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>修改agent.service_name
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>agent.service_name&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">${&lt;/span>&lt;span style="color:#000">SW_AGENT_NAME&lt;/span>:&lt;span style="color:#000">Your_ApplicationName&lt;/span>&lt;span style="color:#c41a16">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>配置含义是可以读到SW_AGENT_NAME配置属性，如果该配置没有指定，那么默认名称为Your_xx，这里替换成skywalking_tomcat
+然后将tomcat重启&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>./shutdown.sh
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>./startup.sh
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="linux下tomcat7和8中使用">Linux下tomcat7和8中使用&lt;/h3>
+&lt;p>1、要使用Skywalking监控Tomcat中的应用，需要先准备一个Spring mvc项目，这里准备好一个打包好的文件：skywalking_springmvc-1.0-SNAPSHOT.war&lt;/p>
+&lt;p>内容为一个简单的hello world controller接口.&lt;/p>
+&lt;p>2、将war包上传至 xx/apache-tomcat-xx/webapps/下。编辑xx/apache-tomcat-xx/bin/catalina.sh文件，在文件顶部添加：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">CATALINA_OPTS&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#34;&lt;/span>&lt;span style="color:#000">$CATALINA_OPTS&lt;/span>&lt;span style="color:#c41a16"> -javaagent:/usr/local/skywalking/apache-skywalking-apm-bin/agent/skywalking-agent.jar&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">export&lt;/span> CATALINA_OPTS
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>修改tomcat启动端口
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>vi conf/server.xml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># port = 8081，防止冲突&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>启动项目，访问接口，然后访问skywalking UI页面，即可查询各项指标&lt;/p>
+&lt;h3 id="windows下tomcat7和8中使用">Windows下tomcat7和8中使用&lt;/h3>
+&lt;p>windows下只需要修改 tomcat目录下 bin/catalina.bat文件的第一行为：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">set&lt;/span> &lt;span style="color:#000">CATALINA_OPTS&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#34;=-javaagent:/path/to/skywalking-agent/skywalking-agent.jar&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="spring-boot中使用">Spring Boot中使用&lt;/h3>
+&lt;p>Skywalking与spring boot集成提供了完善的支持&lt;/p>
+&lt;p>1、首先复制一份agent，防止与tomcat使用时冲突&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">cd&lt;/span> /usr/local/skywalking/apapche-skywalking-apm-bin/
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cp -r agent agent_boot
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>vi agent_boot/config/agent.config
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>修改配置的应用名为 skywalking_boot（同上，略）
+2、同上准备web应用 skywalking_springboot.jar，提供一个正常和异常controller接口&lt;/p>
+&lt;p>将文件上传至 xx 目录下。&lt;/p>
+&lt;p>3、使用命令启动spring boot项目&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>java -javaagent:/usr/local/skywalking/apache-skywalking-apm-bin/agent_boot/skywalking-agent.jar
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-Dserver.port&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#1c01ce">8082&lt;/span> -jar skywalking_boot.jar &amp;amp;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 指定端口号防止冲突&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"># 末尾 &amp;amp; 表示后台启动&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>访问接口，然后访问skywalking UI页面，即可查询各项指标&lt;/p>
+&lt;h2 id="rocketbot的使用">RocketBot的使用&lt;/h2>
+&lt;p>Skywalking的监控UI页面称为RocketBot，可以通过修改webapp/webapp.yml来更改端口：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">server&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">port&lt;/span>: &lt;span style="color:#1c01ce">8080&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h1 id="skywalking高级">Skywalking高级&lt;/h1>
+&lt;h2 id="rpc调用监控">Rpc调用监控&lt;/h2>
+&lt;h2 id="mysql调用监控">MySQL调用监控&lt;/h2>
+&lt;p>启动docker&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>docker -v &lt;span style="color:#177500"># ce版本，可以使用systemctl&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>systemctl start docker
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>使用docker启动MySQL
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>docker images
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker run -id --name&lt;span style="color:#000">=&lt;/span>skywalking_mysql -p 33306:3306 -e
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">MYSQL_ROOT_PASSWORD&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#1c01ce">123456&lt;/span> centos/mysql-57-centos57
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h2 id="skywalking常用插件">Skywalking常用插件&lt;/h2>
+&lt;h3 id="配置覆盖">配置覆盖&lt;/h3>
+&lt;h4 id="系统配置">系统配置&lt;/h4>
+&lt;p>使用skywalking. +配置文件中的配置名作为系统配置项来进行覆盖&lt;/p>
+&lt;p>1、为什么添加前缀&lt;/p>
+&lt;p>agent的系统配置和环境与目标应用共享，所以加上前缀可以有效的避免冲突&lt;/p>
+&lt;p>2、案例&lt;/p>
+&lt;p>通过如下进行agent.service_name的覆盖&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">-Dskywalking.agent.service_name=skywalking_mysql&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h4 id="探针配置">探针配置&lt;/h4>
+&lt;p>Add the properties after the agent path in JVM arguments&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>-javaagent:/path/to/skywalking-agent.jar&lt;span style="color:#000">=[&lt;/span>option1&lt;span style="color:#000">]=[&lt;/span>value1&lt;span style="color:#000">]&lt;/span>,&lt;span style="color:#000">[&lt;/span>option2&lt;span style="color:#000">]=[&lt;/span>value2&lt;span style="color:#000">]&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>1、案例
+通过如下进行agent.service_name覆盖&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>-javaagent:/path/to/skywalking-agent.jar&lt;span style="color:#000">=&lt;/span>agent.service_name&lt;span style="color:#000">=&lt;/span>skywalking_mysql
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>2、特殊字符
+如果配置中包含分隔符（，或者=），就必须使用引号包裹起来&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>-javaagent:/path/to/skywalking-agent.jar&lt;span style="color:#000">=&lt;/span>agent.ignore_suffix&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">&amp;#39;.jpg,.jpeg&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h4 id="系统环境变量">系统环境变量&lt;/h4>
+&lt;p>1、案例&lt;/p>
+&lt;p>由于agent.service_name配置项如下所示：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>agent.service_name&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#c41a16">${&lt;/span>&lt;span style="color:#000">SW_AGENT_NAME&lt;/span>:&lt;span style="color:#000">Your_ApplicationName&lt;/span>&lt;span style="color:#c41a16">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>可以在环境变量中设置SW_AGENT_NAME的值来制定服务名&lt;/p>
+&lt;h3 id="覆盖优先级">覆盖优先级&lt;/h3>
+&lt;p>探针配置 &amp;gt; 系统配置 &amp;gt; 系统环境变量配置 &amp;gt; 配置文件中的值&lt;/p>
+&lt;p>所以我们的启动命令可以修改为：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>java -javaagent:/usr/local/skywaling/apache-skywalking-apm-bin/agent_mysql/skywalking-agent.jar
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-Dskywalking.agent.service_name&lt;span style="color:#000">=&lt;/span>skywalking_mysql -jar skywalking_mysql.jar &amp;amp;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>或
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>java -javaagent:/usr/local/skywaling/apache-skywalking-apm-bin/agent_mysql/skywalking-agent.jar
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">=&lt;/span>agent.service_name&lt;span style="color:#000">=&lt;/span>skywalking_mysql -jar skywalking_mysql.jar &amp;amp;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h3 id="过滤指定端点">过滤指定端点&lt;/h3>
+&lt;p>1、将skywalking_plugins.jar上传至/usr/local/wkywalking目录下&lt;/p>
+&lt;p>2、将agent中的/agent/optional-plugins/apm-trace-ignore-plugin-6.4.0.jar插件拷贝到plugins目录中&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">cd&lt;/span> /usr/local/skywalking/apache-skywalking-apm-bin
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>cp optional-plugins/apm-trace-ignore-plugin-6.4.0.jar plugins/apm-trace-ignore-plugin-6.4.0.jar
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>3、启动skywalk_plugins应用
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>java -javaagent:/usr/local/skwalking/apache-skywalking-apm-bin/agent/skywalking-agent.jar
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>-Dskywalking.agent.service_name&lt;span style="color:#000">=&lt;/span>skywalking_plugins -Dskywalking.trace.ignore_path&lt;span style="color:#000">=&lt;/span>/exclude -jar skywalking_plugins.jar &amp;amp;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;blockquote>
+&lt;p>这里添加-Dskywalking.trace.ignore_path=/exclude参数来标识需要过滤哪些请求，支持Ant Path表达式：
+/path/*, /path/**, /path/?&lt;/p>
+&lt;ul>
+&lt;li>?匹配任何单字符&lt;/li>
+&lt;li>*匹配0或者任意数量的字符&lt;/li>
+&lt;/ul>
+&lt;/blockquote>
+&lt;h2 id="告警功能">告警功能&lt;/h2>
+&lt;h3 id="告警功能简介">告警功能简介&lt;/h3>
+&lt;p>Skywalking每隔一段时间根据收集到的链路追踪的数据和配置的告警规则（如服务响应时间、服务响应时间百分比等），判断如果达到阈值则发送响应的告警信息。发送告警信息是通过调用webhook接口完成，具体的webhook接口可以使用者自行定义，从而开发者可以在指定的webhook接口编写各种告警方式，比如邮件、短信等。告警的信息也可以在RocketBot中查看。&lt;/p>
+&lt;p>以下是默认的告警规则配置，位于skywalking安装目录下的config文件夹下alarm-settings.yml文件中：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">rules&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500"># Rule unique name, must be ended with `_rule`.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">service_resp_time_rule&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">metrics-name&lt;/span>: &lt;span style="color:#1c01ce">service_resp_time&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">op&lt;/span>: &lt;span style="color:#c41a16">&amp;#34;&amp;gt;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">threshold&lt;/span>: &lt;span style="color:#1c01ce">1000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">period&lt;/span>: &lt;span style="color:#1c01ce">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">count&lt;/span>: &lt;span style="color:#1c01ce">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">silence-perild&lt;/span>: &lt;span style="color:#1c01ce">5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">message&lt;/span>: &lt;span style="color:#1c01ce">Response time of serice {name} is more thran 1000ms in 3 minutes of last 10 minutes.&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">webhooks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#1c01ce">http:127.0.0.1/notify/ &lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;blockquote>
+&lt;p>满足规则的告警信息将调用通过webhooks配置的接口&lt;/p>
+&lt;/blockquote>
+&lt;h1 id="skywalking原理">Skywalking原理&lt;/h1>
+&lt;h2 id="java-agent原理">Java agent原理&lt;/h2>
+&lt;p>&lt;strong>Javaagent是什么？&lt;/strong>&lt;/p>
+&lt;p>Java agent是java命令的一个参数。参数javaagent可以用于指定一个jar包。&lt;/p>
+&lt;p>1、这个jar包的MANIFEST.MF文件必须指定Premain-Class项。&lt;/p>
+&lt;p>2、Premain-Class指定的那个类必须实现premain()方法&lt;/p>
+&lt;p>当java虚拟机启动时，在执行main函数之前，JVM会先运行-javaagent所指定jar包内Premain-Class这个类的premain方法。&lt;/p>
+&lt;p>&lt;strong>如何使用java agent？&lt;/strong>&lt;/p>
+&lt;p>步骤：&lt;/p>
+&lt;ol>
+&lt;li>定义一个MANIFEST.MF文件，必须包含Premain-Class选项，通常也会加入Can-Redefine-Classes和Can-Retransform-Class选项&lt;/li>
+&lt;li>创建一个Premain-Class指定的类，类中包含premain方法，方法逻辑由用户自己指定&lt;/li>
+&lt;li>将premain的类和MANIFEST.MF文件打成jar包&lt;/li>
+&lt;li>使用参数-javaagent:jar包路径 启动要代理的方法&lt;/li>
+&lt;/ol>
+&lt;h3 id="搭建java-agent工程">搭建java agent工程&lt;/h3>
+&lt;p>PreMainAgent.java&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">PreMainAgent&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">premain&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">agentparam&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">Instrumenttation&lt;/span> &lt;span style="color:#000">inst&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;premain start&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">agentparam&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">premain&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">agentparam&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;premain start2&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">agentparam&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;blockquote>
+&lt;p>优先调用两个参数的方法&lt;/p>
+&lt;/blockquote>
+&lt;p>MANIFEST.MF&lt;/p>
+&lt;p>在maven中添加插件 maven-assembly-plugin&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;build&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;plugins&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;plugin&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>maven-assembly-plugin&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;configuration&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;appendAssemblyId&amp;gt;&lt;/span>false&lt;span style="color:#000">&amp;lt;/appendAssemblyId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;descriptorRefs&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;descriptorRef&amp;gt;&lt;/span>jar-with-dependecies&lt;span style="color:#000">&amp;lt;/descriptorRefs&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/descriptorRefs&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;archive&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">&amp;lt;!-- 自动添加META-INF/MANIFEST.MF --&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;manifest&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;addClassPath&amp;gt;&lt;/span>true&lt;span style="color:#000">&amp;lt;/addClassPath&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/manifest&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;mainfestEntries&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;Premain-Class&amp;gt;&lt;/span>PreMainAgent&lt;span style="color:#000">&amp;lt;/Premain-Class&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;Agent-Class&amp;gt;&lt;/span>PreMainAgent&lt;span style="color:#000">&amp;lt;/Agent-Class&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;Can-Redefine-Classes&amp;gt;&lt;/span>true&lt;span style="color:#000">&amp;lt;/Can-Redefine-Classes&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;Can-Retransform-Classes&amp;gt;&lt;/span>true&lt;span style="color:#000">&amp;lt;/Can-Retransform-Classes&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/mainfestEntries&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/archive&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/configuration&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;executions&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;execution&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;id&amp;gt;&lt;/span>make-assembly&lt;span style="color:#000">&amp;lt;/id&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;phase&amp;gt;&lt;/span>package&lt;span style="color:#000">&amp;lt;/phase&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;goals&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;goal&amp;gt;&lt;/span>single&lt;span style="color:#000">&amp;lt;/goal&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/goals&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/execution&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;executions&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/plugin&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/plugins&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;/build&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h3 id="统计方法调用时间">统计方法调用时间&lt;/h3>
+&lt;p>Skywalking中对每个调用的市场都进行了统计。这一小节中我们会使用&lt;strong>ByteBuddy和Java agent技术&lt;/strong>来统计方法的调用时长&lt;/p>
+&lt;p>Byte Buddy是开源的、基于Apache 2.0许可证的库，它致力于解决字节码操作和Instrumentation API的复杂性。Byte Buddy所声称的目标是将显式的字节码操作隐藏在一个类型安全的领域特定语言背后。通过使用Byte Buddy，任何熟悉Java编程语言的人都有望非常容易地进行字节码操作。Byte Buddy提供了额外的API来声称Java agent，可以轻松的增强我们已有的代码。&lt;/p>
+&lt;p>添加依赖：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;dependencies&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;groupId&amp;gt;&lt;/span>net.bytebuddy&lt;span style="color:#000">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>byte-buddy&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;version&amp;gt;&lt;/span>1.9.2&lt;span style="color:#000">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;groupId&amp;gt;&lt;/span>net.bytebuddy&lt;span style="color:#000">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>byte-buddy-agent&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;version&amp;gt;&lt;/span>1.9.2&lt;span style="color:#000">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;/dependencies&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>PreMainAgent.java
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">PreMainAgent&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">premain&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">agentparam&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">Instrumentation&lt;/span> &lt;span style="color:#000">inst&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">AgentBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Transformer&lt;/span> &lt;span style="color:#000">transformer&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">AgentBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Transformer&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">DynamicType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Builder&lt;/span>&lt;span style="color:#000">&amp;lt;?&amp;gt;&lt;/span> &lt;span style="color:#000">transform&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">DynamicType&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Builder&lt;/span>&lt;span style="color:#000">&amp;lt;?&amp;gt;&lt;/span> &lt;span style="color:#000">builder&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">TypeDescription&lt;/span> &lt;span style="color:#000">typeDescription&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// mothod指定哪些方法需要被拦截，ElementMatchers.any指定了所有方法
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 声明intercept拦截器
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">builder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">method&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ElementMathcers&lt;/span>&lt;span style="color:#000">.&amp;lt;&lt;/span>&lt;span style="color:#000">MethodDescription&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span>&lt;span style="color:#000">any&lt;/span>&lt;span style="color:#000">())&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">intercept&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">MthodDelegation&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">to&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">MyInterceptor&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">};&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">AgentBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Default&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">type&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ElementMathcers&lt;/span>&lt;span style="color:#000">.&amp;lt;&lt;/span>&lt;span style="color:#000">TypeDescripttion&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span>&lt;span style="color:#000">nameStartsWith&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;com.agent&amp;#34;&lt;/span>&lt;span style="color:#000">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">transform&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">transformer&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">installOn&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">inst&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;p>MyInterceptor.java
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">MyInterceptor&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">@RuntimeType&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#000">Object&lt;/span> &lt;span style="color:#000">intercept&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">@Origin&lt;/span> &lt;span style="color:#000">Method&lt;/span> &lt;span style="color:#000">method&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">@SuperCall&lt;/span> &lt;span style="color:#000">Callable&lt;/span>&lt;span style="color:#000">&amp;lt;?&amp;gt;&lt;/span> &lt;span style="color:#000">callable&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Long&lt;/span> &lt;span style="color:#000">start&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">currentTimeMillis&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">try&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">callable&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">call&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span> &lt;span style="color:#a90d91">finally&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">method&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34;:&amp;#34;&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">currentTimeMillis&lt;/span>&lt;span style="color:#000">()-&lt;/span>&lt;span style="color:#000">start&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#c41a16">&amp;#34;ms&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h2 id="open-tracing介绍">Open Tracing介绍&lt;/h2>
+&lt;p>Open Tracing通过提供平台无关、厂商无关API，使得开发人员能够方便的添加/更换追踪系统的实现。OpenTracing 最核心的概念就是 Trace&lt;/p>
+&lt;h3 id="trace的概念">Trace的概念&lt;/h3>
+&lt;p>广义上，一个trace代表了一个事务或者流程在（分布式）系统中的执行过程。在OpenTracing标准中，trace是多个span组成的一个有向无环图（DAG），每一个span代表trace中被明明并计时的连续性的执行片段。&lt;/p>
+&lt;p>&lt;img src="../imgs/skywalking_tutorial_211223_2.png" alt="skywalking_tutorial_211223_2.png">&lt;/p>
+&lt;p>例如客户端发起的一次请求，就可以认为是一个trace。将上面的图通过Open Tracing的语义修改完之后做可视化，得到下面的图：&lt;/p>
+&lt;p>&lt;img src="../imgs/skywalking_tutorial_211223_3.png" alt="skywalking_tutorial_211223_3.png">&lt;/p>
+&lt;p>图中每一个色块其实就是一个span.&lt;/p>
+&lt;h3 id="span的概念">Span的概念&lt;/h3>
+&lt;p>每一个Span代表系统中具有开始时间和执行市场的逻辑运行单元。span之间通过嵌套或者顺序排列简历逻辑因果关系。&lt;/p>
+&lt;p>Span里面的信息包括：操作的名字，开始时间和结束时间，可以附带多个key:value构成的Tags（key必须是String，value可以是String/bool/数字），还可以附带Logs信息（不一定所有的实现都支持）也是key:value形式。&lt;/p>
+&lt;p>一个Span可以和一个或多个Span间存在因果关系。OpenTracing定义了两种关系：childOf和FollowsFrom。这两种引用类型代表了子节点和父节点间的直接因果关系。未来，OpenTracing将支持非因果关系的span引用关系。（例如：多个span被批量处理，span在同一个队列等）&lt;/p>
+&lt;h3 id="log的概念">Log的概念&lt;/h3>
+&lt;p>每个span可以进行多次Logs操作，每一次Logs操作，都需要一个带时间戳的时间名称，以及可选的任意大小的存储结构。&lt;/p>
+&lt;h3 id="tags的概念">Tags的概念&lt;/h3>
+&lt;p>每个span可以有多个键值对（key:value）形式的Tags，Tags是没有时间戳的，支持简单的对span进行注解和补充。&lt;/p>
+&lt;p>&lt;img src="../imgs/skywalking_tutorial_211223_4.png" alt="skywalking_tutorial_211223_4.png">&lt;/p></description></item><item><title>Docs: Skywalking源码分析2-启动流程</title><link>/docs/45.APM/Skywalking%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%902-%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/45.APM/Skywalking%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%902-%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/</guid><description>
+&lt;h1 id="概述">概述&lt;/h1>
+&lt;p>&lt;img src="../imgs/skywalking-source-code-211211_1.png" alt="skywalking-source-code-211211_1.png">&lt;/p>
+&lt;h1 id="初始化配置">初始化配置&lt;/h1>
+&lt;h2 id="加载配置信息">加载配置信息&lt;/h2>
+&lt;ul>
+&lt;li>/config/agent.config&lt;/li>
+&lt;li>系统环境变量&lt;/li>
+&lt;li>Agent参数&lt;/li>
+&lt;li>优先级：自下而上&lt;/li>
+&lt;/ul>
+&lt;h2 id="将配置信息映射到config类">将配置信息映射到Config类&lt;/h2>
+&lt;h2 id="根据配置信息重新指定日志解析器">根据配置信息重新指定日志解析器&lt;/h2>
+&lt;h2 id="检查agent名称和后端地址是否配置">检查agent名称和后端地址是否配置&lt;/h2>
+&lt;h2 id="标记配置加载完成">标记配置加载完成&lt;/h2>
+&lt;h1 id="加载插件">加载插件&lt;/h1>
+&lt;h2 id="m-插件配置读取">M: 插件配置读取&lt;/h2>
+&lt;blockquote>
+&lt;p>可以借鉴读取配置&lt;/p>
+&lt;/blockquote>
+&lt;p>按行加载键值对，并剔除指定不需要的插件&lt;/p>
+&lt;ul>
+&lt;li>SkyWalkingAgent.java
+&lt;ul>
+&lt;li>PluginFinder.java
+&lt;ul>
+&lt;li>PluginBootstrap.java
+&lt;ul>
+&lt;li>PluginCfg.java&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="插件定义体系">插件定义体系&lt;/h2>
+&lt;h3 id="插件定义-xxxinstrumentation">插件定义: XxxInstrumentation&lt;/h3>
+&lt;ul>
+&lt;li>拦截实例方法/构造器：ClassInstanceMethodsEnhancePluginDefine&lt;/li>
+&lt;li>拦截静态方法：ClassStaticMethodsEnhancePluginDefine&lt;/li>
+&lt;li>AbstractClassEnhancePluginDefine 插件顶级父类&lt;/li>
+&lt;li>要拦截的类：enhanceClass()&lt;/li>
+&lt;li>要拦截的方法：getXxxInterceptorPoints()&lt;/li>
+&lt;/ul>
+&lt;h3 id="目标类匹配">目标类匹配&lt;/h3>
+&lt;ul>
+&lt;li>ClassMatch
+&lt;ul>
+&lt;li>按类名匹配：NameMatch&lt;/li>
+&lt;li>间接匹配：IndirectMatch
+&lt;ul>
+&lt;li>PrefixMatch&lt;/li>
+&lt;li>MethodAnnotationMatch&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="拦截器定义">拦截器定义&lt;/h3>
+&lt;ul>
+&lt;li>beforeMethod&lt;/li>
+&lt;li>afterMethod&lt;/li>
+&lt;li>handleMethodException&lt;/li>
+&lt;/ul>
+&lt;h3 id="插件声明">插件声明&lt;/h3>
+&lt;ul>
+&lt;li>resouces/skywalking-plugin.def&lt;/li>
+&lt;li>插件名称-插件定义&lt;/li>
+&lt;/ul>
+&lt;h2 id="加载流程">加载流程&lt;/h2>
+&lt;h3 id="pluginbootstrap实例化所有插件">PluginBootstrap实例化所有插件&lt;/h3>
+&lt;h3 id="pluginfinder分类插件">PluginFinder分类插件&lt;/h3>
+&lt;ul>
+&lt;li>命名插件 - NameMatch&lt;/li>
+&lt;li>间接匹配插件 - IndirectMatch&lt;/li>
+&lt;li>JDK 类库插件&lt;/li>
+&lt;/ul>
+&lt;h1 id="定制agent">定制Agent&lt;/h1>
+&lt;h2 id="创建bytebuddy实例">创建ByteBuddy实例&lt;/h2>
+&lt;h2 id="指定bytebuddy要忽略的类">指定ByteBuddy要忽略的类&lt;/h2>
+&lt;h2 id="将必要的类注入到bootstrapclassloader中">将必要的类注入到BootstrapClassLoader中&lt;/h2>
+&lt;p>为什么注入classes到bootstrap加载器中&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">ClassInjector&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">UsingUnsafe&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Factory&lt;/span> &lt;span style="color:#000">factory&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">ClassInjector&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">UsingUnsafe&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Factory&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">resolve&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">instrumentation&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">factory&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">make&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">injectRaw&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">classesTypeMap&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">agentBuilder&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">agentBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">with&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">AgentBuilder&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">InjectionStrategy&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">UsingUnsafe&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">OfFactory&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">factory&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>&lt;img src="../imgs/skywalking-source-code-211211_2.png" alt="skywalking-source-code-211211_2.png">&lt;/p>
+&lt;h2 id="解决jdk模块系统的跨模块类访问">解决JDK模块系统的跨模块类访问&lt;/h2>
+&lt;h2 id="根据配置决定是否将修改后的字节码保存到磁盘-内存中">根据配置决定是否将修改后的字节码保存到磁盘/内存中&lt;/h2>
+&lt;h2 id="细节定制">细节定制&lt;/h2>
+&lt;h3 id="指定-bytebuddy要拦截的类">指定 ByteBuddy要拦截的类&lt;/h3>
+&lt;h3 id="指定做字节码增强的工具">指定做字节码增强的工具&lt;/h3>
+&lt;h3 id="指定做字节码增强的模式">指定做字节码增强的模式&lt;/h3>
+&lt;p>redefine和restransform的区别在于是否保留修改前的内容&lt;/p>
+&lt;ul>
+&lt;li>redefine 覆盖&lt;/li>
+&lt;li>restransform 保留&lt;/li>
+&lt;/ul>
+&lt;h3 id="注册监听器">注册监听器&lt;/h3>
+&lt;h3 id="将agent安装到instrumentation">将Agent安装到Instrumentation&lt;/h3>
+&lt;h2 id="什么是-synthetic">什么是&lt;strong>Synthetic&lt;/strong>&lt;/h2>
+&lt;p>&lt;strong>Synthetic关键字：&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>合成的，Java编译器在编译阶段自动生成的[构造]&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>JLS：所有存在于字节码文件中，但是不存在于源代码文件的[构造]，都应该被synthetic关键字标注&lt;/strong>&lt;/p>
+&lt;p>&lt;strong>[构造] =&amp;gt; Constructs =&amp;gt; Field/Method/Constructor&lt;/strong>&lt;/p>
+&lt;p>内部类的私有属性、私有构造方法，都能被外部类直接访问不报错，就是因为编译期新生成了方法或者属性，这就是synthetic&lt;/p>
+&lt;p>getModifiers()的值为4096的话，就代表这个是synthetic&lt;/p>
+&lt;p>用js简单说明：java编译器帮我们自动做了var that = this操作&lt;/p>
+&lt;p>讲解环境：JDK11之前的版本&lt;/p>
+&lt;h2 id="nbac-nested-based-access-control">NBAC(Nested Based Access Control)&lt;/h2>
+&lt;p>编译环境JDK1.8&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;properties&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;maven.compiler.source&amp;gt;&lt;/span>11&lt;span style="color:#000">&amp;lt;/maven.compiler.source&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;maven.compiler.target&amp;gt;&lt;/span>11&lt;span style="color:#000">&amp;lt;/maven.compiler.target&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;/properties&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;build&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;plugins&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;plugin&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;groupId&amp;gt;&lt;/span>org.apache.maven.plugins&lt;span style="color:#000">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>maven-compiler-plugin&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;version&amp;gt;&lt;/span>3.8.1&lt;span style="color:#000">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;configuration&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;source&amp;gt;&lt;/span>1.8&lt;span style="color:#000">&amp;lt;/source&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;target&amp;gt;&lt;/span>1.8&lt;span style="color:#000">&amp;lt;/target&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/configuration&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/plugin&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/plugins&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;/build&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>内部类里面存在同一个方法的不同调用方法呈现不同结果的情况&lt;/p>
+&lt;ul>
+&lt;li>直接调用 - 可以&lt;/li>
+&lt;li>反射调用 - 不可以&lt;/li>
+&lt;/ul>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">Outer&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">fun&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">outPrivate&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">Inner&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">innerPublic&lt;/span>&lt;span style="color:#000">()&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">outerPrivate&lt;/span>&lt;span style="color:#000">();&lt;/span> &lt;span style="color:#177500">//可以
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">reflectOuter&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Outer&lt;/span> &lt;span style="color:#000">outer&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#a90d91">throws&lt;/span> &lt;span style="color:#000">Exception&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Method&lt;/span> &lt;span style="color:#000">method&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">outer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getClass&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getDeclaredMethod&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;outerPrivate&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span> &lt;span style="color:#177500">//报错
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">method&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">invoke&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">outer&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>NBAC消除了这个问题，将pom插件配置改成JDK11（1.8改成1.11）就没有这个问题
+原理：&lt;/p>
+&lt;p>阅读JDK11的Class.java源码，观察getNestHost等方法&lt;/p>
+&lt;p>Inner =&amp;gt; nestHost = Outer.class&lt;/p>
+&lt;p>Outer =&amp;gt; nestMembers = {Inner.class}&lt;/p>
+&lt;p>nestMembers =&amp;gt; nestMates&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">main&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">[]&lt;/span> &lt;span style="color:#000">args&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#a90d91">throws&lt;/span> &lt;span style="color:#000">Exception&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 嵌套宿主一致，都是Outer
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;Inner 的嵌套宿主：&amp;#34;&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">Outer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Inner&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getNestHost&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;Outer 的嵌套宿主：&amp;#34;&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">Outer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getNestHost&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 嵌套成员一致，都是Outer和Outer$Inner
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;Outer 的嵌套成员：&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Class&lt;/span>&lt;span style="color:#000">&amp;lt;?&amp;gt;&lt;/span> &lt;span style="color:#000">nestMember&lt;/span> &lt;span style="color:#000">:&lt;/span> &lt;span style="color:#000">Outer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getNestMembers&lt;/span>&lt;span style="color:#000">())&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">nestMember&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;Inner 的嵌套成员：&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Class&lt;/span>&lt;span style="color:#000">&amp;lt;?&amp;gt;&lt;/span> &lt;span style="color:#000">nestMember&lt;/span> &lt;span style="color:#000">:&lt;/span> &lt;span style="color:#000">Outer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Inner&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getNestMembers&lt;/span>&lt;span style="color:#000">())&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">nestMember&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;Inner 和 Outer 是 NestMate 吗？&amp;#34;&lt;/span> &lt;span style="color:#000">+&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Outer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">Inner&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">isNestmateOf&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Outer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">));&lt;/span> &lt;span style="color:#177500">// true
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h1 id="加载服务">加载服务&lt;/h1>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">ServiceManager&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">INSTANCE&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">boot&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h2 id="服务组织">服务组织&lt;/h2>
+&lt;ul>
+&lt;li>服务需要实现 BootService 接口&lt;/li>
+&lt;li>如果服务只有一种实现，直接创建一个类即可&lt;/li>
+&lt;li>如果服务有多种实现
+&lt;ul>
+&lt;li>默认实现需要使用 @DefaultImplementor&lt;/li>
+&lt;li>覆盖实现需要使用 @OverrideImplementor&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="加载流程-1">加载流程&lt;/h2>
+&lt;ul>
+&lt;li>SPI加载所有 BootService 的实现&lt;/li>
+&lt;li>根据服务的实现模式进行服务的筛选
+&lt;ul>
+&lt;li>两个注解都没有的服务实现直接加入集合&lt;/li>
+&lt;li>对于 @DefaultImplementor 直接加入集合&lt;/li>
+&lt;li>对于 @OverrideImplementor
+&lt;ul>
+&lt;li>value指向的服务有 @DefaultImplementor 则覆盖掉&lt;/li>
+&lt;li>value指向的服务没有 @OverrideImplementor 则报错&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h1 id="插件工作原理">插件工作原理&lt;/h1>
+&lt;h2 id="组件版本识别技术-witness机制">组件版本识别技术（Witness机制）&lt;/h2>
+&lt;ul>
+&lt;li>witnessClasses&lt;/li>
+&lt;li>witnessMethods&lt;/li>
+&lt;/ul>
+&lt;p>&lt;img src="../imgs/skywalking-source-code-211211_3.png" alt="skywalking-source-code-211211_3.png">&lt;/p>
+&lt;p>可观察 AbstractClassEnhancePluginDefine.java的 witnessClasses()或witnessMethods方法的实现&lt;/p>
+&lt;p>举例：查看spring官方文档，对比新增class&lt;/p>
+&lt;blockquote>
+&lt;p>参考spring 3.2.9: &lt;a href="https://docs.spring.io/spring-framework/docs/3.2.9.RELEASE/javadoc-api/">https://docs.spring.io/spring-framework/docs/3.2.9.RELEASE/javadoc-api/&lt;/a>
+参考spring 4: &lt;a href="https://docs.spring.io/spring-framework/docs/4.3.30.RELEASE/javadoc-api/">https://docs.spring.io/spring-framework/docs/4.3.30.RELEASE/javadoc-api/&lt;/a>
+参考spring 5: &lt;a href="https://docs.spring.io/spring-framework/docs/5.2.16.RELEASE/javadoc-api/">https://docs.spring.io/spring-framework/docs/5.2.16.RELEASE/javadoc-api/&lt;/a>&lt;/p>
+&lt;/blockquote>
+&lt;h2 id="工作流程">工作流程&lt;/h2>
+&lt;h3 id="校验-typedescription-插件是否可用">校验 TypeDescription 插件是否可用&lt;/h3>
+&lt;h3 id="字节码增强流程">字节码增强流程&lt;/h3>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// AbstractClassEnhancePluginDefine.java
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// ClassEnhancePluginDefine.java
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// StaticMethodsInter.java
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// StaticMethodsInterWithOverrideArgs.java
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h4 id="静态方法插桩">静态方法插桩&lt;/h4>
+&lt;ul>
+&lt;li>要修改原方法入参
+&lt;ul>
+&lt;li>是 JDK 库核心类&lt;/li>
+&lt;li>不是 JDK 库核心类
+&lt;ul>
+&lt;li>实例化插件中定义的 Interceptor&lt;/li>
+&lt;li>调用 beforeMethod()
+&lt;ul>
+&lt;li>可以修改原方法入参&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>调用原方法
+&lt;ul>
+&lt;li>调用时可以传参&lt;/li>
+&lt;li>对于异常，调用 handleMethodException&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>调用 afterMethod()&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>不修改原方法入参
+&lt;ul>
+&lt;li>是 JDK 库核心类&lt;/li>
+&lt;li>不是 JDK 库核心类
+&lt;ul>
+&lt;li>实例化插件中定义的 Interceptor&lt;/li>
+&lt;li>调用 beforeMethod()&lt;/li>
+&lt;li>调用原方法
+&lt;ul>
+&lt;li>调用时不能传参&lt;/li>
+&lt;li>对于异常，调用 handleMethodException&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>调用 afterMethod()&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h4 id="构造器和实例方法插桩">构造器和实例方法插桩&lt;/h4>
+&lt;ul>
+&lt;li>构造器
+&lt;ul>
+&lt;li>是 JDK 库核心类&lt;/li>
+&lt;li>不是 JDK 库核心类
+&lt;ul>
+&lt;li>只能在拦截的构造器原本逻辑执行完成以后再执行 onConstruct()&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>实例方法
+&lt;ul>
+&lt;li>参考静态方法&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="将记录状态的上下文-enhancecontext-设置为-已增强">将记录状态的上下文 EnhanceContext 设置为 [已增强]&lt;/h3>
+&lt;h2 id="插件拦截器加载流程">插件拦截器加载流程&lt;/h2>
+&lt;p>双亲委派机制&lt;/p>
+&lt;p>Agentxxx必须使用目标类的类加载器加载，才能操作目标类。&lt;/p>
+&lt;p>&lt;img src="../imgs/skywalking-source-code-211211_4.png" alt="skywalking-source-code-211211_4.png">&lt;/p>
+&lt;h2 id="运行时插件效果的字节码">运行时插件效果的字节码&lt;/h2>
+&lt;p>借助工具：&lt;a href="https://github.com/zifeihan/friday">https://github.com/zifeihan/friday&lt;/a>&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">ret&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">zuper&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">call&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">// method.invoke();
+&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>// 不能这么写，会死循环，因为原方法被重命名，如sayHello()被会改成sayHelloXxxx()，新方法sayHello()则是修改字节码后的的方法，method指代的是修改后的sayHello()方法，这里需要调用sayHelloXxx()方法&lt;/p>
+&lt;h1 id="注册关闭钩子">注册关闭钩子&lt;/h1></description></item></channel></rss>

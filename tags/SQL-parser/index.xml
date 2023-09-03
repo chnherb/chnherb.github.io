@@ -1,0 +1,1422 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – SQL parser</title><link>/tags/SQL-parser/</link><description>Recent content in SQL parser on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/SQL-parser/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: 01.SQL解析器介绍</title><link>/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/SQL%E5%BC%95%E6%93%8E/01.SQL%E8%A7%A3%E6%9E%90%E5%99%A8%E4%BB%8B%E7%BB%8D/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/SQL%E5%BC%95%E6%93%8E/01.SQL%E8%A7%A3%E6%9E%90%E5%99%A8%E4%BB%8B%E7%BB%8D/</guid><description>
+&lt;h1 id="背景">背景&lt;/h1>
+&lt;p>传统的关系型数据库都支持 SQL 查询，另外在大数据领域，为了降低大数据的学习成本和难度方便用户，都开始支持 SQL 查询。SQL 查询让更多的用户可以方便快捷地查询数据，极大降低了学习门槛。&lt;/p>
+&lt;h1 id="解析流程">解析流程&lt;/h1>
+&lt;p>通常解析器主要包括：&lt;/p>
+&lt;ul>
+&lt;li>词法解析&lt;/li>
+&lt;li>语法解析&lt;/li>
+&lt;li>语义解析&lt;/li>
+&lt;/ul>
+&lt;h2 id="词法解析">词法解析&lt;/h2>
+&lt;p>根据构词规则识别字符并切割成一个个的词条，如遇到空格进行分割，遇到分号时结束词法解析。&lt;/p>
+&lt;h2 id="语法解析">语法解析&lt;/h2>
+&lt;p>语法分析的任务会在词法分析的结果上将词条序列组合成不同语法短句，组成的语法短句将与相应的语法规则进行适配，若适配成功则生成对应的抽象语法树，否则报会抛出语法错误异常。&lt;/p>
+&lt;h2 id="语义解析">语义解析&lt;/h2>
+&lt;p>语义分析的任务是对语法解析得到的抽象语法树进行有效的校验，比如字段、字段类型、函数、表等进行检查。&lt;/p>
+&lt;h1 id="常用sql解析器">常用SQL解析器&lt;/h1>
+&lt;p>&lt;strong>C/C++中，可以使用 LEX 和 YACC 来做词法分析和语法分析；Java中，可以使用 JavaCC 或 ANTLR&lt;/strong> 。&lt;/p>
+&lt;h1 id="antlr">ANTLR&lt;/h1>
+&lt;p>ANTLR是一款功能强大的语法分析器生成器，几乎支持所有主流变成语言的解析（&lt;a href="https://github.com/antlr/grammars-v4">antlr/grammars-v4&lt;/a>）。可以用来读取、处理、执行和转换结构化文本或者二进制文件。在大数据的一些SQL框架里面有有广泛的应用，比如Hive的词法文件是ANTLR3写的，Presto词法文件也是ANTLR4实现的，SparkSQLambda词法文件也是用Presto的词法文件改写的，另外还有HBase的SQL工具Phoenix也是用ANTLR工具进行SQL解析的。&lt;/p>
+&lt;h2 id="执行过程">执行过程&lt;/h2>
+&lt;ul>
+&lt;li>实现词法文件（.g4）&lt;/li>
+&lt;li>生成词法分析器和语法分析器&lt;/li>
+&lt;li>生成抽象语法书（AST）&lt;/li>
+&lt;li>遍历AST，生成语义树&lt;/li>
+&lt;li>访问统计信息&lt;/li>
+&lt;li>生成逻辑执行计划&lt;/li>
+&lt;li>生成物理执行计划&lt;/li>
+&lt;/ul>
+&lt;h2 id="parser">Parser&lt;/h2>
+&lt;p>Parser用来识别语言程序，包括两个部分：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>词法分析器：关键字、标识符；&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>语法分析器：基于词法分析结果构造语法分析树。
+转换过程：&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>字符流&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Token流&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>（语法分析树）非叶子节点&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>（语法分析树）叶子结点&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="grammar">Grammar&lt;/h2>
+&lt;p>ANTLR提供了很多常用语言的语法文件（&lt;a href="https://github.com/antlr/grammars-v4">antlr/grammars-v4&lt;/a>）。&lt;/p>
+&lt;p>使用语法注意事项：&lt;/p>
+&lt;ul>
+&lt;li>语法名称和文件名要一致&lt;/li>
+&lt;li>语法分析器规则以小写字母开始&lt;/li>
+&lt;li>词法分析器规则以大写字母开始&lt;/li>
+&lt;li>用'string'单引号引出字符串&lt;/li>
+&lt;li>不需要指定开始符号&lt;/li>
+&lt;li>规则以分号结束&lt;/li>
+&lt;/ul>
+&lt;h2 id="实现四则运算">实现四则运算&lt;/h2>
+&lt;p>实现的基本流程：&lt;/p>
+&lt;ol>
+&lt;li>按照ANTLR4的规则编写自定义语法的语义规则, 保存成以g4为后缀的文件；&lt;/li>
+&lt;li>使用ANTLR4工具处理g4文件，生成词法分析器、句法分析器代码、词典文件；&lt;/li>
+&lt;li>编写代码继承Visitor类或实现Listener接口，开发自己的业务逻辑代码。
+一般有两种模式：&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>
+&lt;p>Visitor模式
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>antlr4 -package com.chnherb.sql -no-listener -visitor .&lt;span style="color:#c41a16">\x&lt;/span>xx.g4
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Listener模式
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>antlr4 -package com.chnherb.sql -listener .&lt;span style="color:#c41a16">\x&lt;/span>xx.g4
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h3 id="定义词法规则文件">定义词法规则文件&lt;/h3>
+&lt;p>CommonLexerRules.g4&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>// 定义词法规则
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>lexer grammar CommonLexerRules;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>//////// 定义词法
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// 匹配ID
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ID : [a-zA-Z]+ ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// 匹配INT
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>INT : [0-9]+ ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// 匹配换行符
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NEWLINE: &amp;#39;\n&amp;#39;(&amp;#39;\r&amp;#39;?);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// 跳过空格、跳格、换行符
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>WS : [ \t\n\r]+ -&amp;gt; skip;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>//////// 运算符
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DIV:&amp;#39;/&amp;#39;;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>MUL:&amp;#39;*&amp;#39;;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ADD:&amp;#39;+&amp;#39;;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUB:&amp;#39;-&amp;#39;;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EQU:&amp;#39;=&amp;#39;;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h3 id="定义语法规则文件">定义语法规则文件&lt;/h3>
+&lt;p>LibExpr.g4&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// 定于语法规则
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>grammar LibExpr;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// 导入词法规则
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>import CommonLexerRules;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// 词法根
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>prog:stat+ EOF?;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// 定义声明
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>stat:expr (NEWLINE)? # printExpr
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> | ID &amp;#39;=&amp;#39; expr (NEWLINE)? # assign
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> | NEWLINE # blank
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// 定义表达式
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>expr:expr op=(&amp;#39;*&amp;#39;|&amp;#39;/&amp;#39;) expr # MulDiv
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> |expr op=(&amp;#39;+&amp;#39;|&amp;#39;-&amp;#39;) expr # AddSub
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> |&amp;#39;(&amp;#39; expr &amp;#39;)&amp;#39; # Parens
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> |ID # Id
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> |INT # Int
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h3 id="编译生成文件">编译生成文件&lt;/h3>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;dependencies&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;groupId&amp;gt;&lt;/span>org.antlr&lt;span style="color:#000">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>antlr4&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;version&amp;gt;&lt;/span>4.9.3&lt;span style="color:#000">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;groupId&amp;gt;&lt;/span>org.antlr&lt;span style="color:#000">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>antlr4-runtime&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;version&amp;gt;&lt;/span>4.9.3&lt;span style="color:#000">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;/dependencies&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>执行命令：
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>mvn generate-sources
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>&lt;/p>
+&lt;h3 id="编写示例代码">编写示例代码&lt;/h3>
+&lt;p>示例文本：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>1+2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1+2*3
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1+2*3-4
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1+2*3-4+20/5
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>(1+2)*3
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>逻辑代码：
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">package&lt;/span> &lt;span style="color:#000">com.chnherb.sql&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.util.HashMap&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.util.Map&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 重写访问器规则，实现数据计算功能
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 目标：
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 1+2 =&amp;gt; 1+2=3
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 1+2*4 =&amp;gt; 1+2*4=9
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 1+2*4-5 =&amp;gt; 1+2*4-5=4
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 1+2*4-5+20/5 =&amp;gt; 1+2*4-5+20/5=8
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * (1+2)*4 =&amp;gt; (1+2)*4=12
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">LibExprVisitorImpl&lt;/span> &lt;span style="color:#a90d91">extends&lt;/span> &lt;span style="color:#000">LibExprBaseVisitor&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Integer&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 定义数据
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">Map&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">Integer&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">data&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">HashMap&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">Integer&lt;/span>&lt;span style="color:#000">&amp;gt;();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// expr (NEWLINE)? # printExpr
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Integer&lt;/span> &lt;span style="color:#000">visitPrintExpr&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">PrintExprContext&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">expr&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getText&lt;/span>&lt;span style="color:#000">()+&lt;/span>&lt;span style="color:#c41a16">&amp;#34;=&amp;#34;&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">expr&lt;/span>&lt;span style="color:#000">()));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">expr&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// ID &amp;#39;=&amp;#39; expr (NEWLINE)? # assign
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Integer&lt;/span> &lt;span style="color:#000">visitAssign&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">AssignContext&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 获取id
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">id&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">ID&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getText&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// // 获取value
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">value&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Integer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">valueOf&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">expr&lt;/span>&lt;span style="color:#000">()));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 缓存ID数据
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">data&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">put&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">id&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">value&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 打印日志
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">id&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#c41a16">&amp;#34;=&amp;#34;&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#000">value&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">value&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// NEWLINE # blank
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Integer&lt;/span> &lt;span style="color:#000">visitBlank&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">BlankContext&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// expr op=(&amp;#39;*&amp;#39;|&amp;#39;/&amp;#39;) expr # MulDiv
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Integer&lt;/span> &lt;span style="color:#000">visitMulDiv&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">MulDivContext&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 左侧数字
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">left&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Integer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">valueOf&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">expr&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">)));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 右侧数字
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">right&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Integer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">valueOf&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">expr&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">1&lt;/span>&lt;span style="color:#000">)));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 操作符号
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">opType&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">op&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getType&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 调试
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// System.out.println(&amp;#34;visitMulDiv&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; left:&amp;#34;+left+&amp;#34;,opType:&amp;#34;+opType+&amp;#34;,right:&amp;#34;+right);
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 判断是否为乘法
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">MUL&lt;/span>&lt;span style="color:#000">==&lt;/span>&lt;span style="color:#000">opType&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">left&lt;/span>&lt;span style="color:#000">*&lt;/span>&lt;span style="color:#000">right&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 判断是否为除法
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">left&lt;/span>&lt;span style="color:#000">/&lt;/span>&lt;span style="color:#000">right&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// expr op=(&amp;#39;+&amp;#39;|&amp;#39;-&amp;#39;) expr # AddSub
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Integer&lt;/span> &lt;span style="color:#000">visitAddSub&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">AddSubContext&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 获取值和符号
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 左侧数字
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">left&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Integer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">valueOf&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">expr&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">)));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 右侧数字
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">right&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Integer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">valueOf&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">expr&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">1&lt;/span>&lt;span style="color:#000">)));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 操作符号
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">opType&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">op&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getType&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 调试
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// System.out.println(&amp;#34;visitAddSub&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; left:&amp;#34;+left+&amp;#34;,opType:&amp;#34;+opType+&amp;#34;,right:&amp;#34;+right);
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 判断是否为加法
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">ADD&lt;/span>&lt;span style="color:#000">==&lt;/span>&lt;span style="color:#000">opType&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">left&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#000">right&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 判断是否为减法
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">left&lt;/span>&lt;span style="color:#000">-&lt;/span>&lt;span style="color:#000">right&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// &amp;#39;(&amp;#39; expr &amp;#39;)&amp;#39; # Parens
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Integer&lt;/span> &lt;span style="color:#000">visitParens&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">ParensContext&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 递归下调
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">expr&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// ID # Id
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Integer&lt;/span> &lt;span style="color:#000">visitId&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">IdContext&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 获取id
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">id&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">ID&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getText&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 判断ID是否被定义
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">data&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">containsKey&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">id&lt;/span>&lt;span style="color:#000">)){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// System.out.println(&amp;#34;visitId&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; id:&amp;#34;+id+&amp;#34;,value:&amp;#34;+data.get(id));
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">data&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">get&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">id&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">0&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// INT # Int
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Integer&lt;/span> &lt;span style="color:#000">visitInt&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">IntContext&lt;/span> &lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// System.out.println(&amp;#34;visitInt&amp;gt;&amp;gt;&amp;gt;&amp;gt;&amp;gt; int:&amp;#34;+ctx.INT().getText());
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#000">Integer&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">valueOf&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">ctx&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">INT&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getText&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>&lt;/p>
+&lt;p>Main函数：&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">package&lt;/span> &lt;span style="color:#000">com.chnherb.sql&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">org.antlr.v4.runtime.tree.ParseTree&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.io.FileNotFoundException&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">java.io.IOException&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">org.antlr.v4.runtime.*&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 打印语法树
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">TestLibExprPrint&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 打印语法树 input -&amp;gt; lexer -&amp;gt; tokens -&amp;gt; parser -&amp;gt; tree -&amp;gt; print
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">main&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">args&lt;/span>&lt;span style="color:#000">[]){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">printTree&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;./testCase.txt&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 打印语法树 input -&amp;gt; lexer -&amp;gt; token -&amp;gt; parser -&amp;gt; tree
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * @param fileName
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">private&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">printTree&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">fileName&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 定义输入流
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">ANTLRInputStream&lt;/span> &lt;span style="color:#000">input&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 判断文件名是否为空,若不为空，则读取文件内容，若为空，则读取输入流
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#a90d91">if&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">fileName&lt;/span>&lt;span style="color:#000">!=&lt;/span>&lt;span style="color:#a90d91">null&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">try&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">input&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">ANTLRFileStream&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">fileName&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">catch&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">FileNotFoundException&lt;/span> &lt;span style="color:#000">fnfe&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;文件不存在，请检查后重试！&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">catch&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">IOException&lt;/span> &lt;span style="color:#000">ioe&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;文件读取异常，请检查后重试！&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">else&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">try&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">input&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">ANTLRInputStream&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">in&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">catch&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">FileNotFoundException&lt;/span> &lt;span style="color:#000">fnfe&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;文件不存在，请检查后重试！&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">catch&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">IOException&lt;/span> &lt;span style="color:#000">ioe&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;文件读取异常，请检查后重试！&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 定义词法规则分析器
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">LibExprLexer&lt;/span> &lt;span style="color:#000">lexer&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">LibExprLexer&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">input&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 生成通用字符流
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">CommonTokenStream&lt;/span> &lt;span style="color:#000">tokens&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">CommonTokenStream&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">lexer&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 语法解析
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">LibExprParser&lt;/span> &lt;span style="color:#000">parser&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">LibExprParser&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">tokens&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 生成语法树
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">ParseTree&lt;/span> &lt;span style="color:#000">tree&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">parser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">prog&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// 打印语法树
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// System.out.println(tree.toStringTree(parser));
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#177500">// 生命访问器
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">LibExprVisitorImpl&lt;/span> &lt;span style="color:#000">visitor&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">LibExprVisitorImpl&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">visitor&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">tree&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h2 id="解析csv文件">解析CSV文件&lt;/h2>
+&lt;h3 id="裁剪g4文件">裁剪g4文件&lt;/h3>
+&lt;p>定义SelectBase.g4文件。直接参考Presto源码，g4文件并不需要从零开发，只需要基于Presto的g4文件裁剪即可。&lt;/p>
+&lt;p>核心规则为: SELECT  selectItem (',' selectItem)*  (FROM relation (',' relation)*)?&lt;/p>
+&lt;p>查询数据表被抽象成了relation。&lt;/p>
+&lt;p>裁剪后的内容如下：&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-plain" data-lang="plain">&lt;span style="display:flex;">&lt;span>grammar SqlBase;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>tokens {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> DELIMITER
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>singleStatement
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : statement EOF
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>statement
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : query #statementDefault
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>query
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : queryNoWith
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>queryNoWith:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> queryTerm
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>queryTerm
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : queryPrimary #queryTermDefault
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>queryPrimary
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : querySpecification #queryPrimaryDefault
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>querySpecification
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : SELECT selectItem (&amp;#39;,&amp;#39; selectItem)*
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> (FROM relation (&amp;#39;,&amp;#39; relation)*)?
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>selectItem
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : expression #selectSingle
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>relation
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : sampledRelation #relationDefault
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>expression
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : booleanExpression
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>booleanExpression
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : valueExpression #predicated
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>valueExpression
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : primaryExpression #valueExpressionDefault
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>primaryExpression
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : identifier #columnReference
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>sampledRelation
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : aliasedRelation
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>aliasedRelation
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : relationPrimary
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>relationPrimary
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : qualifiedName #tableName
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>qualifiedName
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : identifier (&amp;#39;.&amp;#39; identifier)*
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>identifier
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : IDENTIFIER #unquotedIdentifier
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SELECT: &amp;#39;SELECT&amp;#39;;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FROM: &amp;#39;FROM&amp;#39;;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>fragment DIGIT
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : [0-9]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>fragment LETTER
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : [A-Z]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>IDENTIFIER
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : (LETTER | &amp;#39;_&amp;#39;) (LETTER | DIGIT | &amp;#39;_&amp;#39; | &amp;#39;@&amp;#39; | &amp;#39;:&amp;#39;)*
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>WS
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : [ \r\n\t]+ -&amp;gt; channel(HIDDEN)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// Catch-all for anything we can&amp;#39;t recognize.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// We use this to be able to ignore and recover all the text
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>// when splitting statements with DelimiterLexer
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>UNRECOGNIZED
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> : .
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ;
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h3 id="生成代码">生成代码&lt;/h3>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>antlr4 -package com.chnherb.csv -no-listener -visitor .&lt;span style="color:#c41a16">\S&lt;/span>qlBase.g4
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="语法树节点">语法树节点&lt;/h3>
+&lt;p>&lt;img src="../imgs/sql_intro_230310_1.png" alt="sql_intro_230310_1.png">&lt;/p>
+&lt;h3 id="解析类">解析类&lt;/h3>
+&lt;p>基于visitor模式实现解析类AstBuilder，以visitQuerySpecification为例：&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">@Override&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#000">Node&lt;/span> &lt;span style="color:#000">visitQuerySpecification&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">SqlBaseParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">QuerySpecificationContext&lt;/span> &lt;span style="color:#000">context&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Optional&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Relation&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">from&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Optional&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">empty&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">SelectItem&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">selectItems&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">context&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">selectItem&lt;/span>&lt;span style="color:#000">(),&lt;/span> &lt;span style="color:#000">SelectItem&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Relation&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">relations&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">visit&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">context&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">relation&lt;/span>&lt;span style="color:#000">(),&lt;/span> &lt;span style="color:#000">Relation&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">class&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">if&lt;/span> &lt;span style="color:#000">(!&lt;/span>&lt;span style="color:#000">relations&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">isEmpty&lt;/span>&lt;span style="color:#000">())&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// synthesize implicit join nodes
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> &lt;span style="color:#000">Iterator&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Relation&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">iterator&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">relations&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">iterator&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Relation&lt;/span> &lt;span style="color:#000">relation&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">iterator&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">next&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">from&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Optional&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">of&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">relation&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">return&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">QuerySpecification&lt;/span>&lt;span style="color:#000">(&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">getLocation&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">context&lt;/span>&lt;span style="color:#000">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Select&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">getLocation&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">context&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">SELECT&lt;/span>&lt;span style="color:#000">()),&lt;/span> &lt;span style="color:#a90d91">false&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">selectItems&lt;/span>&lt;span style="color:#000">),&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">from&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;p>解析出查询的数据源和具体字段，封装到QuerySpecification对象中。&lt;/p>
+&lt;h3 id="statement查询数据">Statement查询数据&lt;/h3>
+&lt;p>将用户输入的语句解析成ParseTree，对其遍历生成Statement对象。核心代码如下：&lt;/p>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">SqlParser&lt;/span> &lt;span style="color:#000">sqlParser&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">SqlParser&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Statement&lt;/span> &lt;span style="color:#000">statement&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">sqlParser&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">createStatement&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">sql&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>Statement对象使用：&lt;/p>
+&lt;ul>
+&lt;li>Query类型的Statement有QueryBody属性。&lt;/li>
+&lt;li>QuerySpecification类型的QueryBody有select属性和from属性。
+&lt;ul>
+&lt;li>从from属性中获取待查询的目标表Table。这里约定表名和csv文件名一致。&lt;/li>
+&lt;li>从select属性中获取待查询的目标字段SelectItem。这里约定csv首行为title行。
+流程如下：&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>获取查询的数据表以及字段。&lt;/li>
+&lt;li>通过数据表名称定为到数据文件，并读取数据文件数据。&lt;/li>
+&lt;li>格式化输出字段名称到命令行。&lt;/li>
+&lt;li>格式化输出字段内容到命令行。&lt;/li>
+&lt;/ol>
+&lt;h3 id="编写代码">编写代码&lt;/h3>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 获取待查询的表名和字段名称
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">QuerySpecification&lt;/span> &lt;span style="color:#000">specification&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">QuerySpecification&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">query&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getQueryBody&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Table&lt;/span> &lt;span style="color:#000">table&lt;/span>&lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Table&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">specification&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getFrom&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">get&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">SelectItem&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">selectItems&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">specification&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getSelect&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">getSelectItems&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">fieldNames&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Lists&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">newArrayList&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">for&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">SelectItem&lt;/span> &lt;span style="color:#000">item&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">selectItems&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">SingleColumn&lt;/span> &lt;span style="color:#000">column&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">SingleColumn&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">item&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">fieldNames&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">add&lt;/span>&lt;span style="color:#000">(((&lt;/span>&lt;span style="color:#000">Identifier&lt;/span>&lt;span style="color:#000">)&lt;/span>&lt;span style="color:#000">column&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getExpression&lt;/span>&lt;span style="color:#000">()).&lt;/span>&lt;span style="color:#836c28">getValue&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 基于表名确定查询的数据源文件
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">fileLoc&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">format&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;./data/%s.csv&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">table&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getName&lt;/span>&lt;span style="color:#000">());&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 从csv文件中读取指定的字段
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Reader&lt;/span> &lt;span style="color:#000">in&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">FileReader&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">fileLoc&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Iterable&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">CSVRecord&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">records&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">CSVFormat&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">RFC4180&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">withFirstRecordAsHeader&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">parse&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">in&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">List&lt;/span>&lt;span style="color:#000">&amp;lt;&lt;/span>&lt;span style="color:#000">Row&lt;/span>&lt;span style="color:#000">&amp;gt;&lt;/span> &lt;span style="color:#000">rowList&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Lists&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">newArrayList&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">for&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">CSVRecord&lt;/span> &lt;span style="color:#000">record&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">records&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">Row&lt;/span> &lt;span style="color:#000">row&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">Row&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">for&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">field&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">fieldNames&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">row&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">addColumn&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">record&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">get&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">field&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">rowList&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">add&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">row&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">/**
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> * 格式化输出到控制台
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500"> */&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">width&lt;/span>&lt;span style="color:#000">=&lt;/span>&lt;span style="color:#000">30&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">format&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">fieldNames&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">stream&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">map&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">s&lt;/span>&lt;span style="color:#000">-&amp;gt;&lt;/span> &lt;span style="color:#c41a16">&amp;#34;%-&amp;#34;&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#000">width&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#c41a16">&amp;#34;s&amp;#34;&lt;/span>&lt;span style="color:#000">).&lt;/span>&lt;span style="color:#836c28">collect&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Collectors&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">joining&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;|&amp;#34;&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span> &lt;span style="color:#c41a16">&amp;#34;|&amp;#34;&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">format&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">format&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">fieldNames&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">toArray&lt;/span>&lt;span style="color:#000">())+&lt;/span>&lt;span style="color:#c41a16">&amp;#34;|&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">int&lt;/span> &lt;span style="color:#000">flagCnt&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">width&lt;/span>&lt;span style="color:#000">*&lt;/span>&lt;span style="color:#000">fieldNames&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">size&lt;/span>&lt;span style="color:#000">()+&lt;/span>&lt;span style="color:#000">fieldNames&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">size&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">rowDelimiter&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">join&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">Collections&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">nCopies&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">flagCnt&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#c41a16">&amp;#34;-&amp;#34;&lt;/span>&lt;span style="color:#000">));&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">rowDelimiter&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">for&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Row&lt;/span> &lt;span style="color:#000">row&lt;/span>&lt;span style="color:#000">:&lt;/span>&lt;span style="color:#000">rowList&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span> &lt;span style="color:#c41a16">&amp;#34;|&amp;#34;&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">format&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">format&lt;/span>&lt;span style="color:#000">,&lt;/span> &lt;span style="color:#000">row&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">getColumnList&lt;/span>&lt;span style="color:#000">().&lt;/span>&lt;span style="color:#836c28">toArray&lt;/span>&lt;span style="color:#000">())+&lt;/span>&lt;span style="color:#c41a16">&amp;#34;|&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h1 id="calcite">Calcite&lt;/h1>
+&lt;h2 id="简介">简介&lt;/h2>
+&lt;p>与ANTLR不同，Apache Calcite大大简化了SQL的解析流程，不需要定义接口、生成代码。&lt;/p>
+&lt;p>数据库包含的常用功能：&lt;/p>
+&lt;ul>
+&lt;li>query language&lt;/li>
+&lt;li>query optimization&lt;/li>
+&lt;li>query execution&lt;/li>
+&lt;li>data management&lt;/li>
+&lt;li>data storage
+Calcite 设计之初主要关注前三者，将后面两个数据管理和数据存储交给计算/存储引擎。专注于上层通用的模块，控制系统的复杂性。&lt;/li>
+&lt;/ul>
+&lt;p>同时，Calcite也复用了一些组件，如使用 JavaCC 来将SQL语句转为Java代码，进而转化成AST。另外为了支持灵活的元数据功能，Calcite需要支持运行时编译Java代码，但默认的JavaC太重，使用了轻量开源的 Janino。&lt;/p>
+&lt;p>常用的大数据组件都有集成 Calcite，Hive就是自己做了SQL解析，只使用了Calcite的查询优化功能。而像Flink从解析到优化都直接使用了Calcite。&lt;/p>
+&lt;h2 id="主要模块">主要模块&lt;/h2>
+&lt;ul>
+&lt;li>JDBC Client：支持 JDBC Client 的应用&lt;/li>
+&lt;li>SQL Parser and Validator：用来SQL解析和校验&lt;/li>
+&lt;li>Expressions Builder：支持SQL解析和校验的框架对接&lt;/li>
+&lt;li>Operator Expressions：处理关系表达式&lt;/li>
+&lt;li>Metadata Provider：支持外部自定义元数据&lt;/li>
+&lt;li>Pluggable Rules：定义优化规则&lt;/li>
+&lt;li>Query Optimizer：（核心模块）专注于查询优化&lt;/li>
+&lt;/ul>
+&lt;h2 id="解析sql">解析SQL&lt;/h2>
+&lt;h3 id="pom依赖">pom依赖&lt;/h3>
+&lt;style>
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+.code-collapse1 {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 100%;
+}
+&lt;/style>
+&lt;div class="code-collapse1">
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-xml" data-lang="xml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;dependencies&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;groupId&amp;gt;&lt;/span>org.smartloli&lt;span style="color:#000">&amp;lt;/groupId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;artifactId&amp;gt;&lt;/span>jsql-client&lt;span style="color:#000">&amp;lt;/artifactId&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;version&amp;gt;&lt;/span>1.0.0&lt;span style="color:#000">&amp;lt;/version&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">&amp;lt;/dependency&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">&amp;lt;/dependencies&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;h3 id="实现代码">实现代码&lt;/h3>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-java" data-lang="java">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">package&lt;/span> &lt;span style="color:#000">com.chnherb.sql&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.alibaba.fastjson.JSON&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.alibaba.fastjson.JSONArray&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">com.alibaba.fastjson.JSONObject&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">import&lt;/span> &lt;span style="color:#000">org.smartloli.util.JSqlUtils&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">class&lt;/span> &lt;span style="color:#3f6e75">JSqlClient&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">public&lt;/span> &lt;span style="color:#a90d91">static&lt;/span> &lt;span style="color:#a90d91">void&lt;/span> &lt;span style="color:#000">main&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">String&lt;/span>&lt;span style="color:#000">[]&lt;/span> &lt;span style="color:#000">args&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">JSONObject&lt;/span> &lt;span style="color:#000">tabSchema&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#a90d91">new&lt;/span> &lt;span style="color:#000">JSONObject&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">tabSchema&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">put&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;id&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#c41a16">&amp;#34;integer&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">tabSchema&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">put&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;name&amp;#34;&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#c41a16">&amp;#34;varchar&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">JSONArray&lt;/span> &lt;span style="color:#000">datasets&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">JSON&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">parseArray&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;[{\&amp;#34;id\&amp;#34;:1,\&amp;#34;name\&amp;#34;:\&amp;#34;aaa\&amp;#34;,\&amp;#34;age\&amp;#34;:20},{\&amp;#34;id\&amp;#34;:2,\&amp;#34;name\&amp;#34;:\&amp;#34;bbb\&amp;#34;,\&amp;#34;age\&amp;#34;:21},{\&amp;#34;id\&amp;#34;:3,\&amp;#34;name\&amp;#34;:\&amp;#34;ccc\&amp;#34;,\&amp;#34;age\&amp;#34;:22}]&amp;#34;&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">tabName&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#c41a16">&amp;#34;userinfo&amp;#34;&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">sql&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#c41a16">&amp;#34;select count(*) as cnt from \&amp;#34;userinfo\&amp;#34;&amp;#34;&lt;/span>&lt;span style="color:#000">;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a90d91">try&lt;/span>&lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">String&lt;/span> &lt;span style="color:#000">result&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">JSqlUtils&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">query&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">tabSchema&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">tabName&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">datasets&lt;/span>&lt;span style="color:#000">,&lt;/span>&lt;span style="color:#000">sql&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">System&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">out&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">println&lt;/span>&lt;span style="color:#000">(&lt;/span>&lt;span style="color:#c41a16">&amp;#34;result: &amp;#34;&lt;/span>&lt;span style="color:#000">+&lt;/span>&lt;span style="color:#000">result&lt;/span>&lt;span style="color:#000">);&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>&lt;span style="color:#a90d91">catch&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#000">Exception&lt;/span> &lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">){&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">e&lt;/span>&lt;span style="color:#000">.&lt;/span>&lt;span style="color:#836c28">printStackTrace&lt;/span>&lt;span style="color:#000">();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://github.com/antlr/antlr4">https://github.com/antlr/antlr4&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://github.com/antlr/grammars-v4">https://github.com/antlr/grammars-v4&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://github.com/apache/calcite">https://github.com/apache/calcite&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://github.com/smartloli/EFAK">https://github.com/smartloli/EFAK&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://prestodb.io/docs/current/">https://prestodb.io/docs/current/&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://github.com/prestodb/presto">https://github.com/prestodb/presto&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://mp.weixin.qq.com/s/oYsCmTg4OVlIuB9a8Eu1Vw">探究Presto SQL引擎(1)-巧用Antlr&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://mp.weixin.qq.com/s/2FH4WuO1FMbxqiv4RUvdrA">如何实现一个SQL解析器&lt;/a>&lt;/p></description></item><item><title>Docs: 03.统计计数</title><link>/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/SQL%E5%BC%95%E6%93%8E/03.%E7%BB%9F%E8%AE%A1%E8%AE%A1%E6%95%B0/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/30.%E6%95%B0%E6%8D%AE%E5%BA%93/SQL%E5%BC%95%E6%93%8E/03.%E7%BB%9F%E8%AE%A1%E8%AE%A1%E6%95%B0/</guid><description>
+&lt;h1 id="背景">背景&lt;/h1>
+&lt;p>统计计数是一个非常常见场景。除了通常的计数，统计不重复元素个数的需求也非常常见，这种统计称为&lt;strong>基数统计&lt;/strong>。分布式SQL引擎，计数的实现原理值得深入研究，特别是基数统计。关于普通计数和基数计数，最典型的例子莫过于PV/UV。&lt;/p>
+&lt;h1 id="主要方法">主要方法&lt;/h1>
+&lt;p>在SQL语法里面，基数统计对应到count(distinct  field)或者aprox_distinct()。通常做精确计数统计需要用到Set这种数据结构。Set不仅可以获得数量信息，还能不重不漏地获取每一个元素。&lt;/p>
+&lt;p>Set内部有两种实现实现原理：Hash和Tree。&lt;/p>
+&lt;p>在海量数据的前提下，Hash和Tree有一个致命的问题：内存消耗，而且随着数据量级的增长，内存消耗也是线性增长。&lt;/p>
+&lt;p>面对Set内存消耗的问题，通常有两种思路：&lt;/p>
+&lt;ul>
+&lt;li>选取其他内存占用更小的数据结构，例如bitmap；&lt;/li>
+&lt;li>放弃精确，从数学上寻求近似解，典型的算法有Linear Count和HyperLogLog。&lt;/li>
+&lt;/ul>
+&lt;h2 id="bitmap">Bitmap&lt;/h2>
+&lt;p>在数据库领域Bitmap并不是新事物，一般用作索引，称为位图索引。所谓位图索引，就是用一个bit位向量来记录某个字段值是否存在于对应的记录。它有一个前置条件：记录要有永久的编号，类似于从1开始的自增主键。&lt;/p>
+&lt;h3 id="位图向量的构建">位图向量的构建&lt;/h3>
+&lt;p>对于数据表的一个字段，如果记录数为n且字段的取值基数为m，那么会得到一个m*n的位图。&lt;/p>
+&lt;p>多个字段即得到多个这样的位图。&lt;/p>
+&lt;h3 id="位图向量的应用">位图向量的应用&lt;/h3>
+&lt;p>单个条件：&lt;/p>
+&lt;p>直接取该字段m*n的位图，统计其中 1 的个数。&lt;/p>
+&lt;p>多个条件：&lt;/p>
+&lt;p>取对应多个字段的位图，多个向量进行交集运算，然后统计 1 的个数。&lt;/p>
+&lt;h3 id="优缺点">优缺点&lt;/h3>
+&lt;p>优点：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>节省内存（数据分布密集压缩空间更大）&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>二进制位操作，执行效率高
+缺点：&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>非数值型字段，需要额外转换处理&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;h2 id="linear-count">Linear Count&lt;/h2>
+&lt;p>Linear Count简称LC算法（利用数学的概率和统计学知识）。 &lt;/p>
+&lt;p>算法描述如下：&lt;/p>
+&lt;ul>
+&lt;li>初始化：给定m个房间，房间存储数字，初始化为0。&lt;/li>
+&lt;li>迭代执行：对于要进行基数统计的集合，用一个哈希函数处理集合中的每一个元素。通过哈希函数处理后，元素就可以放置到一个房间中。&lt;/li>
+&lt;li>收尾：统计m个房间中空房间的数量U。&lt;/li>
+&lt;li>结论：集合中不重复元素的个数估计值可以通过如下公式计算：n=-m*log(U/m)。
+随着m和n的增大，m大约为n的十分之一。&lt;/li>
+&lt;/ul>
+&lt;h2 id="hyperloglog">HyperLogLog&lt;/h2>
+&lt;p>HyperLogLog简称HLL算法，它有如下的特点：&lt;/p>
+&lt;ol>
+&lt;li>可以实现由极小的内存开销统计出巨量的数据。在 Redis中实现的HyperLogLog，只需要12K内存就能统计2^64个数据。&lt;/li>
+&lt;li>可以方便实现分布式扩展。(对算法在业务系统中落地非常关键)&lt;/li>
+&lt;/ol>
+&lt;h2 id="基础理论">基础理论&lt;/h2>
+&lt;h3 id="伯努利实验">伯努利实验&lt;/h3>
+&lt;p>如抛硬币，随着次数地增多，对应的值也就越趋近一个值。这样将统计问题转换成概率论中参数估计的问题。&lt;/p>
+&lt;h3 id="调和平均数">调和平均数&lt;/h3>
+&lt;p>概率中的极值问题导致最后得到的值不稳定。对于极值的处理策略是多实验几轮，通过平均值来消除极值的影响。&lt;/p>
+&lt;p>数学上其实有许多的平均数计算方式：算术平均数、几何平均数、平方平均数。选用调和平均数主要是消除极值的影响。&lt;/p>
+&lt;h1 id="核心流程">核心流程&lt;/h1>
+&lt;p>MapReduce的核心流程：&lt;/p>
+&lt;ul>
+&lt;li>Input&lt;/li>
+&lt;li>Splitting&lt;/li>
+&lt;li>Mapping&lt;/li>
+&lt;li>Shuffling&lt;/li>
+&lt;li>Reducing&lt;/li>
+&lt;li>Final result
+Presto核心流程也是类似的，先分组聚合，然后汇总聚合。&lt;/li>
+&lt;/ul>
+&lt;h1 id="方案实现">方案实现&lt;/h1>
+&lt;h2 id="count-distinct">&lt;strong>count distinct&lt;/strong>&lt;/h2>
+&lt;p>以id为主key, 对数据进行hash分发，进行部分聚合，最终整体聚合。依然是map-reduce的思路，只不过数据按id进行了分发。&lt;/p>
+&lt;h2 id="aprox-distinct">&lt;strong>aprox_distinct&lt;/strong>&lt;/h2>
+&lt;p>免去了基于id的hash分发策略，减少了一个stage。以Presto为例，基础框架airlift中封装了HyperLogLog算法的实现，采用的函数是MurMurHash3算法，生成64位散列值。前6位用于计算当前散列值所在分组m。实现过程中还有一个很有意思的细节：基于待统计的数据量，实现中同时采用了Linear Count算法和HyperLogLog算法。&lt;/p>
+&lt;h1 id="小结">小结&lt;/h1>
+&lt;p>基数统计是一个非常消耗内存的操作，特别是在分布式系统背景下，不仅消耗内存，而且涉及大量网络数据传输。&lt;/p>
+&lt;p>分析对应的业务场景，如果可以提供近似值而非精确值，能大幅度降低系统消耗和响应时间，提升用户体验。或者在设计产品时，对于一些场景的计数，可以优先提供近似估计，如果确实需要精确计数，在管理好响应时间预期下，再提供查询精确值的接口。&lt;/p></description></item></channel></rss>

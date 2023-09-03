@@ -1,0 +1,169 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Herbdocs – cron</title><link>/tags/cron/</link><description>Recent content in cron on Herbdocs</description><generator>Hugo -- gohugo.io</generator><atom:link href="/tags/cron/index.xml" rel="self" type="application/rss+xml"/><item><title>Docs: cron表达式</title><link>/docs/71.%E9%80%9A%E7%94%A8/cron%E8%A1%A8%E8%BE%BE%E5%BC%8F/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>/docs/71.%E9%80%9A%E7%94%A8/cron%E8%A1%A8%E8%BE%BE%E5%BC%8F/</guid><description>
+&lt;h1 id="简介">简介&lt;/h1>
+&lt;p>Quartz Cron表达式主要用于JAVA Spring定时任务中，用法如下：&lt;/p>
+&lt;style>
+.highlight {
+overflow-y: auto;
+max-height: 500px;
+overflow-x: auto;
+max-width: 130%;
+}
+.td-content .highlight {
+margin-top: 0.5rem;
+margin-bottom: 0.5rem;
+}
+&lt;/style>
+&lt;details class="code-collapse">
+&lt;summary>Expand/Collapse Code Block&lt;/summary>
+&lt;div class="highlight">&lt;div style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">
+&lt;table style="border-spacing:0;padding:0;margin:0;border:0;">&lt;tr>&lt;td style="vertical-align:top;padding:0;margin:0;border:0;">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19
+&lt;/span>&lt;span style="white-space:pre;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20
+&lt;/span>&lt;/code>&lt;/pre>&lt;/td>
+&lt;td style="vertical-align:top;padding:0;margin:0;border:0;;width:100%">
+&lt;pre tabindex="0" style="background-color:#fff;-moz-tab-size:2;-o-tab-size:2;tab-size:2;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">#&lt;/span> &lt;span style="color:#000">每月的最后&lt;/span>&lt;span style="color:#1c01ce">1&lt;/span>&lt;span style="color:#000">天&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">@Scheduled(cron&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#c41a16">&amp;#34;0 0 18 28–31 * ?&amp;#34;&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">public&lt;/span> &lt;span style="color:#000">void&lt;/span> &lt;span style="color:#000">doAtLastDayOfMonth()&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">final&lt;/span> &lt;span style="color:#000">Calendar&lt;/span> &lt;span style="color:#000">calendar&lt;/span> &lt;span style="color:#000">=&lt;/span> &lt;span style="color:#000">Calendar.getInstance();&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#000">if&lt;/span> &lt;span style="color:#000">(c.get(Calendar.DATE)&lt;/span> &lt;span style="color:#000">==&lt;/span> &lt;span style="color:#000">c.getActualMaximum(Calendar.DATE))&lt;/span> &lt;span style="color:#000">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#177500">// do something here...
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#177500">&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">说明：&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">Java(Spring)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">*&lt;/span> &lt;span style="color:#000">*&lt;/span> &lt;span style="color:#000">*&lt;/span> &lt;span style="color:#000">*&lt;/span> &lt;span style="color:#000">*&lt;/span> &lt;span style="color:#000">*&lt;/span> &lt;span style="color:#000">*&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#000">-&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">+&lt;/span> &lt;span style="color:#000">year&lt;/span> [&lt;span style="color:#000">optional&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">+-----&lt;/span> &lt;span style="color:#000">day&lt;/span> &lt;span style="color:#000">of&lt;/span> &lt;span style="color:#000">week&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#1c01ce">0&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#1c01ce">7&lt;/span>&lt;span style="color:#000">)&lt;/span> &lt;span style="color:#000">(Sunday=&lt;/span>&lt;span style="color:#1c01ce">0&lt;/span> &lt;span style="color:#000">or&lt;/span> &lt;span style="color:#1c01ce">7&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">+----------&lt;/span> &lt;span style="color:#000">month&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#1c01ce">1&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#1c01ce">12&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">+---------------&lt;/span> &lt;span style="color:#000">day&lt;/span> &lt;span style="color:#000">of&lt;/span> &lt;span style="color:#000">month&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#1c01ce">1&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#1c01ce">31&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">+--------------------&lt;/span> &lt;span style="color:#000">hour&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#1c01ce">0&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#1c01ce">23&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">|&lt;/span> &lt;span style="color:#000">+-------------------------&lt;/span> &lt;span style="color:#000">min&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#1c01ce">0&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#1c01ce">59&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#000">+------------------------------&lt;/span> &lt;span style="color:#000">second&lt;/span> &lt;span style="color:#000">(&lt;/span>&lt;span style="color:#1c01ce">0&lt;/span> &lt;span style="color:#000">-&lt;/span> &lt;span style="color:#1c01ce">59&lt;/span>&lt;span style="color:#000">)&lt;/span>
+&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/td>&lt;/tr>&lt;/table>
+&lt;/div>
+&lt;/div>
+&lt;/details>
+&lt;br/>
+&lt;h1 id="各字段的含义">&lt;strong>各字段的含义&lt;/strong>&lt;/h1>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:left">字段&lt;/th>
+&lt;th style="text-align:left">允许值&lt;/th>
+&lt;th style="text-align:left">允许的特殊字符&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:left">秒（Seconds）&lt;/td>
+&lt;td style="text-align:left">0~59的整数&lt;/td>
+&lt;td style="text-align:left">, - * /    四个字符&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">分（&lt;em>Minutes&lt;/em>）&lt;/td>
+&lt;td style="text-align:left">0~59的整数&lt;/td>
+&lt;td style="text-align:left">, - * /    四个字符&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">小时（&lt;em>Hours&lt;/em>）&lt;/td>
+&lt;td style="text-align:left">0~23的整数&lt;/td>
+&lt;td style="text-align:left">, - * /    四个字符&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">日期（&lt;em>DayofMonth&lt;/em>）&lt;/td>
+&lt;td style="text-align:left">1~31的整数（但是你需要考虑你月的天数）&lt;/td>
+&lt;td style="text-align:left">,- * ? / L W C     八个字符&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">月份（&lt;em>Month&lt;/em>）&lt;/td>
+&lt;td style="text-align:left">1~12的整数或者 JAN-DEC&lt;/td>
+&lt;td style="text-align:left">, - * /    四个字符&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">星期（&lt;em>DayofWeek&lt;/em>）&lt;/td>
+&lt;td style="text-align:left">1~7的整数或者 SUN-SAT （1=SUN）&lt;/td>
+&lt;td style="text-align:left">, - * ? / L C #     八个字符&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:left">年(可选，留空)（&lt;em>Year&lt;/em>）&lt;/td>
+&lt;td style="text-align:left">1970~2099&lt;/td>
+&lt;td style="text-align:left">, - * /    四个字符&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>&lt;strong>注意事项：&lt;/strong>&lt;/p>
+&lt;p>每一个域都使用数字，但还可以出现如下特殊字符，它们的含义是：&lt;/p>
+&lt;p>（1）&lt;em>：表示匹配该域的任意值。假如在Minutes域使用&lt;/em>, 即表示每分钟都会触发事件。&lt;/p>
+&lt;p>（2）?：&lt;strong>只能用在DayofMonth（日）和DayofWeek（星期）两个域&lt;/strong>。表示不指定！它也匹配域的任意值，但实际不会。因为DayofMonth和DayofWeek会相互影响。例如想在每月的20日触发调度，不管20日到底是星期几，则只能使用如下写法： 13 13 15 20 * ?, 其中最后一位只能用？，而不能使用*，如果使用*表示不管星期几都会触发，实际上并不是这样。&lt;/p>
+&lt;p>（3）-：表示范围。例如在Minutes域使用5-20，表示从5分到20分钟每分钟触发一次 &lt;/p>
+&lt;p>（4）/：表示起始时间开始触发，然后每隔固定时间触发一次。例如在Minutes域使用5/20,则意味着5分钟触发一次，而间隔20分钟在25、45等分别触发一次. &lt;/p>
+&lt;p>（5）,：表示列出枚举值。例如：在Minutes域使用5,20，则意味着在5和20分每分钟触发一次。 &lt;/p>
+&lt;p>（6）L：表示最后，只能出现在DayofWeek和DayofMonth域。如果在DayofWeek域使用5L,意味着在最后的一个星期四触发。 &lt;/p>
+&lt;p>（7）W:表示有效工作日(周一到周五),只能出现在DayofMonth域，系统将在离指定日期的最近的有效工作日触发事件。例如：在 DayofMonth使用5W，如果5日是星期六，则将在最近的工作日：星期五，即4日触发。如果5日是星期天，则在6日(周一)触发；如果5日在星期一到星期五中的一天，则就在5日触发。另外一点，W的最近寻找不会跨过月份 。&lt;/p>
+&lt;p>（8）LW:这两个字符可以连用，表示在某个月最后一个工作日，即最后一个星期五。 &lt;/p>
+&lt;p>（9）#:用于确定每个月第几个星期几，只能出现在DayofWeek域。例如在4#2，表示某月的第二个星期三。&lt;/p>
+&lt;h1 id="常用表达式">常用表达式&lt;/h1>
+&lt;p>（0）&lt;strong>0/20 * * * * ?&lt;/strong>   表示每20秒 调整任务&lt;/p>
+&lt;p>（1）&lt;strong>0 0 2 1 * ?&lt;/strong>   表示在每月的1日的凌晨2点调整任务&lt;/p>
+&lt;p>（2）&lt;strong>0 15 10 ? * MON-FRI&lt;/strong>   表示周一到周五每天上午10:15执行作业&lt;/p>
+&lt;p>（3）&lt;strong>0 15 10 ? 6L 2002-2006&lt;/strong>   表示2002-2006年的每个月的最后一个星期五上午10:15执行作&lt;/p>
+&lt;p>（4）&lt;strong>0 0 10,14,16 * * ?&lt;/strong>   每天上午10点，下午2点，4点 &lt;/p>
+&lt;p>（5）&lt;strong>0 0/30 9-17 * * ?&lt;/strong>   朝九晚五工作时间内每半小时 &lt;/p>
+&lt;p>（6）&lt;strong>0 0 12 ? * WED&lt;/strong>    表示每个星期三中午12点 &lt;/p>
+&lt;p>（7）&lt;strong>0 0 12 * * ?&lt;/strong>   每天中午12点触发 &lt;/p>
+&lt;p>（8）**0 15 10 ? * ***  每天上午10:15触发 &lt;/p>
+&lt;p>（9）&lt;strong>0 15 10 * * ?&lt;/strong>     每天上午10:15触发 &lt;/p>
+&lt;p>（10）**0 15 10 * * ? ***    每天上午10:15触发 &lt;/p>
+&lt;p>（11）&lt;strong>0 15 10 * * ? 2005&lt;/strong>    2005年的每天上午10:15触发 &lt;/p>
+&lt;p>（12）&lt;strong>0 * 14 * * ?&lt;/strong>     在每天下午2点到下午2:59期间的每1分钟触发 &lt;/p>
+&lt;p>（13）&lt;strong>0 0/5 14 * * ?&lt;/strong>    在每天下午2点到下午2:55期间的每5分钟触发 &lt;/p>
+&lt;p>（14）&lt;strong>0 0/5 14,18 * * ?&lt;/strong>     在每天下午2点到2:55期间和下午6点到6:55期间的每5分钟触发 &lt;/p>
+&lt;p>（15）&lt;strong>0 0-5 14 * * ?&lt;/strong>    在每天下午2点到下午2:05期间的每1分钟触发 &lt;/p>
+&lt;p>（16）&lt;strong>0 10,44 14 ? 3 WED&lt;/strong>    每年三月的星期三的下午2:10和2:44触发 &lt;/p>
+&lt;p>（17）&lt;strong>0 15 10 ? * MON-FRI&lt;/strong>    周一至周五的上午10:15触发 &lt;/p>
+&lt;p>（18）&lt;strong>0 15 10 15 * ?&lt;/strong>    每月15日上午10:15触发 &lt;/p>
+&lt;p>（19）&lt;strong>0 15 10 L * ?&lt;/strong>    每月最后一日的上午10:15触发 &lt;/p>
+&lt;p>（20）&lt;strong>0 15 10 ? * 6L&lt;/strong>    每月的最后一个星期五上午10:15触发 &lt;/p>
+&lt;p>（21）&lt;strong>0 15 10 ? * 6L 2002-2005&lt;/strong>   2002年至2005年的每月的最后一个星期五上午10:15触发 &lt;/p>
+&lt;p>（22）&lt;strong>0 15 10 ? * 6#3&lt;/strong>   每月的第三个星期五上午10:15触发&lt;/p>
+&lt;p>&lt;strong>注：&lt;/strong>&lt;/p>
+&lt;p>（1）有些子表达式能包含一些范围或列表&lt;/p>
+&lt;p>例如：子表达式（天（星期））可以为 “MON-FRI”，“MON，WED，FRI”，“MON-WED,SAT”&lt;/p>
+&lt;p>“*”字符代表所有可能的值&lt;/p>
+&lt;p>因此，“&lt;em>”在子表达式（月）里表示每个月的含义，“&lt;/em>”在子表达式（天（星期））表示星期的每一天&lt;/p>
+&lt;p>“/”字符用来指定数值的增量 &lt;/p>
+&lt;p>例如：在子表达式（分钟）里的“0/15”表示从第0分钟开始，每15分钟 &lt;/p>
+&lt;p>在子表达式（分钟）里的“3/20”表示从第3分钟开始，每20分钟（它和“3，23，43”）的含义一样&lt;/p>
+&lt;p>“？”字符仅被用于天（月）和天（星期）两个子表达式，表示不指定值 &lt;/p>
+&lt;p>当2个子表达式其中之一被指定了值以后，为了避免冲突，需要将另一个子表达式的值设为“？”&lt;/p>
+&lt;p>“L” 字符仅被用于天（月）和天（星期）两个子表达式，它是单词“last”的缩写 &lt;/p>
+&lt;p>但是它在两个子表达式里的含义是不同的。 &lt;/p>
+&lt;p>在天（月）子表达式中，“L”表示一个月的最后一天 &lt;/p>
+&lt;p>在天（星期）自表达式中，“L”表示一个星期的最后一天，也就是SAT&lt;/p>
+&lt;p>如果在“L”前有具体的内容，它就具有其他的含义了&lt;/p>
+&lt;p>例如：“6L”表示这个月的倒数第６天，“FRIL”表示这个月的最一个星期五 &lt;/p>
+&lt;p>注意：在使用“L”参数时，不要指定列表或范围，因为这会导致问题&lt;/p>
+&lt;h1 id="reference">Reference&lt;/h1>
+&lt;p>&lt;a href="https://www.bejson.com/othertools/cronvalidate/">https://www.bejson.com/othertools/cronvalidate/&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://cron.qqe2.com/">https://cron.qqe2.com/&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://www.matools.com/cron/">https://www.matools.com/cron/&lt;/a>&lt;/p></description></item></channel></rss>
